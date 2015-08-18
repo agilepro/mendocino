@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://www.wfmc.org/2008/XPDL2.1" xmlns:ns2="http://www.wfmc.org/2002/XPDL1.0" Name="New project name" Id="82522066-c321-4154-aaa9-920bbaaae8be">
+    <PackageHeader>
+        <XPDLVersion>2.1</XPDLVersion>
+        <Vendor>Lombardi Software</Vendor>
+        <Created>2009/07/13 22:38:12</Created>
+    </PackageHeader>
+    <Pools>
+        <Pool BoundaryVisible="true" Process="17ff75fb-3e59-407d-b259-9d45a26ddcc2" Orientation="HORIZONTAL" Name="TroubleTicket" Id="43218ec7-2fe8-4a89-9f72-7100bee4907f">
+            <Lanes>
+                <Lane ParentPool="43218ec7-2fe8-4a89-9f72-7100bee4907f" Name="joe" Id="dbea0c96-132e-4bc6-a153-41e1d48ce770">
+                    <Object Name="joe" Id="dbea0c96-132e-4bc6-a153-41e1d48ce770"/>
+                    <NodeGraphicsInfos>
+                        <NodeGraphicsInfo Width="800.0" Height="88.0">
+                            <Coordinates YCoordinate="0.0" XCoordinate="48.0"/>
+                        </NodeGraphicsInfo>
+                    </NodeGraphicsInfos>
+                </Lane>
+                <Lane ParentPool="43218ec7-2fe8-4a89-9f72-7100bee4907f" Name="Unassigned" Id="a23bfda3-bac4-4533-a530-edecbb9f5bf9">
+                    <Object Name="Unassigned" Id="a23bfda3-bac4-4533-a530-edecbb9f5bf9"/>
+                    <NodeGraphicsInfos>
+                        <NodeGraphicsInfo Width="800.0" Height="88.0">
+                            <Coordinates YCoordinate="88.0" XCoordinate="48.0"/>
+                        </NodeGraphicsInfo>
+                    </NodeGraphicsInfos>
+                </Lane>
+            </Lanes>
+            <Object Name="TroubleTicket" Id="43218ec7-2fe8-4a89-9f72-7100bee4907f"/>
+            <NodeGraphicsInfos>
+                <NodeGraphicsInfo Width="848.0" Height="176.0">
+                    <Coordinates YCoordinate="0.0" XCoordinate="0.0"/>
+                </NodeGraphicsInfo>
+            </NodeGraphicsInfos>
+        </Pool>
+    </Pools>
+    <WorkflowProcesses>
+        <WorkflowProcess Status="None" ProcessType="None" Name="TroubleTicket" Id="17ff75fb-3e59-407d-b259-9d45a26ddcc2">
+            <ProcessHeader/>
+            <ActivitySets/>
+            <Activities>
+                <Activity Id="0735b653-d6f1-4fe5-8ed5-a98fe7bed008">
+                    <Event>
+                        <StartEvent Trigger="None"/>
+                    </Event>
+                    <Object Id="0735b653-d6f1-4fe5-8ed5-a98fe7bed008"/>
+                    <NodeGraphicsInfos>
+                        <NodeGraphicsInfo Width="24.0" Height="24.0" LaneId="dbea0c96-132e-4bc6-a153-41e1d48ce770">
+                            <Coordinates YCoordinate="32.0" XCoordinate="116.0"/>
+                        </NodeGraphicsInfo>
+                    </NodeGraphicsInfos>
+                </Activity>
+                <Activity Name="step 1" Id="822fdd6a-84bf-41c8-b9fe-8bd9fee3a161">
+                    <Implementation>
+                        <Task/>
+                    </Implementation>
+                    <Object Name="step 1" Id="822fdd6a-84bf-41c8-b9fe-8bd9fee3a161"/>
+                    <NodeGraphicsInfos>
+                        <NodeGraphicsInfo Width="96.0" Height="56.0" LaneId="dbea0c96-132e-4bc6-a153-41e1d48ce770">
+                            <Coordinates YCoordinate="16.0" XCoordinate="168.0"/>
+                        </NodeGraphicsInfo>
+                    </NodeGraphicsInfos>
+                </Activity>
+                <Activity Name="step 2" Id="06611508-600c-49c5-a2a5-5c54f26e7165">
+                    <Implementation>
+                        <Task/>
+                    </Implementation>
+                    <Object Name="step 2" Id="06611508-600c-49c5-a2a5-5c54f26e7165">
+                        <Documentation>&lt;div&gt;adsfadf a dfasd fads fas df&lt;/div&gt;
+&lt;div&gt;as&lt;/div&gt;
+&lt;div&gt;d fa&lt;/div&gt;
+&lt;div&gt;sd fa&lt;/div&gt;
+&lt;div&gt;df&lt;/div&gt;
+&lt;div&gt;adf&lt;/div&gt;
+&lt;div&gt;as&lt;/div&gt;
+&lt;div&gt;dfa&lt;/div&gt;
+&lt;div&gt;df&lt;/div&gt;
+&lt;div&gt;a&lt;/div&gt;
+&lt;div&gt;dfa&lt;/div&gt;
+&lt;div&gt;df&lt;/div&gt;
+&lt;div&gt;a&lt;/div&gt;
+&lt;div&gt;dfa&lt;/div&gt;
+&lt;div&gt;sdf&lt;/div&gt;
+&lt;div&gt;asd&lt;/div&gt;
+&lt;div&gt;f&lt;/div&gt;
+&lt;div&gt;asd&lt;/div&gt;
+&lt;div&gt;fa&lt;/div&gt;
+&lt;div&gt;sdf&lt;/div&gt;
+&lt;div&gt;asd&lt;/div&gt;
+&lt;div&gt;&amp;nbsp;fa&lt;/div&gt;
+&lt;div&gt;sd f&lt;/div&gt;</Documentation>
+                    </Object>
+                    <NodeGraphicsInfos>
+                        <NodeGraphicsInfo Width="96.0" Height="56.0" LaneId="dbea0c96-132e-4bc6-a153-41e1d48ce770">
+                            <Coordinates YCoordinate="16.0" XCoordinate="296.0"/>
+                        </NodeGraphicsInfo>
+                    </NodeGraphicsInfos>
+                </Activity>
+                <Activity Name="step 3" Id="f37d6470-cf4f-45e5-9de2-1222b7013ce2">
+                    <Implementation>
+                        <Task/>
+                    </Implementation>
+                    <TransitionRestrictions>
+                        <TransitionRestriction>
+                            <Split Type="Inclusive">
+<TransitionRefs>
+    <TransitionRef Id="df613775-fe9d-4973-a5c4-89be950377e1"/>
+    <TransitionRef Id="a18e1833-2897-4869-ab43-08e3a54586b5"/>
+</TransitionRefs>
+                            </Split>
+                        </TransitionRestriction>
+                    </TransitionRestrictions>
+                    <Object Name="step 3" Id="f37d6470-cf4f-45e5-9de2-1222b7013ce2"/>
+                    <NodeGraphicsInfos>
+                        <NodeGraphicsInfo Width="96.0" Height="56.0" LaneId="a23bfda3-bac4-4533-a530-edecbb9f5bf9">
+                            <Coordinates YCoordinate="104.0" XCoordinate="296.0"/>
+                        </NodeGraphicsInfo>
+                    </NodeGraphicsInfos>
+                </Activity>
+                <Activity Name="step 4" Id="09df0fbb-67fe-4d27-90ca-8e6a6f7a6f27">
+                    <Implementation>
+                        <Task/>
+                    </Implementation>
+                    <TransitionRestrictions>
+                        <TransitionRestriction>
+                            <Split Type="Inclusive">
+<TransitionRefs>
+    <TransitionRef Id="bfd489b1-26a3-4fc0-9035-7ce8163b0a29"/>
+    <TransitionRef Id="f054a55a-263d-4702-8809-3629612b8e49"/>
+</TransitionRefs>
+                            </Split>
+                        </TransitionRestriction>
+                    </TransitionRestrictions>
+                    <Object Name="step 4" Id="09df0fbb-67fe-4d27-90ca-8e6a6f7a6f27"/>
+                    <NodeGraphicsInfos>
+                        <NodeGraphicsInfo Width="96.0" Height="56.0" LaneId="a23bfda3-bac4-4533-a530-edecbb9f5bf9">
+                            <Coordinates YCoordinate="104.0" XCoordinate="424.0"/>
+                        </NodeGraphicsInfo>
+                    </NodeGraphicsInfos>
+                </Activity>
+                <Activity Name="step 5" Id="c2dfdba0-723b-4e55-b440-328475b973be">
+                    <Implementation>
+                        <Task/>
+                    </Implementation>
+                    <Object Name="step 5" Id="c2dfdba0-723b-4e55-b440-328475b973be"/>
+                    <NodeGraphicsInfos>
+                        <NodeGraphicsInfo Width="96.0" Height="56.0" LaneId="a23bfda3-bac4-4533-a530-edecbb9f5bf9">
+                            <Coordinates YCoordinate="104.0" XCoordinate="552.0"/>
+                        </NodeGraphicsInfo>
+                    </NodeGraphicsInfos>
+                </Activity>
+                <Activity Name="step 6" Id="4a156f80-1946-4a7f-9c70-4884a78cf938">
+                    <Implementation>
+                        <Task/>
+                    </Implementation>
+                    <Object Name="step 6" Id="4a156f80-1946-4a7f-9c70-4884a78cf938"/>
+                    <NodeGraphicsInfos>
+                        <NodeGraphicsInfo Width="96.0" Height="56.0" LaneId="a23bfda3-bac4-4533-a530-edecbb9f5bf9">
+                            <Coordinates YCoordinate="104.0" XCoordinate="680.0"/>
+                        </NodeGraphicsInfo>
+                    </NodeGraphicsInfos>
+                </Activity>
+                <Activity Id="729e969a-e6b8-4f66-81eb-ed3d21047d9c">
+                    <Event>
+                        <EndEvent/>
+                    </Event>
+                    <Object Id="729e969a-e6b8-4f66-81eb-ed3d21047d9c"/>
+                    <NodeGraphicsInfos>
+                        <NodeGraphicsInfo Width="24.0" Height="24.0" LaneId="a23bfda3-bac4-4533-a530-edecbb9f5bf9">
+                            <Coordinates YCoordinate="120.0" XCoordinate="812.0"/>
+                        </NodeGraphicsInfo>
+                    </NodeGraphicsInfos>
+                </Activity>
+            </Activities>
+            <Transitions>
+                <Transition To="822fdd6a-84bf-41c8-b9fe-8bd9fee3a161" From="0735b653-d6f1-4fe5-8ed5-a98fe7bed008" Id="2392ac9c-5839-4121-8fd0-c134c8716cb7">
+                    <ConnectorGraphicsInfos>
+                        <ConnectorGraphicsInfo>
+                            <Coordinates YCoordinate="40.0" XCoordinate="88.0"/>
+                            <Coordinates YCoordinate="40.0" XCoordinate="120.0"/>
+                        </ConnectorGraphicsInfo>
+                    </ConnectorGraphicsInfos>
+                </Transition>
+                <Transition To="06611508-600c-49c5-a2a5-5c54f26e7165" From="822fdd6a-84bf-41c8-b9fe-8bd9fee3a161" Id="6676db8e-c0d3-458c-a5b6-bbf57dd0666e">
+                    <ConnectorGraphicsInfos>
+                        <ConnectorGraphicsInfo>
+                            <Coordinates YCoordinate="40.0" XCoordinate="216.0"/>
+                            <Coordinates YCoordinate="40.0" XCoordinate="248.0"/>
+                        </ConnectorGraphicsInfo>
+                    </ConnectorGraphicsInfos>
+                </Transition>
+                <Transition To="f37d6470-cf4f-45e5-9de2-1222b7013ce2" From="06611508-600c-49c5-a2a5-5c54f26e7165" Id="bf91060f-8f53-4180-b9f8-a89995cc1ce5">
+                    <ConnectorGraphicsInfos>
+                        <ConnectorGraphicsInfo>
+                            <Coordinates YCoordinate="72.0" XCoordinate="296.0"/>
+                            <Coordinates YCoordinate="104.0" XCoordinate="296.0"/>
+                        </ConnectorGraphicsInfo>
+                    </ConnectorGraphicsInfos>
+                </Transition>
+                <Transition To="09df0fbb-67fe-4d27-90ca-8e6a6f7a6f27" From="f37d6470-cf4f-45e5-9de2-1222b7013ce2" Id="df613775-fe9d-4973-a5c4-89be950377e1">
+                    <ConnectorGraphicsInfos>
+                        <ConnectorGraphicsInfo>
+                            <Coordinates YCoordinate="128.0" XCoordinate="344.0"/>
+                            <Coordinates YCoordinate="128.0" XCoordinate="376.0"/>
+                        </ConnectorGraphicsInfo>
+                    </ConnectorGraphicsInfos>
+                </Transition>
+                <Transition To="c2dfdba0-723b-4e55-b440-328475b973be" From="09df0fbb-67fe-4d27-90ca-8e6a6f7a6f27" Id="bfd489b1-26a3-4fc0-9035-7ce8163b0a29">
+                    <ConnectorGraphicsInfos>
+                        <ConnectorGraphicsInfo>
+                            <Coordinates YCoordinate="128.0" XCoordinate="472.0"/>
+                            <Coordinates YCoordinate="128.0" XCoordinate="504.0"/>
+                        </ConnectorGraphicsInfo>
+                    </ConnectorGraphicsInfos>
+                </Transition>
+                <Transition To="4a156f80-1946-4a7f-9c70-4884a78cf938" From="c2dfdba0-723b-4e55-b440-328475b973be" Id="850cf5b2-07a3-413c-a92f-d75f57ad1e58">
+                    <ConnectorGraphicsInfos>
+                        <ConnectorGraphicsInfo>
+                            <Coordinates YCoordinate="128.0" XCoordinate="600.0"/>
+                            <Coordinates YCoordinate="128.0" XCoordinate="632.0"/>
+                        </ConnectorGraphicsInfo>
+                    </ConnectorGraphicsInfos>
+                </Transition>
+                <Transition To="729e969a-e6b8-4f66-81eb-ed3d21047d9c" From="4a156f80-1946-4a7f-9c70-4884a78cf938" Id="09f00b55-300d-4c47-8e9d-aa734939464b">
+                    <ConnectorGraphicsInfos>
+                        <ConnectorGraphicsInfo>
+                            <Coordinates YCoordinate="128.0" XCoordinate="728.0"/>
+                            <Coordinates YCoordinate="128.0" XCoordinate="760.0"/>
+                        </ConnectorGraphicsInfo>
+                    </ConnectorGraphicsInfos>
+                </Transition>
+                <Transition To="06611508-600c-49c5-a2a5-5c54f26e7165" From="09df0fbb-67fe-4d27-90ca-8e6a6f7a6f27" Id="f054a55a-263d-4702-8809-3629612b8e49">
+                    <ConnectorGraphicsInfos>
+                        <ConnectorGraphicsInfo>
+                            <Coordinates YCoordinate="104.0" XCoordinate="424.0"/>
+                            <Coordinates YCoordinate="40.0" XCoordinate="424.0"/>
+                            <Coordinates YCoordinate="40.0" XCoordinate="344.0"/>
+                        </ConnectorGraphicsInfo>
+                    </ConnectorGraphicsInfos>
+                </Transition>
+                <Transition To="822fdd6a-84bf-41c8-b9fe-8bd9fee3a161" From="f37d6470-cf4f-45e5-9de2-1222b7013ce2" Id="a18e1833-2897-4869-ab43-08e3a54586b5">
+                    <ConnectorGraphicsInfos>
+                        <ConnectorGraphicsInfo>
+                            <Coordinates YCoordinate="128.0" XCoordinate="248.0"/>
+                            <Coordinates YCoordinate="128.0" XCoordinate="168.0"/>
+                            <Coordinates YCoordinate="72.0" XCoordinate="168.0"/>
+                        </ConnectorGraphicsInfo>
+                    </ConnectorGraphicsInfos>
+                </Transition>
+            </Transitions>
+            <Object Name="TroubleTicket" Id="17ff75fb-3e59-407d-b259-9d45a26ddcc2"/>
+        </WorkflowProcess>
+    </WorkflowProcesses>
+</Package>

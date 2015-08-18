@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><library>
+  <book>
+    <author>Nicholas Taleb</author>
+    <stores>Barnes &amp; Noble</stores>
+    <stores>Amazon</stores>
+    <stores>Hicklebees</stores>
+    <stores>Target</stores>
+    <title>The Black Swan</title>
+  </book>
+  <book>
+    <author>L Frank Baum</author>
+    <stores>Barnes &amp; Noble</stores>
+    <stores>Amazon</stores>
+    <stores>Hicklebees</stores>
+    <stores>Target</stores>
+    <title>Wizard of Oz</title>
+  </book>
+</library>

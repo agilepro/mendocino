@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><library>
+  <book>
+    <length>225</length>
+    <reading date="5/15/2009">
+      <readby>Mark</readby>
+    </reading>
+    <reading>
+      <readby>Joe</readby>
+    </reading>
+    <reading date="7/15/2009">
+      <readby>Alex</readby>
+    </reading>
+    <stores>Barnes &amp; Noble</stores>
+    <stores>Amazon</stores>
+    <stores>Hicklebees</stores>
+    <stores>Target</stores>
+    <title>The Black Swan</title>
+  </book>
+  <book>
+    <author>L. Frank Baum</author>
+    <length>350</length>
+    <stores>Barnes &amp; Noble</stores>
+    <stores>Amazon</stores>
+    <stores>Hicklebees</stores>
+    <stores>Target</stores>
+    <title>Wizard of Oz</title>
+  </book>
+</library>

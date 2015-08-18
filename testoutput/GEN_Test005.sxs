@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><schema>
+  <container name="rss">
+    <attr name="version"/>
+    <attr name="xmlns:atom"/>
+    <attr name="xmlns:content"/>
+    <attr name="xmlns:dc"/>
+    <attr name="xmlns:media"/>
+    <attr name="xmlns:slash"/>
+    <attr name="xmlns:sy"/>
+    <attr name="xmlns:wfw"/>
+    <contains name="channel"/>
+  </container>
+  <container name="atom:link">
+    <attr name="href"/>
+    <attr name="rel"/>
+    <attr name="type"/>
+  </container>
+  <container name="image">
+    <contains name="link"/>
+    <contains name="title"/>
+    <contains name="url"/>
+  </container>
+  <container name="media:content">
+    <attr name="medium"/>
+    <attr name="url"/>
+    <contains name="media:title"/>
+  </container>
+  <container name="item">
+    <contains name="category" plural="true"/>
+    <contains name="comments"/>
+    <contains name="content:encoded"/>
+    <contains name="dc:creator"/>
+    <contains name="description"/>
+    <contains name="guid"/>
+    <contains name="link"/>
+    <contains name="media:content" plural="true"/>
+    <contains name="pubDate"/>
+    <contains name="slash:comments"/>
+    <contains name="title"/>
+    <contains name="wfw:commentRss"/>
+  </container>
+  <container name="channel">
+    <contains name="atom:link"/>
+    <contains name="description"/>
+    <contains name="generator"/>
+    <contains name="image"/>
+    <contains name="item" plural="true"/>
+    <contains name="language"/>
+    <contains name="lastBuildDate"/>
+    <contains name="link"/>
+    <contains name="sy:updateFrequency"/>
+    <contains name="sy:updatePeriod"/>
+    <contains name="title"/>
+  </container>
+  <data name="generator"/>
+  <data name="link"/>
+  <data name="title"/>
+  <data name="url"/>
+  <data name="category"/>
+  <data name="comments"/>
+  <data name="content:encoded"/>
+  <data name="dc:creator"/>
+  <data name="description"/>
+  <data name="guid"/>
+  <data name="media:title"/>
+  <data name="pubDate"/>
+  <data name="slash:comments"/>
+  <data name="wfw:commentRss"/>
+  <data name="language"/>
+  <data name="lastBuildDate"/>
+  <data name="sy:updateFrequency"/>
+  <data name="sy:updatePeriod"/>
+  <root>rss</root>
+</schema>

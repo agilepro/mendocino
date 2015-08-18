@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+
+    <servlet>
+        <servlet-name>leaf-viewer</servlet-name>
+        <servlet-class>com.fujitsu.nugen.NGLeafServlet</servlet-class>
+        <load-on-startup>6</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>DataFeedServlet</servlet-name> 
+        <display-name>DataFeedServlet</display-name> 
+        <servlet-class>com.fujitsu.nugen.DataFeedServlet</servlet-class> 
+    </servlet>    
+    <servlet-mapping>
+        <servlet-name>leaf-viewer</servlet-name>
+        <url-pattern>/p/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>leaf-viewer</servlet-name>
+        <url-pattern>/b/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>leaf-viewer</servlet-name>
+        <url-pattern>/s/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>leaf-viewer</servlet-name>
+        <url-pattern>/u/*</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>wiki-viewer</servlet-name>
+        <servlet-class>com.fujitsu.nugen.NGServlet</servlet-class>
+        <load-on-startup>6</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>wiki-viewer</servlet-name>
+        <url-pattern>*.sp</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>attach-viewer</servlet-name>
+        <servlet-class>com.fujitsu.nugen.AttachServlet</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>attach-viewer</servlet-name>
+        <url-pattern>/attachments/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DataFeedServlet</servlet-name> 
+        <url-pattern>/servlet/DataFeedServlet</url-pattern> 
+    </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>main.jsp</welcome-file>
+    </welcome-file-list>
+    <servlet>
+        <servlet-name>RssServlet</servlet-name>
+        <servlet-class>com.fujitsu.nugen.RssServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RssServlet</servlet-name> 
+        <url-pattern>/Tasks.rss</url-pattern> 
+    </servlet-mapping>
+
+</web-app>

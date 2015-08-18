@@ -1,0 +1,14 @@
+#Configuration for NuGen Demo
+
+# Data Folder
+# This is the location where the .sp files will be stored.
+# Can be any local path, include the complete path to the folder.
+# Make sure that this folder exists before you start.
+dataFolder=D:/sandbox/ps/nugen/data_pages/
+
+# Attachment folder
+# This is the location where the attachment files will be stored.
+# Can be any local path, include the complete path to the folder.
+# Make sure that this folder exists before you start.
+attachFolder=D:/sandbox/ps/nugen/data_attachments/
+

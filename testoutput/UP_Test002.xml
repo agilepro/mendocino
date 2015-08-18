@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><userprofiles>
+  <userprofile id="MOBQNTGYF">
+    <homepage>http://web.com/processleaves/p/main/public.htm</homepage>
+    <lastlogin>1244434616875</lastlogin>
+    <lastupdated>1241018683687</lastupdated>
+    <username>AAA</username>
+  </userprofile>
+  <userprofile id="YVXIXTGYF">
+    <idrec loginid="aaa@gmail.com"/>
+    <username>BBB</username>
+  </userprofile>
+  <userprofile id="HMSBPXKYF">
+    <idrec loginid="jjj@a.com"/>
+    <idrec confirmed="true" loginid="ddd@a.com"/>
+    <lastlogin>1244512041541</lastlogin>
+    <username>Christopher Columbus</username>
+  </userprofile>
+</userprofiles>

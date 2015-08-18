@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?><schema>
+  <container name="Package">
+    <attr name="Id"/>
+    <attr name="Name"/>
+    <attr name="xmlns"/>
+    <attr name="xmlns:deprecated"/>
+    <attr name="xmlns:ibpm"/>
+    <attr name="xmlns:xsi"/>
+    <attr name="xsi:schemaLocation"/>
+    <contains name="ExtendedAttributes"/>
+    <contains name="PackageHeader"/>
+    <contains name="Participants"/>
+    <contains name="Pools"/>
+    <contains name="RedefinableHeader"/>
+    <contains name="Script"/>
+    <contains name="WorkflowProcesses"/>
+  </container>
+  <container name="ExtendedAttribute">
+    <attr name="Name"/>
+    <attr name="Value"/>
+    <contains name="Simulation"/>
+    <contains name="ibpm:PrologueJavaActionSet"/>
+    <contains name="PrivateData"/>
+    <contains name="ibpm:EpilogueJavaActionSet"/>
+    <contains name="ibpm:RoleJavaActionSet"/>
+    <contains name="ibpm:TimerDefSet"/>
+    <contains name="ibpm:FormsList"/>
+    <contains name="ibpm:PrologueScript"/>
+    <contains name="DataMappings"/>
+    <contains name="ibpm:IsWorkItemUDA"/>
+    <contains name="ibpm:isReadOnly"/>
+    <contains name="ibpm:IsTrackable"/>
+    <contains name="ibpm:IflowDataType"/>
+    <contains name="ibpm:InitJavaActionSet"/>
+    <contains name="ibpm:CommitJavaActionSet"/>
+    <contains name="SWIM_LANES"/>
+    <contains name="ANNOTATIONS"/>
+  </container>
+  <container name="ExtendedAttributes">
+    <contains name="ExtendedAttribute" plural="true"/>
+  </container>
+  <container name="PackageHeader">
+    <contains name="Created"/>
+    <contains name="Vendor"/>
+    <contains name="XPDLVersion"/>
+  </container>
+  <container name="ParticipantType">
+    <attr name="Type"/>
+  </container>
+  <container name="Participant">
+    <attr name="Id"/>
+    <attr name="Name"/>
+    <contains name="ParticipantType"/>
+  </container>
+  <container name="Participants">
+    <contains name="Participant" plural="true"/>
+  </container>
+  <container name="Coordinates">
+    <attr name="XCoordinate"/>
+    <attr name="YCoordinate"/>
+  </container>
+  <container name="NodeGraphicsInfo">
+    <attr name="FillColor"/>
+    <attr name="IsVisible"/>
+    <attr name="LaneId"/>
+    <attr name="Page"/>
+    <attr name="ToolId"/>
+    <contains name="Coordinates"/>
+  </container>
+  <container name="NodeGraphicsInfos">
+    <contains name="NodeGraphicsInfo"/>
+  </container>
+  <container name="Lane">
+    <attr name="Id"/>
+    <attr name="Name"/>
+    <contains name="NodeGraphicsInfos"/>
+  </container>
+  <container name="Lanes">
+    <contains name="Lane"/>
+  </container>
+  <container name="Pool">
+    <attr name="BoundaryVisible"/>
+    <attr name="Id"/>
+    <attr name="Name"/>
+    <attr name="Orientation"/>
+    <attr name="Process"/>
+    <contains name="Lanes"/>
+    <contains name="NodeGraphicsInfos"/>
+  </container>
+  <container name="Pools">
+    <contains name="Pool"/>
+  </container>
+  <container name="RedefinableHeader">
+    <attr name="PublicationStatus"/>
+    <contains name="Author"/>
+    <contains name="Responsibles"/>
+    <contains name="Version"/>
+  </container>
+  <container name="Script">
+    <attr name="Type"/>
+  </container>
+  <container name="Connector">
+    <attr name="Name"/>
+    <attr name="Probability"/>
+  </container>
+  <container name="Connectors">
+    <contains name="Connector" plural="true"/>
+  </container>
+  <container name="Simulation">
+    <contains name="Connectors"/>
+    <contains name="Duration"/>
+    <contains name="Resources"/>
+  </container>
+  <container name="TransitionRef">
+    <attr name="Id"/>
+  </container>
+  <container name="TransitionRefs">
+    <contains name="TransitionRef" plural="true"/>
+  </container>
+  <container name="Split">
+    <attr name="Type"/>
+    <contains name="TransitionRefs"/>
+  </container>
+  <container name="TransitionRestriction">
+    <contains name="Split"/>
+    <contains name="Join"/>
+  </container>
+  <container name="TransitionRestrictions">
+    <contains name="TransitionRestriction"/>
+  </container>
+  <container name="Activity">
+    <attr name="Id"/>
+    <attr name="Name"/>
+    <contains name="Documentation"/>
+    <contains name="ExtendedAttributes"/>
+    <contains name="NodeGraphicsInfos"/>
+    <contains name="Performer"/>
+    <contains name="Priority"/>
+    <contains name="Route"/>
+    <contains name="TransitionRestrictions"/>
+    <contains name="Implementation"/>
+  </container>
+  <container name="InputUDAList">
+    <contains name="E" plural="true"/>
+  </container>
+  <container name="JavaAction">
+    <attr name="name"/>
+    <attr name="ordinal"/>
+    <contains name="AbortSequenceOnError"/>
+    <contains name="BeanMethodInputUDAList"/>
+    <contains name="BeanMethodName"/>
+    <contains name="BeanName"/>
+    <contains name="ClassName"/>
+    <contains name="ClassPath"/>
+    <contains name="Description"/>
+    <contains name="EditorClassName"/>
+    <contains name="FactoryClassName"/>
+    <contains name="InputUDAList"/>
+    <contains name="MethodName"/>
+    <contains name="ReturnUDA"/>
+    <contains name="TechDescription"/>
+  </container>
+  <container name="JavaActionSet">
+    <attr name="javaActionCount"/>
+    <attr name="name"/>
+    <attr name="xmlns"/>
+    <contains name="Description"/>
+    <contains name="JavaAction" plural="true"/>
+  </container>
+  <container name="ibpm:PrologueJavaActionSet">
+    <contains name="JavaActionSet"/>
+  </container>
+  <container name="CondSplitBranchInfo">
+    <attr name="arrowLabel"/>
+    <attr name="comparisionOperandValue"/>
+    <attr name="comparisionValue"/>
+    <attr name="isDefault"/>
+    <attr name="ordinal"/>
+  </container>
+  <container name="CondSplitPrivateData">
+    <attr name="conditionAttribute"/>
+    <contains name="CondSplitBranchInfo" plural="true"/>
+  </container>
+  <container name="PrivateData">
+    <contains name="CondSplitPrivateData"/>
+    <contains name="DataMapping"/>
+  </container>
+  <container name="Join">
+    <attr name="Type"/>
+  </container>
+  <container name="ibpm:EpilogueJavaActionSet">
+    <contains name="JavaActionSet"/>
+  </container>
+  <container name="ibpm:RoleJavaActionSet">
+    <contains name="JavaActionSet"/>
+  </container>
+  <container name="ExecuteJavaActionSetAction">
+    <attr name="javaActionSet"/>
+    <attr name="ordinal"/>
+  </container>
+  <container name="TimerActions">
+    <contains name="ExecuteJavaActionSetAction"/>
+  </container>
+  <container name="TimerDef">
+    <attr name="Id"/>
+    <attr name="ordinal"/>
+    <attr name="time"/>
+    <attr name="type"/>
+    <contains name="Description"/>
+    <contains name="Label"/>
+    <contains name="TimerActions"/>
+  </container>
+  <container name="ibpm:TimerDefSet">
+    <contains name="TimerDef"/>
+  </container>
+  <container name="Implementation">
+    <contains name="No"/>
+    <contains name="SubFlow"/>
+  </container>
+  <container name="DataMapping">
+    <attr name="Direction"/>
+    <attr name="ProcessDataField"/>
+    <attr name="SubProcessDataField"/>
+    <contains name="DataMappingElement" plural="true"/>
+  </container>
+  <container name="DataMappings">
+    <contains name="DataMapping" plural="true"/>
+  </container>
+  <container name="DataMappingElement">
+    <attr name="fromSource"/>
+    <attr name="fromTarget"/>
+    <attr name="sourceDataSetElementName"/>
+    <attr name="targetDataSetElementName"/>
+  </container>
+  <container name="ActualParameters">
+    <contains name="ActualParameter" plural="true"/>
+  </container>
+  <container name="SubFlow">
+    <attr name="Execution"/>
+    <attr name="Id"/>
+    <contains name="ActualParameters"/>
+  </container>
+  <container name="Activities">
+    <contains name="Activity" plural="true"/>
+  </container>
+  <container name="BasicType">
+    <attr name="Type"/>
+  </container>
+  <container name="DataType">
+    <contains name="BasicType"/>
+  </container>
+  <container name="ibpm:IsWorkItemUDA">
+    <attr name="Value"/>
+  </container>
+  <container name="ibpm:isReadOnly">
+    <attr name="Value"/>
+  </container>
+  <container name="ibpm:IsTrackable">
+    <attr name="Value"/>
+  </container>
+  <container name="ibpm:IflowDataType">
+    <attr name="Type"/>
+  </container>
+  <container name="DataField">
+    <attr name="Id"/>
+    <attr name="IsArray"/>
+    <attr name="Name"/>
+    <contains name="DataType"/>
+    <contains name="ExtendedAttributes"/>
+    <contains name="InitialValue"/>
+  </container>
+  <container name="DataFields">
+    <contains name="DataField" plural="true"/>
+  </container>
+  <container name="ibpm:InitJavaActionSet">
+    <contains name="JavaActionSet"/>
+  </container>
+  <container name="ibpm:CommitJavaActionSet">
+    <contains name="JavaActionSet"/>
+  </container>
+  <container name="ANNOTATION">
+    <contains name="CoordinateX"/>
+    <contains name="CoordinateY"/>
+    <contains name="Description"/>
+    <contains name="Height"/>
+    <contains name="Width"/>
+  </container>
+  <container name="ANNOTATIONS">
+    <contains name="ANNOTATION" plural="true"/>
+  </container>
+  <container name="ProcessHeader">
+    <contains name="Description"/>
+  </container>
+  <container name="Responsibles">
+    <contains name="Responsible"/>
+  </container>
+  <container name="ConnectorGraphicsInfo">
+    <attr name="FillColor"/>
+    <attr name="IsVisible"/>
+    <attr name="Page"/>
+    <contains name="Coordinates" plural="true"/>
+  </container>
+  <container name="ConnectorGraphicsInfos">
+    <contains name="ConnectorGraphicsInfo"/>
+  </container>
+  <container name="Transition">
+    <attr name="From"/>
+    <attr name="Id"/>
+    <attr name="Name"/>
+    <attr name="To"/>
+    <contains name="ConnectorGraphicsInfos"/>
+    <contains name="ExtendedAttributes"/>
+    <contains name="Condition"/>
+  </container>
+  <container name="Transitions">
+    <contains name="Transition" plural="true"/>
+  </container>
+  <container name="WorkflowProcess">
+    <attr name="AccessLevel"/>
+    <attr name="Id"/>
+    <attr name="Name"/>
+    <contains name="Activities"/>
+    <contains name="DataFields"/>
+    <contains name="ExtendedAttributes"/>
+    <contains name="ProcessHeader"/>
+    <contains name="RedefinableHeader"/>
+    <contains name="Transitions"/>
+  </container>
+  <container name="WorkflowProcesses">
+    <contains name="WorkflowProcess"/>
+  </container>
+  <data name="Created"/>
+  <data name="Vendor"/>
+  <data name="XPDLVersion"/>
+  <data name="Duration"/>
+  <data name="AbortSequenceOnError"/>
+  <data name="ClassName"/>
+  <data name="Description"/>
+  <data name="EditorClassName"/>
+  <data name="FactoryClassName"/>
+  <data name="E"/>
+  <data name="MethodName"/>
+  <data name="Label"/>
+  <data name="Performer"/>
+  <data name="ibpm:PrologueScript"/>
+  <data name="ActualParameter"/>
+  <data name="InitialValue"/>
+  <data name="CoordinateX"/>
+  <data name="CoordinateY"/>
+  <data name="Height"/>
+  <data name="Width"/>
+  <data name="Author"/>
+  <data name="Responsible"/>
+  <data name="Version"/>
+  <data name="Condition"/>
+  <data ambiguous="true" name="Documentation"/>
+  <data ambiguous="true" name="Resources"/>
+  <data ambiguous="true" name="Priority"/>
+  <data ambiguous="true" name="Route"/>
+  <data ambiguous="true" name="BeanMethodInputUDAList"/>
+  <data ambiguous="true" name="BeanMethodName"/>
+  <data ambiguous="true" name="BeanName"/>
+  <data ambiguous="true" name="ClassPath"/>
+  <data ambiguous="true" name="ReturnUDA"/>
+  <data ambiguous="true" name="TechDescription"/>
+  <data ambiguous="true" name="ibpm:FormsList"/>
+  <data ambiguous="true" name="No"/>
+  <data ambiguous="true" name="SWIM_LANES"/>
+  <root>Package</root>
+</schema>

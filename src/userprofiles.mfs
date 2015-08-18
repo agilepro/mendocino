@@ -1,0 +1,23 @@
+<mendocino_schema>
+  <container name="userprofiles">
+    <contains plural="*">userprofile</contains>
+  </container>
+  <container name="userprofile">
+    <attr name="id" type="String"/>
+    <contains>homepage</contains>
+    <contains>lastlogin</contains>
+    <contains>lastupdated</contains>
+    <contains>username</contains>
+    <contains plural="*">idrec</contains>
+  </container>
+  <container name="idrec">
+    <attr name="loginid"   type="String"/>
+    <attr name="confirmed" type="String"/>
+  </container>
+  <data name="lastlogin"   type="Integer"/>
+  <data name="lastupdated" type="Integer"/>
+  <data name="username"    type="String"/>
+  <data name="homepage"    type="String"/>
+  <data name="username"    type="String"/>
+  <root>userprofiles</root>
+</mendocino_schema>
