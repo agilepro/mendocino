@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A JSONObject is an collection of name/value pairs.
@@ -645,29 +646,42 @@ public class JSONObject {
     }
 
 
+
     /**
-     * Get an enumeration of the keys of the JSONObject.
-     *
-     * @return An iterator of the keys.
+     * @return Return a set of keys of the JSONObject
      */
-    public Iterator<String> keys() {
-        return this.map.keySet().iterator();
+    public Set<String> keySet() {
+        return this.map.keySet();
+    }
+
+    /**
+     * @return Return a list of keys of the JSONObject in sorted order
+     */
+    public List<String> sortedKeySet() {
+        List<String> keyList = new ArrayList<String>();
+        for (String key : keySet()) {
+            keyList.add(key);
+        }
+        Collections.sort(keyList);
+        return keyList;
     }
 
     /**
      * Get an enumeration of the keys of the JSONObject in alphabetically sorted order.
-     *
      * @return An iterator that walks the keys in sorted order.
+     * @deprecated use sortedKeySet instead because iterators are old fashioned
      */
     public Iterator<String> sortedKeys() {
-        List<String> keyList = new ArrayList<String>();
-        Iterator<String> k = keys();
-        while (k.hasNext()) {
-            String key = k.next();
-            keyList.add(key);
-        }
-        Collections.sort(keyList);
-        return keyList.iterator();
+        return sortedKeySet().iterator();
+    }
+
+    /**
+     * Get an enumeration of the keys of the JSONObject.
+     * @return An iterator of the keys.
+     * @deprecated use sortedKeySet instead because iterators are old fashioned
+     */
+    public Iterator<String> keys() {
+        return this.map.keySet().iterator();
     }
 
 
@@ -1414,7 +1428,7 @@ public class JSONObject {
             try {
                 object = ((JSONString)value).toJSONString();
             } catch (Exception e) {
-                throw new JSONException(e);
+                throw new JSONException("Error converting JSONString to a string", e);
             }
             if (object instanceof String) {
                 return (String)object;
@@ -1532,7 +1546,7 @@ public class JSONObject {
             try {
                 o = ((JSONString) value).toJSONString();
             } catch (Exception e) {
-                throw new JSONException(e);
+                throw new JSONException("Error while converting a JSONString to a string", e);
             }
             writer.write(o != null ? o.toString() : quote(value.toString()));
         } else {
@@ -1580,21 +1594,21 @@ public class JSONObject {
         try {
             boolean commanate = false;
             final int length = this.length();
-            Iterator<String> keys = this.sortedKeys();
+            List<String> keys = this.sortedKeySet();
             writer.write('{');
 
             if (length == 1) {
-                Object key = keys.next();
-                writer.write(quote(key.toString()));
+                String key = keys.get(0);
+                writer.write(quote(key));
                 writer.write(':');
                 if (indentFactor > 0) {
                     writer.write(' ');
                 }
                 writeValue(writer, this.map.get(key), indentFactor, indent);
-            } else if (length != 0) {
+            }
+            else if (length > 1) {
                 final int newindent = indent + indentFactor;
-                while (keys.hasNext()) {
-                    Object key = keys.next();
+                for (String key : keys) {
                     if (commanate) {
                         writer.write(',');
                     }
@@ -1602,7 +1616,7 @@ public class JSONObject {
                         writer.write('\n');
                     }
                     indent(writer, newindent);
-                    writer.write(quote(key.toString()));
+                    writer.write(quote(key));
                     writer.write(':');
                     if (indentFactor > 0) {
                         writer.write(' ');
@@ -1619,7 +1633,7 @@ public class JSONObject {
             writer.write('}');
             return writer;
         } catch (IOException exception) {
-            throw new JSONException(exception);
+            throw new JSONException("Unable to write object JSONObject indent level: "+indent, exception);
         }
      }
 }

@@ -925,7 +925,7 @@ public class JSONArray {
             writer.write(']');
             return writer;
         } catch (IOException e) {
-           throw new JSONException(e);
+           throw new JSONException("Difficulty writing the JSON object at indent "+indent, e);
         }
     }
 }

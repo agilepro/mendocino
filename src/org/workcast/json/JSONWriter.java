@@ -118,7 +118,7 @@ public class JSONWriter {
                 }
                 this.writer.write(string);
             } catch (IOException e) {
-                throw new JSONException(e);
+                throw new JSONException("Error while appending a string to the JSONWriter", e);
             }
             if (this.mode == 'o') {
                 this.mode = 'k';
@@ -165,7 +165,7 @@ public class JSONWriter {
         try {
             this.writer.write(c);
         } catch (IOException e) {
-            throw new JSONException(e);
+            throw new JSONException("Error while ending an array or object", e);
         }
         this.comma = true;
         return this;
@@ -201,7 +201,7 @@ public class JSONWriter {
      */
     public JSONWriter key(String string) throws JSONException {
         if (string == null) {
-            throw new JSONException("Null key.");
+            throw new JSONException("Null key encountered while writing.");
         }
         if (this.mode == 'k') {
             try {
@@ -215,10 +215,10 @@ public class JSONWriter {
                 this.mode = 'o';
                 return this;
             } catch (IOException e) {
-                throw new JSONException(e);
+                throw new JSONException("Error while appending a key: "+string, e);
             }
         }
-        throw new JSONException("Misplaced key.");
+        throw new JSONException("Misplaced key while writing because mode == "+this.mode);
     }
 
 
@@ -241,7 +241,7 @@ public class JSONWriter {
             this.comma = false;
             return this;
         }
-        throw new JSONException("Misplaced object.");
+        throw new JSONException("Misplaced object while writing because mode == "+this.mode);
 
     }
 

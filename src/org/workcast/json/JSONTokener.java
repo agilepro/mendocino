@@ -155,7 +155,7 @@ public class JSONTokener {
             try {
                 c = this.reader.read();
             } catch (IOException exception) {
-                throw new JSONException(exception);
+                throw new JSONException("Error while reading a character from input", exception);
             }
 
             if (c <= 0) { // End of stream
@@ -416,7 +416,7 @@ public class JSONTokener {
                 }
             } while (c != to);
         } catch (IOException exc) {
-            throw new JSONException(exc);
+            throw new JSONException("Error while skipping characters", exc);
         }
 
         this.back();
