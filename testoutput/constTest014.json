@@ -1,0 +1,34 @@
+{"library": {"book": [
+  {
+    "length": "225",
+    "reading": [
+      {
+        "date": "5/15/2009",
+        "readby": "Mark"
+      },
+      {"readby": "Joe"},
+      {
+        "date": "7/15/2009",
+        "readby": "Alex"
+      }
+    ],
+    "stores": [
+      "Barnes & Noble",
+      "Amazon",
+      "Hicklebees",
+      "Target"
+    ],
+    "title": "The Black Swan"
+  },
+  {
+    "author": "L. Frank Baum",
+    "length": "350",
+    "stores": [
+      "Barnes & Noble",
+      "Amazon",
+      "Hicklebees",
+      "Target"
+    ],
+    "title": "Wizard of Oz"
+  }
+]}}

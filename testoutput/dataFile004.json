@@ -1,0 +1,307 @@
+{"Package": {
+  "ConformanceClass": {"BPMNModelPortabilityConformance": "SIMPLE"},
+  "ExtendedAttributes": {"ExtendedAttribute": [
+    {
+      "Name": "Build",
+      "Value": "8.1 IF810045"
+    },
+    {
+      "Name": "System",
+      "Value": "KSwensonVM1Flow"
+    }
+  ]},
+  "Id": "13782",
+  "Name": "Example1",
+  "PackageHeader": {
+    "Created": "Sat Dec 30 15:50:35 PST 2006",
+    "Vendor": "Fujitsu",
+    "XPDLVersion": "2.0"
+  },
+  "Participants": {"Participant": [
+    {
+      "Id": "ibpm_server1",
+      "Name": "ibpm_server1",
+      "ParticipantType": {"Type": "RESOURCE"}
+    },
+    {
+      "Id": "Role",
+      "Name": "Role",
+      "ParticipantType": {"Type": "ROLE"}
+    }
+  ]},
+  "Pools": {"Pool": [{
+    "BoundaryVisible": "false",
+    "Id": "1",
+    "Lanes": {"Lane": [{
+      "Id": "1",
+      "Name": "",
+      "NodeGraphicsInfos": {"NodeGraphicsInfo": [{"Coordinates": [{
+        "XCoordinate": "0.0",
+        "YCoordinate": "0.0"
+      }]}]}
+    }]},
+    "Name": "",
+    "NodeGraphicsInfos": {"NodeGraphicsInfo": [{"Coordinates": [{
+      "XCoordinate": "0.0",
+      "YCoordinate": "0.0"
+    }]}]},
+    "Orientation": "HORIZONTAL",
+    "Process": "13782"
+  }]},
+  "RedefinableHeader": {"PublicationStatus": "UNDER_TEST"},
+  "Script": {"Type": "text/javascript"},
+  "WorkflowProcesses": {"WorkflowProcess": [{
+    "AccessLevel": "PUBLIC",
+    "Activities": {"Activity": [
+      {
+        "Event": {"StartEvent": {"Trigger": "None"}},
+        "ExtendedAttributes": {"ExtendedAttribute": [
+          {
+            "Name": "NodeType",
+            "Value": "0"
+          },
+          {
+            "Name": "Simulation",
+            "ibpm:Simulation": {
+              "ibpm:Connectors": {"ibpm:Connector": {
+                "Name": "Arrow1",
+                "Probability": "100.0"
+              }},
+              "ibpm:Duration": "3600000",
+              "ibpm:Resources": ""
+            }
+          },
+          {
+            "Name": "Coordinates",
+            "ibpm:Coordinates": {
+              "xpos": "81",
+              "ypos": "80"
+            }
+          }
+        ]},
+        "Id": "13785",
+        "Name": "Start",
+        "NodeGraphicsInfos": {"NodeGraphicsInfo": [{
+          "Coordinates": [{
+            "XCoordinate": "50.0",
+            "YCoordinate": "50.0"
+          }],
+          "FillColor": "light blue",
+          "Height": "60.0",
+          "IsVisible": "true",
+          "LaneId": "1",
+          "Page": "1",
+          "ToolId": "Interstage Business Process Manager",
+          "Width": "60.0"
+        }]},
+        "TransitionRestrictions": {"TransitionRestriction": [{"Split": {
+          "TransitionRefs": {"TransitionRef": [{"Id": "13787"}]},
+          "Type": "XOR"
+        }}]}
+      },
+      {
+        "ExtendedAttributes": {"ExtendedAttribute": [
+          {
+            "Name": "NodeType",
+            "Value": "2"
+          },
+          {
+            "Name": "ExpandGroups",
+            "Value": "true"
+          },
+          {
+            "Name": "Simulation",
+            "ibpm:Simulation": {
+              "Connectors": {"Connector": [{
+                "Name": "Arrow2",
+                "Probability": "100.0"
+              }]},
+              "Duration": "7200000",
+              "Resources": ""
+            }
+          },
+          {
+            "Name": "Coordinates",
+            "ibpm:Coordinates": {
+              "xpos": "317",
+              "ypos": "83"
+            }
+          }
+        ]},
+        "Id": "13784",
+        "Implementation": {"No": ""},
+        "Name": "Activity1",
+        "NodeGraphicsInfos": {"NodeGraphicsInfo": [{
+          "Coordinates": [{
+            "XCoordinate": "264.0",
+            "YCoordinate": "49.0"
+          }],
+          "FillColor": "light blue",
+          "Height": "102.0",
+          "IsVisible": "true",
+          "LaneId": "1",
+          "Page": "1",
+          "ToolId": "Interstage Business Process Manager",
+          "Width": "68.0"
+        }]},
+        "Performer": "Role",
+        "TransitionRestrictions": {"TransitionRestriction": [{
+          "Join": {"Type": "XOR"},
+          "Split": {
+            "TransitionRefs": {"TransitionRef": [{"Id": "13786"}]},
+            "Type": "XOR"
+          }
+        }]}
+      },
+      {
+        "Event": {"EndEvent": ""},
+        "ExtendedAttributes": {"ExtendedAttribute": [
+          {
+            "Name": "NodeType",
+            "Value": "1"
+          },
+          {
+            "Name": "Coordinates",
+            "ibpm:Coordinates": {
+              "xpos": "313",
+              "ypos": "222"
+            }
+          }
+        ]},
+        "Id": "13783",
+        "Name": "Exit1",
+        "NodeGraphicsInfos": {"NodeGraphicsInfo": [{
+          "Coordinates": [{
+            "XCoordinate": "282.0",
+            "YCoordinate": "192.0"
+          }],
+          "FillColor": "light blue",
+          "Height": "60.0",
+          "IsVisible": "true",
+          "LaneId": "1",
+          "Page": "1",
+          "ToolId": "Interstage Business Process Manager",
+          "Width": "60.0"
+        }]},
+        "TransitionRestrictions": {"TransitionRestriction": [{"Join": {"Type": "XOR"}}]}
+      }
+    ]},
+    "DataFields": "",
+    "ExtendedAttributes": {"ExtendedAttribute": [
+      {
+        "Name": "ProcessDefinitionId",
+        "Value": "13782"
+      },
+      {
+        "Name": "ProcessTypeId",
+        "Value": "0"
+      },
+      {
+        "Name": "State",
+        "Value": "0"
+      },
+      {
+        "Name": "SWIM_LANES",
+        "ibpm:SWIM_LANES": ""
+      },
+      {
+        "Name": "ANNOTATIONS",
+        "ibpm:ANNOTATIONS": ""
+      }
+    ]},
+    "Id": "13782",
+    "Name": "Example1",
+    "ProcessHeader": {
+      "Description": "A simple example -- one node",
+      "DurationUnit": "s"
+    },
+    "RedefinableHeader": {
+      "Author": "ibpm_server1",
+      "PublicationStatus": "UNDER_TEST",
+      "Responsibles": {"Responsible": "ibpm_server1"},
+      "Version": "1.0"
+    },
+    "Transitions": {"Transition": [
+      {
+        "ConnectorGraphicsInfos": {"ConnectorGraphicsInfo": {
+          "Coordinates": [
+            {
+              "XCoordinate": "116.0",
+              "YCoordinate": "83.0"
+            },
+            {
+              "XCoordinate": "264.0",
+              "YCoordinate": "83.0"
+            }
+          ],
+          "FillColor": "light blue",
+          "IsVisible": "true",
+          "Page": "1"
+        }},
+        "ExtendedAttributes": {"ExtendedAttribute": [
+          {
+            "Name": "StartPoint",
+            "ibpm:StartPoint": {
+              "xpos": "116",
+              "ypos": "83"
+            }
+          },
+          {
+            "Name": "EndPoint",
+            "ibpm:EndPoint": {
+              "xpos": "264",
+              "ypos": "83"
+            }
+          }
+        ]},
+        "From": "13785",
+        "Id": "13787",
+        "Name": "Arrow1",
+        "To": "13784"
+      },
+      {
+        "ConnectorGraphicsInfos": {"ConnectorGraphicsInfo": {
+          "Coordinates": [
+            {
+              "XCoordinate": "315.0",
+              "YCoordinate": "117.0"
+            },
+            {
+              "XCoordinate": "315.0",
+              "YCoordinate": "192.0"
+            }
+          ],
+          "FillColor": "light blue",
+          "IsVisible": "true",
+          "Page": "1"
+        }},
+        "ExtendedAttributes": {"ExtendedAttribute": [
+          {
+            "Name": "StartPoint",
+            "ibpm:StartPoint": {
+              "xpos": "315",
+              "ypos": "117"
+            }
+          },
+          {
+            "Name": "EndPoint",
+            "ibpm:EndPoint": {
+              "xpos": "315",
+              "ypos": "192"
+            }
+          }
+        ]},
+        "From": "13784",
+        "Id": "13786",
+        "Name": "Arrow2",
+        "To": "13783"
+      }
+    ]}
+  }]},
+  "xmlns": "http://www.wfmc.org/2008/XPDL2.1",
+  "xmlns:deprecated": "http://www.wfmc.org/2002/XPDL1.0",
+  "xmlns:ibpm": "http://fujitsu.com/ibpm1",
+  "xmlns:xpdl": "http://www.wfmc.org/2008/XPDL2.1",
+  "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+  "xsi:schemaLocation": "http://www.wfmc.org/2008/XPDL2.1 bpmnxpdl_30.xsd"
+}}

@@ -23,9 +23,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
+
+import org.workcast.json.Dom2JSON;
+import org.workcast.json.JSONObject;
 import org.workcast.mendocino.Mel;
 import org.workcast.mendocino.Schema;
 import org.workcast.mendocino.SchemaGen;
@@ -60,6 +65,15 @@ public class Test1 implements TestSet {
 
         Enumeration<Mel> userprofile_enum = me.getChildren("userprofile").elements();
 
+        Hashtable<String,Integer> hints = new Hashtable<String,Integer>();
+        hints.put("userprofile", new Integer(3));
+        hints.put("data", new Integer(3));
+        hints.put("idrec", new Integer(3));
+        hints.put("container", new Integer(3));
+        hints.put("attr", new Integer(3));
+        hints.put("contains", new Integer(3));
+
+
         Mel userprofile = userprofile_enum.nextElement();
         testNotNull(userprofile, "first user profile object");
         testVal(userprofile.getName(), "userprofile", "first user profile object: name");
@@ -88,13 +102,13 @@ public class Test1 implements TestSet {
         testScalar(userprofile, "username", "CCC", "third user profile object");
         testScalar(userprofile, "lastlogin", "1244512041541", "third user profile object");
 
-        writeFileAndCompare(me, "UP_Test001.xml");
+        writeBothStylesAndCompare(me, "UP_Test001", hints);
 
         userprofile.setScalar("username", "Christopher Columbus");
         testScalar(userprofile, "username", "Christopher Columbus", "modified user profile object");
         testScalar(userprofile, "lastlogin", "1244512041541", "modified user profile object");
 
-        writeFileAndCompare(me, "UP_Test002.xml");
+        writeBothStylesAndCompare(me, "UP_Test002", hints);
 
         Schema schema1 = Mel.readInputStream(getData2Stream(), Schema.class);
         testVal(schema1.getName(), "schema", "root element of schema file name");
@@ -122,21 +136,27 @@ public class Test1 implements TestSet {
 
         Schema generatedSchema = SchemaGen.generateFor(me);
 
-        writeFileAndCompare(generatedSchema, "UP_Test003.xml");
+        writeBothStylesAndCompare(generatedSchema, "UP_Test003", hints);
     }
 
     public void TestEmpty() throws Exception {
+        Hashtable<String,Integer> hints = new Hashtable<String,Integer>();
+        hints.put("book", new Integer(3));
+        hints.put("library", new Integer(3));
+        hints.put("stores", new Integer(1));
+        hints.put("reading", new Integer(3));
+
         Mel testTree = Mel.createEmpty("library", Mel.class);
-        writeFileAndCompare(testTree, "constTest001.xml");
+        writeBothStylesAndCompare(testTree, "constTest001", hints);
 
         Mel book1 = testTree.addChild("book", Mel.class);
-        writeFileAndCompare(testTree, "constTest002.xml");
+        writeBothStylesAndCompare(testTree, "constTest002", hints);
 
         book1.setScalar("title", "The Black Swan");
-        writeFileAndCompare(testTree, "constTest003.xml");
+        writeBothStylesAndCompare(testTree, "constTest003", hints);
 
         book1.setScalar("author", "Nicholas Taleb");
-        writeFileAndCompare(testTree, "constTest004.xml");
+        writeBothStylesAndCompare(testTree, "constTest004", hints);
 
         Vector<String> stores = new Vector<String>();
         stores.add("Barnes & Noble");
@@ -144,30 +164,30 @@ public class Test1 implements TestSet {
         stores.add("Hicklebees");
         stores.add("Target");
         book1.setVector("stores", stores);
-        writeFileAndCompare(testTree, "constTest005.xml");
+        writeBothStylesAndCompare(testTree, "constTest005", hints);
 
         Mel book2 = testTree.addChild("book", Mel.class);
-        writeFileAndCompare(testTree, "constTest006.xml");
+        writeBothStylesAndCompare(testTree, "constTest006", hints);
 
         book2.setVector("stores", stores);
-        writeFileAndCompare(testTree, "constTest007.xml");
+        writeBothStylesAndCompare(testTree, "constTest007", hints);
 
         book2.setScalar("author", "L Frank Baum");
-        writeFileAndCompare(testTree, "constTest008.xml");
+        writeBothStylesAndCompare(testTree, "constTest008", hints);
 
         book2.setScalar("title", "Wizard of Oz");
-        writeFileAndCompare(testTree, "constTest009.xml");
+        writeBothStylesAndCompare(testTree, "constTest009", hints);
 
         book2.setScalar("author", "L. Frank Baum");
-        writeFileAndCompare(testTree, "constTest010.xml");
+        writeBothStylesAndCompare(testTree, "constTest010", hints);
 
         book1.setScalar("length", "225");
         book2.setScalar("length", "350");
-        writeFileAndCompare(testTree, "constTest011.xml");
+        writeBothStylesAndCompare(testTree, "constTest011", hints);
 
         // now test that setting a value to a scalar removes it from the file
         book1.setScalar("author", null);
-        writeFileAndCompare(testTree, "constTest012.xml");
+        writeBothStylesAndCompare(testTree, "constTest012", hints);
 
         Mel reading1 = book1.addChild("reading", Mel.class);
         Mel reading2 = book1.addChild("reading", Mel.class);
@@ -175,73 +195,132 @@ public class Test1 implements TestSet {
 
         reading1.setAttribute("date", "5/15/2009");
         reading3.setAttribute("date", "7/15/2009");
-        writeFileAndCompare(testTree, "constTest013.xml");
+        writeBothStylesAndCompare(testTree, "constTest013", hints);
 
         reading1.setScalar("readby", "Mark");
         reading2.setScalar("readby", "Joe");
         reading3.setScalar("readby", "Alex");
-        writeFileAndCompare(testTree, "constTest014.xml");
+        writeBothStylesAndCompare(testTree, "constTest014", hints);
 
         reading1.setScalar("rating", "A+");
         reading2.setScalar("rating", "B");
         reading3.setScalar("rating", "D-");
-        writeFileAndCompare(testTree, "constTest015.xml");
+        writeBothStylesAndCompare(testTree, "constTest015", hints);
 
     }
 
     public void TestReadWrite() throws Exception {
         File sourceFolder = new File(tr.getProperty("source", null), "testdata");
+        Hashtable<String,Integer> hints = new Hashtable<String,Integer>();
+        hints.put("userprofile", new Integer(3));
+        hints.put("servlet", new Integer(3));
+        hints.put("servlet-mapping", new Integer(3));
+
+        //these are the XPDL hints
+        hints.put("Pool", new Integer(3));
+        hints.put("NodeGraphicsInfo", new Integer(3));
+        hints.put("Lane", new Integer(3));
+        hints.put("TransitionRef", new Integer(3));
+        hints.put("Activity", new Integer(3));
+        hints.put("Transition", new Integer(3));
+        hints.put("Coordinates", new Integer(3));
+        hints.put("WorkflowProcess", new Integer(3));
+        hints.put("TransitionRestriction", new Integer(3));
+        hints.put("Transition", new Integer(3));
+        hints.put("ExtendedAttribute", new Integer(3));
+        hints.put("Participant", new Integer(3));
+        hints.put("Connector", new Integer(3));
+
+
 
         File sourceFile = new File(sourceFolder, "UserProfiles.xml");
         Mel test = Mel.readFile(sourceFile, Mel.class);
-        writeFileAndCompare(test, "dataFile001.xml");
+        writeBothStylesAndCompare(test, "dataFile001", hints);
 
         test = Mel.readFile(new File(sourceFolder, "web.xml"), Mel.class);
-        writeFileAndCompare(test, "dataFile002.xml");
+        writeBothStylesAndCompare(test, "dataFile002", hints);
 
         test = Mel.readFile(new File(sourceFolder, "TroubleTicket.xpdl"), Mel.class);
-        writeFileAndCompare(test, "dataFile003.xpdl");
+        writeBothStylesAndCompare(test, "dataFile003", hints);
 
         test = Mel.readFile(new File(sourceFolder, "FujitsuExample1_x2.xpdl"), Mel.class);
-        writeFileAndCompare(test, "dataFile004.xpdl");
+        writeBothStylesAndCompare(test, "dataFile004", hints);
 
         test = Mel.readFile(new File(sourceFolder, "simpleProcess2a_mod.xpdl"), Mel.class);
-        writeFileAndCompare(test, "dataFile005.xpdl");
+        writeBothStylesAndCompare(test, "dataFile005", hints);
 
         test = Mel.readFile(new File(sourceFolder, "simpleProcess2a.xpdl"), Mel.class);
-        writeFileAndCompare(test, "dataFile006.xpdl");
+        writeBothStylesAndCompare(test, "dataFile006", hints);
 
         test = Mel.readFile(new File(sourceFolder, "Loyalty_updated_Mar3.xpdl"), Mel.class);
-        writeFileAndCompare(test, "dataFile007.xpdl");
+        writeBothStylesAndCompare(test, "dataFile007", hints);
 
         test = Mel.readFile(new File(sourceFolder, "simplefuj2new_with2008.xpdl"), Mel.class);
-        writeFileAndCompare(test, "dataFile008.xpdl");
+        writeBothStylesAndCompare(test, "dataFile008", hints);
 
         test = Mel.readFile(new File(sourceFolder, "simplefuj2new_with2008b.xpdl"), Mel.class);
-        writeFileAndCompare(test, "dataFile009.xpdl");
+        writeBothStylesAndCompare(test, "dataFile009", hints);
 
         test = Mel.readFile(new File(sourceFolder, "Loyalty.xpdl"), Mel.class);
-        writeFileAndCompare(test, "dataFile010.xpdl");
+        writeBothStylesAndCompare(test, "dataFile010", hints);
 
     }
 
     public void testGenSchema() throws Exception {
+        Hashtable<String,Integer> hints = new Hashtable<String,Integer>();
+        hints.put("userprofile", new Integer(3));
+        hints.put("servlet", new Integer(3));
+        hints.put("servlet-mapping", new Integer(3));
+
+        //these are the XPDL hints
+        hints.put("Pool", new Integer(3));
+        hints.put("NodeGraphicsInfo", new Integer(3));
+        hints.put("Lane", new Integer(3));
+        hints.put("TransitionRef", new Integer(3));
+        hints.put("Activity", new Integer(3));
+        hints.put("Transition", new Integer(3));
+        hints.put("Coordinates", new Integer(3));
+        hints.put("WorkflowProcess", new Integer(3));
+        hints.put("TransitionRestriction", new Integer(3));
+        hints.put("Transition", new Integer(3));
+        hints.put("ExtendedAttribute", new Integer(3));
+        hints.put("Participant", new Integer(3));
+
+        //these are minimal schema elements
+        hints.put("container", new Integer(3));
+        hints.put("contains", new Integer(3));
+        hints.put("attr", new Integer(3));
+
+        //these are minimal rss elements
+        hints.put("item", new Integer(3));
+        hints.put("content", new Integer(3));
+        hints.put("category", new Integer(3));
+
+
+
         File sourceFolder = new File(tr.getProperty("source", null), "testdata");
         Mel me = Mel.readFile(new File(sourceFolder, "Loyalty.xpdl"), Mel.class);
-        writeFileAndCompare(me, "GEN_Test001.xml");
+        writeBothStylesAndCompare(me, "GEN_Test001", hints);
 
         Schema generatedSchema = SchemaGen.generateFor(me);
-        writeFileAndCompare(generatedSchema, "GEN_Test002.sxs");
+        writeBothStylesAndCompare(generatedSchema, "GEN_Test002", hints);
 
         me = Mel.readFile(new File(sourceFolder, "RawFeed1.rss"), Mel.class);
-        writeFileAndCompare(me, "GEN_Test003.rss");
+        writeBothStylesAndCompare(me, "GEN_Test003", hints);
 
         me.eliminateCData();
-        writeFileAndCompare(me, "GEN_Test004.rss");
+        writeBothStylesAndCompare(me, "GEN_Test004", hints);
 
         generatedSchema = SchemaGen.generateFor(me);
-        writeFileAndCompare(generatedSchema, "GEN_Test005.sxs");
+        writeBothStylesAndCompare(generatedSchema, "GEN_Test005", hints);
     }
+
+
+    public void writeBothStylesAndCompare(Mel me, String fileNamePart, Hashtable<String,Integer> hints) throws Exception {
+        writeFileAndCompare(me, fileNamePart + ".xml");
+        writeJSONAndCompare(me, fileNamePart + ".json", hints);
+    }
+
 
     public void writeFileAndCompare(Mel me, String fileName) throws Exception {
         me.reformatXML();
@@ -249,8 +328,26 @@ public class Test1 implements TestSet {
         File outputFile = new File(tr.getProperty("testoutput", null), fileName);
         me.writeToFile(outputFile);
 
-        String note = "Compare output to " + fileName;
+        compareFiles(outputFile, fileName);
+    }
 
+    public void  writeJSONAndCompare(Mel me, String fileName, Hashtable<String,Integer> hints) throws Exception {
+        JSONObject jsonRep = Dom2JSON.convertElementToJSON(me.getElement(), hints);
+
+        File outputFile = new File(tr.getProperty("testoutput", null), fileName);
+        FileOutputStream fos = new FileOutputStream(outputFile);
+        Writer w = new OutputStreamWriter(fos);
+        jsonRep.write(w, 2, 0);
+        w.close();
+        fos.close();
+
+        compareFiles(outputFile, fileName);
+    }
+
+
+    public void compareFiles(File outputFile, String fileName) throws Exception {
+
+        String note = "Compare output to " + fileName;
         File compareFolder = new File(tr.getProperty("source", null), "testoutput");
         File compareFile = new File(compareFolder, fileName);
         if (!compareFile.exists()) {

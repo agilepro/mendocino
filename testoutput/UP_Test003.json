@@ -1,0 +1,43 @@
+{"schema": {
+  "container": [
+    {
+      "contains": [{
+        "name": "userprofile",
+        "plural": "true"
+      }],
+      "name": "userprofiles"
+    },
+    {
+      "attr": [{"name": "id"}],
+      "contains": [
+        {"name": "homepage"},
+        {"name": "lastlogin"},
+        {"name": "lastupdated"},
+        {"name": "username"},
+        {
+          "name": "idrec",
+          "plural": "true"
+        },
+        {"name": "username_bogus"}
+      ],
+      "name": "userprofile"
+    },
+    {
+      "attr": [
+        {"name": "loginid"},
+        {"name": "confirmed"}
+      ],
+      "contains": [{"name": "second_bogus"}],
+      "name": "idrec"
+    }
+  ],
+  "data": [
+    {"name": "homepage"},
+    {"name": "lastlogin"},
+    {"name": "lastupdated"},
+    {"name": "username"},
+    {"name": "second_bogus"},
+    {"name": "username_bogus"}
+  ],
+  "root": "userprofiles"
+}}

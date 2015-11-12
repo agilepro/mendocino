@@ -1,0 +1,26 @@
+{"userprofiles": {"userprofile": [
+  {
+    "homepage": "http://web.com/processleaves/p/main/public.htm",
+    "id": "MOBQNTGYF",
+    "lastlogin": "1244434616875",
+    "lastupdated": "1241018683687",
+    "username": "AAA"
+  },
+  {
+    "id": "YVXIXTGYF",
+    "idrec": [{"loginid": "aaa@gmail.com"}],
+    "username": "BBB"
+  },
+  {
+    "id": "HMSBPXKYF",
+    "idrec": [
+      {"loginid": "jjj@a.com"},
+      {
+        "confirmed": "true",
+        "loginid": "ddd@a.com"
+      }
+    ],
+    "lastlogin": "1244512041541",
+    "username": "CCC"
+  }
+]}}

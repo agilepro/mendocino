@@ -1,0 +1,39 @@
+{"library": {"book": [
+  {
+    "length": "225",
+    "reading": [
+      {
+        "date": "5/15/2009",
+        "rating": "A+",
+        "readby": "Mark"
+      },
+      {
+        "rating": "B",
+        "readby": "Joe"
+      },
+      {
+        "date": "7/15/2009",
+        "rating": "D-",
+        "readby": "Alex"
+      }
+    ],
+    "stores": [
+      "Barnes & Noble",
+      "Amazon",
+      "Hicklebees",
+      "Target"
+    ],
+    "title": "The Black Swan"
+  },
+  {
+    "author": "L. Frank Baum",
+    "length": "350",
+    "stores": [
+      "Barnes & Noble",
+      "Amazon",
+      "Hicklebees",
+      "Target"
+    ],
+    "title": "Wizard of Oz"
+  }
+]}}

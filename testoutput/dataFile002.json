@@ -1,0 +1,67 @@
+{"web-app": {
+  "servlet": [
+    {
+      "load-on-startup": "6",
+      "servlet-class": "com.fujitsu.nugen.NGLeafServlet",
+      "servlet-name": "leaf-viewer"
+    },
+    {
+      "display-name": "DataFeedServlet",
+      "servlet-class": "com.fujitsu.nugen.DataFeedServlet",
+      "servlet-name": "DataFeedServlet"
+    },
+    {
+      "load-on-startup": "6",
+      "servlet-class": "com.fujitsu.nugen.NGServlet",
+      "servlet-name": "wiki-viewer"
+    },
+    {
+      "load-on-startup": "5",
+      "servlet-class": "com.fujitsu.nugen.AttachServlet",
+      "servlet-name": "attach-viewer"
+    },
+    {
+      "servlet-class": "com.fujitsu.nugen.RssServlet",
+      "servlet-name": "RssServlet"
+    }
+  ],
+  "servlet-mapping": [
+    {
+      "servlet-name": "leaf-viewer",
+      "url-pattern": "/p/*"
+    },
+    {
+      "servlet-name": "leaf-viewer",
+      "url-pattern": "/b/*"
+    },
+    {
+      "servlet-name": "leaf-viewer",
+      "url-pattern": "/s/*"
+    },
+    {
+      "servlet-name": "leaf-viewer",
+      "url-pattern": "/u/*"
+    },
+    {
+      "servlet-name": "wiki-viewer",
+      "url-pattern": "*.sp"
+    },
+    {
+      "servlet-name": "attach-viewer",
+      "url-pattern": "/attachments/*"
+    },
+    {
+      "servlet-name": "DataFeedServlet",
+      "url-pattern": "/servlet/DataFeedServlet"
+    },
+    {
+      "servlet-name": "RssServlet",
+      "url-pattern": "/Tasks.rss"
+    }
+  ],
+  "version": "2.4",
+  "welcome-file-list": {"welcome-file": "main.jsp"},
+  "xmlns": "http://java.sun.com/xml/ns/j2ee",
+  "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+  "xsi:schemaLocation": "http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+}}

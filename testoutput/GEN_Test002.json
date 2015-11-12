@@ -1,0 +1,600 @@
+{"schema": {
+  "container": [
+    {
+      "attr": [
+        {"name": "Id"},
+        {"name": "Name"},
+        {"name": "xmlns"},
+        {"name": "xmlns:deprecated"},
+        {"name": "xmlns:ibpm"},
+        {"name": "xmlns:xsi"},
+        {"name": "xsi:schemaLocation"}
+      ],
+      "contains": [
+        {"name": "ExtendedAttributes"},
+        {"name": "PackageHeader"},
+        {"name": "Participants"},
+        {"name": "Pools"},
+        {"name": "RedefinableHeader"},
+        {"name": "Script"},
+        {"name": "WorkflowProcesses"}
+      ],
+      "name": "Package"
+    },
+    {
+      "attr": [
+        {"name": "Name"},
+        {"name": "Value"}
+      ],
+      "contains": [
+        {"name": "Simulation"},
+        {"name": "ibpm:PrologueJavaActionSet"},
+        {"name": "PrivateData"},
+        {"name": "ibpm:EpilogueJavaActionSet"},
+        {"name": "ibpm:RoleJavaActionSet"},
+        {"name": "ibpm:TimerDefSet"},
+        {"name": "ibpm:FormsList"},
+        {"name": "ibpm:PrologueScript"},
+        {"name": "DataMappings"},
+        {"name": "ibpm:IsWorkItemUDA"},
+        {"name": "ibpm:isReadOnly"},
+        {"name": "ibpm:IsTrackable"},
+        {"name": "ibpm:IflowDataType"},
+        {"name": "ibpm:InitJavaActionSet"},
+        {"name": "ibpm:CommitJavaActionSet"},
+        {"name": "SWIM_LANES"},
+        {"name": "ANNOTATIONS"}
+      ],
+      "name": "ExtendedAttribute"
+    },
+    {
+      "contains": [{
+        "name": "ExtendedAttribute",
+        "plural": "true"
+      }],
+      "name": "ExtendedAttributes"
+    },
+    {
+      "contains": [
+        {"name": "Created"},
+        {"name": "Vendor"},
+        {"name": "XPDLVersion"}
+      ],
+      "name": "PackageHeader"
+    },
+    {
+      "attr": [{"name": "Type"}],
+      "name": "ParticipantType"
+    },
+    {
+      "attr": [
+        {"name": "Id"},
+        {"name": "Name"}
+      ],
+      "contains": [{"name": "ParticipantType"}],
+      "name": "Participant"
+    },
+    {
+      "contains": [{
+        "name": "Participant",
+        "plural": "true"
+      }],
+      "name": "Participants"
+    },
+    {
+      "attr": [
+        {"name": "XCoordinate"},
+        {"name": "YCoordinate"}
+      ],
+      "name": "Coordinates"
+    },
+    {
+      "attr": [
+        {"name": "FillColor"},
+        {"name": "IsVisible"},
+        {"name": "LaneId"},
+        {"name": "Page"},
+        {"name": "ToolId"}
+      ],
+      "contains": [{"name": "Coordinates"}],
+      "name": "NodeGraphicsInfo"
+    },
+    {
+      "contains": [{"name": "NodeGraphicsInfo"}],
+      "name": "NodeGraphicsInfos"
+    },
+    {
+      "attr": [
+        {"name": "Id"},
+        {"name": "Name"}
+      ],
+      "contains": [{"name": "NodeGraphicsInfos"}],
+      "name": "Lane"
+    },
+    {
+      "contains": [{"name": "Lane"}],
+      "name": "Lanes"
+    },
+    {
+      "attr": [
+        {"name": "BoundaryVisible"},
+        {"name": "Id"},
+        {"name": "Name"},
+        {"name": "Orientation"},
+        {"name": "Process"}
+      ],
+      "contains": [
+        {"name": "Lanes"},
+        {"name": "NodeGraphicsInfos"}
+      ],
+      "name": "Pool"
+    },
+    {
+      "contains": [{"name": "Pool"}],
+      "name": "Pools"
+    },
+    {
+      "attr": [{"name": "PublicationStatus"}],
+      "contains": [
+        {"name": "Author"},
+        {"name": "Responsibles"},
+        {"name": "Version"}
+      ],
+      "name": "RedefinableHeader"
+    },
+    {
+      "attr": [{"name": "Type"}],
+      "name": "Script"
+    },
+    {
+      "attr": [
+        {"name": "Name"},
+        {"name": "Probability"}
+      ],
+      "name": "Connector"
+    },
+    {
+      "contains": [{
+        "name": "Connector",
+        "plural": "true"
+      }],
+      "name": "Connectors"
+    },
+    {
+      "contains": [
+        {"name": "Connectors"},
+        {"name": "Duration"},
+        {"name": "Resources"}
+      ],
+      "name": "Simulation"
+    },
+    {
+      "attr": [{"name": "Id"}],
+      "name": "TransitionRef"
+    },
+    {
+      "contains": [{
+        "name": "TransitionRef",
+        "plural": "true"
+      }],
+      "name": "TransitionRefs"
+    },
+    {
+      "attr": [{"name": "Type"}],
+      "contains": [{"name": "TransitionRefs"}],
+      "name": "Split"
+    },
+    {
+      "contains": [
+        {"name": "Split"},
+        {"name": "Join"}
+      ],
+      "name": "TransitionRestriction"
+    },
+    {
+      "contains": [{"name": "TransitionRestriction"}],
+      "name": "TransitionRestrictions"
+    },
+    {
+      "attr": [
+        {"name": "Id"},
+        {"name": "Name"}
+      ],
+      "contains": [
+        {"name": "Documentation"},
+        {"name": "ExtendedAttributes"},
+        {"name": "NodeGraphicsInfos"},
+        {"name": "Performer"},
+        {"name": "Priority"},
+        {"name": "Route"},
+        {"name": "TransitionRestrictions"},
+        {"name": "Implementation"}
+      ],
+      "name": "Activity"
+    },
+    {
+      "contains": [{
+        "name": "E",
+        "plural": "true"
+      }],
+      "name": "InputUDAList"
+    },
+    {
+      "attr": [
+        {"name": "name"},
+        {"name": "ordinal"}
+      ],
+      "contains": [
+        {"name": "AbortSequenceOnError"},
+        {"name": "BeanMethodInputUDAList"},
+        {"name": "BeanMethodName"},
+        {"name": "BeanName"},
+        {"name": "ClassName"},
+        {"name": "ClassPath"},
+        {"name": "Description"},
+        {"name": "EditorClassName"},
+        {"name": "FactoryClassName"},
+        {"name": "InputUDAList"},
+        {"name": "MethodName"},
+        {"name": "ReturnUDA"},
+        {"name": "TechDescription"}
+      ],
+      "name": "JavaAction"
+    },
+    {
+      "attr": [
+        {"name": "javaActionCount"},
+        {"name": "name"},
+        {"name": "xmlns"}
+      ],
+      "contains": [
+        {"name": "Description"},
+        {
+          "name": "JavaAction",
+          "plural": "true"
+        }
+      ],
+      "name": "JavaActionSet"
+    },
+    {
+      "contains": [{"name": "JavaActionSet"}],
+      "name": "ibpm:PrologueJavaActionSet"
+    },
+    {
+      "attr": [
+        {"name": "arrowLabel"},
+        {"name": "comparisionOperandValue"},
+        {"name": "comparisionValue"},
+        {"name": "isDefault"},
+        {"name": "ordinal"}
+      ],
+      "name": "CondSplitBranchInfo"
+    },
+    {
+      "attr": [{"name": "conditionAttribute"}],
+      "contains": [{
+        "name": "CondSplitBranchInfo",
+        "plural": "true"
+      }],
+      "name": "CondSplitPrivateData"
+    },
+    {
+      "contains": [
+        {"name": "CondSplitPrivateData"},
+        {"name": "DataMapping"}
+      ],
+      "name": "PrivateData"
+    },
+    {
+      "attr": [{"name": "Type"}],
+      "name": "Join"
+    },
+    {
+      "contains": [{"name": "JavaActionSet"}],
+      "name": "ibpm:EpilogueJavaActionSet"
+    },
+    {
+      "contains": [{"name": "JavaActionSet"}],
+      "name": "ibpm:RoleJavaActionSet"
+    },
+    {
+      "attr": [
+        {"name": "javaActionSet"},
+        {"name": "ordinal"}
+      ],
+      "name": "ExecuteJavaActionSetAction"
+    },
+    {
+      "contains": [{"name": "ExecuteJavaActionSetAction"}],
+      "name": "TimerActions"
+    },
+    {
+      "attr": [
+        {"name": "Id"},
+        {"name": "ordinal"},
+        {"name": "time"},
+        {"name": "type"}
+      ],
+      "contains": [
+        {"name": "Description"},
+        {"name": "Label"},
+        {"name": "TimerActions"}
+      ],
+      "name": "TimerDef"
+    },
+    {
+      "contains": [{"name": "TimerDef"}],
+      "name": "ibpm:TimerDefSet"
+    },
+    {
+      "contains": [
+        {"name": "No"},
+        {"name": "SubFlow"}
+      ],
+      "name": "Implementation"
+    },
+    {
+      "attr": [
+        {"name": "Direction"},
+        {"name": "ProcessDataField"},
+        {"name": "SubProcessDataField"}
+      ],
+      "contains": [{
+        "name": "DataMappingElement",
+        "plural": "true"
+      }],
+      "name": "DataMapping"
+    },
+    {
+      "contains": [{
+        "name": "DataMapping",
+        "plural": "true"
+      }],
+      "name": "DataMappings"
+    },
+    {
+      "attr": [
+        {"name": "fromSource"},
+        {"name": "fromTarget"},
+        {"name": "sourceDataSetElementName"},
+        {"name": "targetDataSetElementName"}
+      ],
+      "name": "DataMappingElement"
+    },
+    {
+      "contains": [{
+        "name": "ActualParameter",
+        "plural": "true"
+      }],
+      "name": "ActualParameters"
+    },
+    {
+      "attr": [
+        {"name": "Execution"},
+        {"name": "Id"}
+      ],
+      "contains": [{"name": "ActualParameters"}],
+      "name": "SubFlow"
+    },
+    {
+      "contains": [{
+        "name": "Activity",
+        "plural": "true"
+      }],
+      "name": "Activities"
+    },
+    {
+      "attr": [{"name": "Type"}],
+      "name": "BasicType"
+    },
+    {
+      "contains": [{"name": "BasicType"}],
+      "name": "DataType"
+    },
+    {
+      "attr": [{"name": "Value"}],
+      "name": "ibpm:IsWorkItemUDA"
+    },
+    {
+      "attr": [{"name": "Value"}],
+      "name": "ibpm:isReadOnly"
+    },
+    {
+      "attr": [{"name": "Value"}],
+      "name": "ibpm:IsTrackable"
+    },
+    {
+      "attr": [{"name": "Type"}],
+      "name": "ibpm:IflowDataType"
+    },
+    {
+      "attr": [
+        {"name": "Id"},
+        {"name": "IsArray"},
+        {"name": "Name"}
+      ],
+      "contains": [
+        {"name": "DataType"},
+        {"name": "ExtendedAttributes"},
+        {"name": "InitialValue"}
+      ],
+      "name": "DataField"
+    },
+    {
+      "contains": [{
+        "name": "DataField",
+        "plural": "true"
+      }],
+      "name": "DataFields"
+    },
+    {
+      "contains": [{"name": "JavaActionSet"}],
+      "name": "ibpm:InitJavaActionSet"
+    },
+    {
+      "contains": [{"name": "JavaActionSet"}],
+      "name": "ibpm:CommitJavaActionSet"
+    },
+    {
+      "contains": [
+        {"name": "CoordinateX"},
+        {"name": "CoordinateY"},
+        {"name": "Description"},
+        {"name": "Height"},
+        {"name": "Width"}
+      ],
+      "name": "ANNOTATION"
+    },
+    {
+      "contains": [{
+        "name": "ANNOTATION",
+        "plural": "true"
+      }],
+      "name": "ANNOTATIONS"
+    },
+    {
+      "contains": [{"name": "Description"}],
+      "name": "ProcessHeader"
+    },
+    {
+      "contains": [{"name": "Responsible"}],
+      "name": "Responsibles"
+    },
+    {
+      "attr": [
+        {"name": "FillColor"},
+        {"name": "IsVisible"},
+        {"name": "Page"}
+      ],
+      "contains": [{
+        "name": "Coordinates",
+        "plural": "true"
+      }],
+      "name": "ConnectorGraphicsInfo"
+    },
+    {
+      "contains": [{"name": "ConnectorGraphicsInfo"}],
+      "name": "ConnectorGraphicsInfos"
+    },
+    {
+      "attr": [
+        {"name": "From"},
+        {"name": "Id"},
+        {"name": "Name"},
+        {"name": "To"}
+      ],
+      "contains": [
+        {"name": "ConnectorGraphicsInfos"},
+        {"name": "ExtendedAttributes"},
+        {"name": "Condition"}
+      ],
+      "name": "Transition"
+    },
+    {
+      "contains": [{
+        "name": "Transition",
+        "plural": "true"
+      }],
+      "name": "Transitions"
+    },
+    {
+      "attr": [
+        {"name": "AccessLevel"},
+        {"name": "Id"},
+        {"name": "Name"}
+      ],
+      "contains": [
+        {"name": "Activities"},
+        {"name": "DataFields"},
+        {"name": "ExtendedAttributes"},
+        {"name": "ProcessHeader"},
+        {"name": "RedefinableHeader"},
+        {"name": "Transitions"}
+      ],
+      "name": "WorkflowProcess"
+    },
+    {
+      "contains": [{"name": "WorkflowProcess"}],
+      "name": "WorkflowProcesses"
+    }
+  ],
+  "data": [
+    {"name": "Created"},
+    {"name": "Vendor"},
+    {"name": "XPDLVersion"},
+    {"name": "Duration"},
+    {"name": "AbortSequenceOnError"},
+    {"name": "ClassName"},
+    {"name": "Description"},
+    {"name": "EditorClassName"},
+    {"name": "FactoryClassName"},
+    {"name": "E"},
+    {"name": "MethodName"},
+    {"name": "Label"},
+    {"name": "Performer"},
+    {"name": "ibpm:PrologueScript"},
+    {"name": "ActualParameter"},
+    {"name": "InitialValue"},
+    {"name": "CoordinateX"},
+    {"name": "CoordinateY"},
+    {"name": "Height"},
+    {"name": "Width"},
+    {"name": "Author"},
+    {"name": "Responsible"},
+    {"name": "Version"},
+    {"name": "Condition"},
+    {
+      "ambiguous": "true",
+      "name": "Documentation"
+    },
+    {
+      "ambiguous": "true",
+      "name": "Resources"
+    },
+    {
+      "ambiguous": "true",
+      "name": "Priority"
+    },
+    {
+      "ambiguous": "true",
+      "name": "Route"
+    },
+    {
+      "ambiguous": "true",
+      "name": "BeanMethodInputUDAList"
+    },
+    {
+      "ambiguous": "true",
+      "name": "BeanMethodName"
+    },
+    {
+      "ambiguous": "true",
+      "name": "BeanName"
+    },
+    {
+      "ambiguous": "true",
+      "name": "ClassPath"
+    },
+    {
+      "ambiguous": "true",
+      "name": "ReturnUDA"
+    },
+    {
+      "ambiguous": "true",
+      "name": "TechDescription"
+    },
+    {
+      "ambiguous": "true",
+      "name": "ibpm:FormsList"
+    },
+    {
+      "ambiguous": "true",
+      "name": "No"
+    },
+    {
+      "ambiguous": "true",
+      "name": "SWIM_LANES"
+    }
+  ],
+  "root": "Package"
+}}

@@ -1,0 +1,376 @@
+{"Package": {
+  "Id": "82522066-c321-4154-aaa9-920bbaaae8be",
+  "Name": "New project name",
+  "PackageHeader": {
+    "Created": "2009/07/13 22:38:12",
+    "Vendor": "Lombardi Software",
+    "XPDLVersion": "2.1"
+  },
+  "Pools": {"Pool": [{
+    "BoundaryVisible": "true",
+    "Id": "43218ec7-2fe8-4a89-9f72-7100bee4907f",
+    "Lanes": {"Lane": [
+      {
+        "Id": "dbea0c96-132e-4bc6-a153-41e1d48ce770",
+        "Name": "joe",
+        "NodeGraphicsInfos": {"NodeGraphicsInfo": [{
+          "Coordinates": [{
+            "XCoordinate": "48.0",
+            "YCoordinate": "0.0"
+          }],
+          "Height": "88.0",
+          "Width": "800.0"
+        }]},
+        "Object": {
+          "Id": "dbea0c96-132e-4bc6-a153-41e1d48ce770",
+          "Name": "joe"
+        },
+        "ParentPool": "43218ec7-2fe8-4a89-9f72-7100bee4907f"
+      },
+      {
+        "Id": "a23bfda3-bac4-4533-a530-edecbb9f5bf9",
+        "Name": "Unassigned",
+        "NodeGraphicsInfos": {"NodeGraphicsInfo": [{
+          "Coordinates": [{
+            "XCoordinate": "48.0",
+            "YCoordinate": "88.0"
+          }],
+          "Height": "88.0",
+          "Width": "800.0"
+        }]},
+        "Object": {
+          "Id": "a23bfda3-bac4-4533-a530-edecbb9f5bf9",
+          "Name": "Unassigned"
+        },
+        "ParentPool": "43218ec7-2fe8-4a89-9f72-7100bee4907f"
+      }
+    ]},
+    "Name": "TroubleTicket",
+    "NodeGraphicsInfos": {"NodeGraphicsInfo": [{
+      "Coordinates": [{
+        "XCoordinate": "0.0",
+        "YCoordinate": "0.0"
+      }],
+      "Height": "176.0",
+      "Width": "848.0"
+    }]},
+    "Object": {
+      "Id": "43218ec7-2fe8-4a89-9f72-7100bee4907f",
+      "Name": "TroubleTicket"
+    },
+    "Orientation": "HORIZONTAL",
+    "Process": "17ff75fb-3e59-407d-b259-9d45a26ddcc2"
+  }]},
+  "WorkflowProcesses": {"WorkflowProcess": [{
+    "Activities": {"Activity": [
+      {
+        "Event": {"StartEvent": {"Trigger": "None"}},
+        "Id": "0735b653-d6f1-4fe5-8ed5-a98fe7bed008",
+        "NodeGraphicsInfos": {"NodeGraphicsInfo": [{
+          "Coordinates": [{
+            "XCoordinate": "116.0",
+            "YCoordinate": "32.0"
+          }],
+          "Height": "24.0",
+          "LaneId": "dbea0c96-132e-4bc6-a153-41e1d48ce770",
+          "Width": "24.0"
+        }]},
+        "Object": {"Id": "0735b653-d6f1-4fe5-8ed5-a98fe7bed008"}
+      },
+      {
+        "Id": "822fdd6a-84bf-41c8-b9fe-8bd9fee3a161",
+        "Implementation": {"Task": ""},
+        "Name": "step 1",
+        "NodeGraphicsInfos": {"NodeGraphicsInfo": [{
+          "Coordinates": [{
+            "XCoordinate": "168.0",
+            "YCoordinate": "16.0"
+          }],
+          "Height": "56.0",
+          "LaneId": "dbea0c96-132e-4bc6-a153-41e1d48ce770",
+          "Width": "96.0"
+        }]},
+        "Object": {
+          "Id": "822fdd6a-84bf-41c8-b9fe-8bd9fee3a161",
+          "Name": "step 1"
+        }
+      },
+      {
+        "Id": "06611508-600c-49c5-a2a5-5c54f26e7165",
+        "Implementation": {"Task": ""},
+        "Name": "step 2",
+        "NodeGraphicsInfos": {"NodeGraphicsInfo": [{
+          "Coordinates": [{
+            "XCoordinate": "296.0",
+            "YCoordinate": "16.0"
+          }],
+          "Height": "56.0",
+          "LaneId": "dbea0c96-132e-4bc6-a153-41e1d48ce770",
+          "Width": "96.0"
+        }]},
+        "Object": {
+          "Documentation": "<div>adsfadf a dfasd fads fas df<\/div>\n<div>as<\/div>\n<div>d fa<\/div>\n<div>sd fa<\/div>\n<div>df<\/div>\n<div>adf<\/div>\n<div>as<\/div>\n<div>dfa<\/div>\n<div>df<\/div>\n<div>a<\/div>\n<div>dfa<\/div>\n<div>df<\/div>\n<div>a<\/div>\n<div>dfa<\/div>\n<div>sdf<\/div>\n<div>asd<\/div>\n<div>f<\/div>\n<div>asd<\/div>\n<div>fa<\/div>\n<div>sdf<\/div>\n<div>asd<\/div>\n<div>&nbsp;fa<\/div>\n<div>sd f<\/div>",
+          "Id": "06611508-600c-49c5-a2a5-5c54f26e7165",
+          "Name": "step 2"
+        }
+      },
+      {
+        "Id": "f37d6470-cf4f-45e5-9de2-1222b7013ce2",
+        "Implementation": {"Task": ""},
+        "Name": "step 3",
+        "NodeGraphicsInfos": {"NodeGraphicsInfo": [{
+          "Coordinates": [{
+            "XCoordinate": "296.0",
+            "YCoordinate": "104.0"
+          }],
+          "Height": "56.0",
+          "LaneId": "a23bfda3-bac4-4533-a530-edecbb9f5bf9",
+          "Width": "96.0"
+        }]},
+        "Object": {
+          "Id": "f37d6470-cf4f-45e5-9de2-1222b7013ce2",
+          "Name": "step 3"
+        },
+        "TransitionRestrictions": {"TransitionRestriction": [{"Split": {
+          "TransitionRefs": {"TransitionRef": [
+            {"Id": "df613775-fe9d-4973-a5c4-89be950377e1"},
+            {"Id": "a18e1833-2897-4869-ab43-08e3a54586b5"}
+          ]},
+          "Type": "Inclusive"
+        }}]}
+      },
+      {
+        "Id": "09df0fbb-67fe-4d27-90ca-8e6a6f7a6f27",
+        "Implementation": {"Task": ""},
+        "Name": "step 4",
+        "NodeGraphicsInfos": {"NodeGraphicsInfo": [{
+          "Coordinates": [{
+            "XCoordinate": "424.0",
+            "YCoordinate": "104.0"
+          }],
+          "Height": "56.0",
+          "LaneId": "a23bfda3-bac4-4533-a530-edecbb9f5bf9",
+          "Width": "96.0"
+        }]},
+        "Object": {
+          "Id": "09df0fbb-67fe-4d27-90ca-8e6a6f7a6f27",
+          "Name": "step 4"
+        },
+        "TransitionRestrictions": {"TransitionRestriction": [{"Split": {
+          "TransitionRefs": {"TransitionRef": [
+            {"Id": "bfd489b1-26a3-4fc0-9035-7ce8163b0a29"},
+            {"Id": "f054a55a-263d-4702-8809-3629612b8e49"}
+          ]},
+          "Type": "Inclusive"
+        }}]}
+      },
+      {
+        "Id": "c2dfdba0-723b-4e55-b440-328475b973be",
+        "Implementation": {"Task": ""},
+        "Name": "step 5",
+        "NodeGraphicsInfos": {"NodeGraphicsInfo": [{
+          "Coordinates": [{
+            "XCoordinate": "552.0",
+            "YCoordinate": "104.0"
+          }],
+          "Height": "56.0",
+          "LaneId": "a23bfda3-bac4-4533-a530-edecbb9f5bf9",
+          "Width": "96.0"
+        }]},
+        "Object": {
+          "Id": "c2dfdba0-723b-4e55-b440-328475b973be",
+          "Name": "step 5"
+        }
+      },
+      {
+        "Id": "4a156f80-1946-4a7f-9c70-4884a78cf938",
+        "Implementation": {"Task": ""},
+        "Name": "step 6",
+        "NodeGraphicsInfos": {"NodeGraphicsInfo": [{
+          "Coordinates": [{
+            "XCoordinate": "680.0",
+            "YCoordinate": "104.0"
+          }],
+          "Height": "56.0",
+          "LaneId": "a23bfda3-bac4-4533-a530-edecbb9f5bf9",
+          "Width": "96.0"
+        }]},
+        "Object": {
+          "Id": "4a156f80-1946-4a7f-9c70-4884a78cf938",
+          "Name": "step 6"
+        }
+      },
+      {
+        "Event": {"EndEvent": ""},
+        "Id": "729e969a-e6b8-4f66-81eb-ed3d21047d9c",
+        "NodeGraphicsInfos": {"NodeGraphicsInfo": [{
+          "Coordinates": [{
+            "XCoordinate": "812.0",
+            "YCoordinate": "120.0"
+          }],
+          "Height": "24.0",
+          "LaneId": "a23bfda3-bac4-4533-a530-edecbb9f5bf9",
+          "Width": "24.0"
+        }]},
+        "Object": {"Id": "729e969a-e6b8-4f66-81eb-ed3d21047d9c"}
+      }
+    ]},
+    "ActivitySets": "",
+    "Id": "17ff75fb-3e59-407d-b259-9d45a26ddcc2",
+    "Name": "TroubleTicket",
+    "Object": {
+      "Id": "17ff75fb-3e59-407d-b259-9d45a26ddcc2",
+      "Name": "TroubleTicket"
+    },
+    "ProcessHeader": "",
+    "ProcessType": "None",
+    "Status": "None",
+    "Transitions": {"Transition": [
+      {
+        "ConnectorGraphicsInfos": {"ConnectorGraphicsInfo": {"Coordinates": [
+          {
+            "XCoordinate": "88.0",
+            "YCoordinate": "40.0"
+          },
+          {
+            "XCoordinate": "120.0",
+            "YCoordinate": "40.0"
+          }
+        ]}},
+        "From": "0735b653-d6f1-4fe5-8ed5-a98fe7bed008",
+        "Id": "2392ac9c-5839-4121-8fd0-c134c8716cb7",
+        "To": "822fdd6a-84bf-41c8-b9fe-8bd9fee3a161"
+      },
+      {
+        "ConnectorGraphicsInfos": {"ConnectorGraphicsInfo": {"Coordinates": [
+          {
+            "XCoordinate": "216.0",
+            "YCoordinate": "40.0"
+          },
+          {
+            "XCoordinate": "248.0",
+            "YCoordinate": "40.0"
+          }
+        ]}},
+        "From": "822fdd6a-84bf-41c8-b9fe-8bd9fee3a161",
+        "Id": "6676db8e-c0d3-458c-a5b6-bbf57dd0666e",
+        "To": "06611508-600c-49c5-a2a5-5c54f26e7165"
+      },
+      {
+        "ConnectorGraphicsInfos": {"ConnectorGraphicsInfo": {"Coordinates": [
+          {
+            "XCoordinate": "296.0",
+            "YCoordinate": "72.0"
+          },
+          {
+            "XCoordinate": "296.0",
+            "YCoordinate": "104.0"
+          }
+        ]}},
+        "From": "06611508-600c-49c5-a2a5-5c54f26e7165",
+        "Id": "bf91060f-8f53-4180-b9f8-a89995cc1ce5",
+        "To": "f37d6470-cf4f-45e5-9de2-1222b7013ce2"
+      },
+      {
+        "ConnectorGraphicsInfos": {"ConnectorGraphicsInfo": {"Coordinates": [
+          {
+            "XCoordinate": "344.0",
+            "YCoordinate": "128.0"
+          },
+          {
+            "XCoordinate": "376.0",
+            "YCoordinate": "128.0"
+          }
+        ]}},
+        "From": "f37d6470-cf4f-45e5-9de2-1222b7013ce2",
+        "Id": "df613775-fe9d-4973-a5c4-89be950377e1",
+        "To": "09df0fbb-67fe-4d27-90ca-8e6a6f7a6f27"
+      },
+      {
+        "ConnectorGraphicsInfos": {"ConnectorGraphicsInfo": {"Coordinates": [
+          {
+            "XCoordinate": "472.0",
+            "YCoordinate": "128.0"
+          },
+          {
+            "XCoordinate": "504.0",
+            "YCoordinate": "128.0"
+          }
+        ]}},
+        "From": "09df0fbb-67fe-4d27-90ca-8e6a6f7a6f27",
+        "Id": "bfd489b1-26a3-4fc0-9035-7ce8163b0a29",
+        "To": "c2dfdba0-723b-4e55-b440-328475b973be"
+      },
+      {
+        "ConnectorGraphicsInfos": {"ConnectorGraphicsInfo": {"Coordinates": [
+          {
+            "XCoordinate": "600.0",
+            "YCoordinate": "128.0"
+          },
+          {
+            "XCoordinate": "632.0",
+            "YCoordinate": "128.0"
+          }
+        ]}},
+        "From": "c2dfdba0-723b-4e55-b440-328475b973be",
+        "Id": "850cf5b2-07a3-413c-a92f-d75f57ad1e58",
+        "To": "4a156f80-1946-4a7f-9c70-4884a78cf938"
+      },
+      {
+        "ConnectorGraphicsInfos": {"ConnectorGraphicsInfo": {"Coordinates": [
+          {
+            "XCoordinate": "728.0",
+            "YCoordinate": "128.0"
+          },
+          {
+            "XCoordinate": "760.0",
+            "YCoordinate": "128.0"
+          }
+        ]}},
+        "From": "4a156f80-1946-4a7f-9c70-4884a78cf938",
+        "Id": "09f00b55-300d-4c47-8e9d-aa734939464b",
+        "To": "729e969a-e6b8-4f66-81eb-ed3d21047d9c"
+      },
+      {
+        "ConnectorGraphicsInfos": {"ConnectorGraphicsInfo": {"Coordinates": [
+          {
+            "XCoordinate": "424.0",
+            "YCoordinate": "104.0"
+          },
+          {
+            "XCoordinate": "424.0",
+            "YCoordinate": "40.0"
+          },
+          {
+            "XCoordinate": "344.0",
+            "YCoordinate": "40.0"
+          }
+        ]}},
+        "From": "09df0fbb-67fe-4d27-90ca-8e6a6f7a6f27",
+        "Id": "f054a55a-263d-4702-8809-3629612b8e49",
+        "To": "06611508-600c-49c5-a2a5-5c54f26e7165"
+      },
+      {
+        "ConnectorGraphicsInfos": {"ConnectorGraphicsInfo": {"Coordinates": [
+          {
+            "XCoordinate": "248.0",
+            "YCoordinate": "128.0"
+          },
+          {
+            "XCoordinate": "168.0",
+            "YCoordinate": "128.0"
+          },
+          {
+            "XCoordinate": "168.0",
+            "YCoordinate": "72.0"
+          }
+        ]}},
+        "From": "f37d6470-cf4f-45e5-9de2-1222b7013ce2",
+        "Id": "a18e1833-2897-4869-ab43-08e3a54586b5",
+        "To": "822fdd6a-84bf-41c8-b9fe-8bd9fee3a161"
+      }
+    ]}
+  }]},
+  "xmlns": "http://www.wfmc.org/2008/XPDL2.1",
+  "xmlns:ns2": "http://www.wfmc.org/2002/XPDL1.0"
+}}

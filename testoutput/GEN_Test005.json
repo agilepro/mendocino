@@ -1,0 +1,105 @@
+{"schema": {
+  "container": [
+    {
+      "attr": [
+        {"name": "version"},
+        {"name": "xmlns:atom"},
+        {"name": "xmlns:content"},
+        {"name": "xmlns:dc"},
+        {"name": "xmlns:media"},
+        {"name": "xmlns:slash"},
+        {"name": "xmlns:sy"},
+        {"name": "xmlns:wfw"}
+      ],
+      "contains": [{"name": "channel"}],
+      "name": "rss"
+    },
+    {
+      "attr": [
+        {"name": "href"},
+        {"name": "rel"},
+        {"name": "type"}
+      ],
+      "name": "atom:link"
+    },
+    {
+      "contains": [
+        {"name": "link"},
+        {"name": "title"},
+        {"name": "url"}
+      ],
+      "name": "image"
+    },
+    {
+      "attr": [
+        {"name": "medium"},
+        {"name": "url"}
+      ],
+      "contains": [{"name": "media:title"}],
+      "name": "media:content"
+    },
+    {
+      "contains": [
+        {
+          "name": "category",
+          "plural": "true"
+        },
+        {"name": "comments"},
+        {"name": "content:encoded"},
+        {"name": "dc:creator"},
+        {"name": "description"},
+        {"name": "guid"},
+        {"name": "link"},
+        {
+          "name": "media:content",
+          "plural": "true"
+        },
+        {"name": "pubDate"},
+        {"name": "slash:comments"},
+        {"name": "title"},
+        {"name": "wfw:commentRss"}
+      ],
+      "name": "item"
+    },
+    {
+      "contains": [
+        {"name": "atom:link"},
+        {"name": "description"},
+        {"name": "generator"},
+        {"name": "image"},
+        {
+          "name": "item",
+          "plural": "true"
+        },
+        {"name": "language"},
+        {"name": "lastBuildDate"},
+        {"name": "link"},
+        {"name": "sy:updateFrequency"},
+        {"name": "sy:updatePeriod"},
+        {"name": "title"}
+      ],
+      "name": "channel"
+    }
+  ],
+  "data": [
+    {"name": "generator"},
+    {"name": "link"},
+    {"name": "title"},
+    {"name": "url"},
+    {"name": "category"},
+    {"name": "comments"},
+    {"name": "content:encoded"},
+    {"name": "dc:creator"},
+    {"name": "description"},
+    {"name": "guid"},
+    {"name": "media:title"},
+    {"name": "pubDate"},
+    {"name": "slash:comments"},
+    {"name": "wfw:commentRss"},
+    {"name": "language"},
+    {"name": "lastBuildDate"},
+    {"name": "sy:updateFrequency"},
+    {"name": "sy:updatePeriod"}
+  ],
+  "root": "rss"
+}}
