@@ -286,19 +286,12 @@ public class JSONObject {
 
     /**
      * Construct a JSONObject from a source JSON text string.
-     * You should think before using this JSONObject constructor,
-     * for any use other than testing purposes.  If you are reading
-     * a file, stream the file directly into the object using the
-     * JSONTokener.  If you are reading a file from the internet
-     * stream the socket straight into the object constructor.
-     * Loading the file into a string and then using this constructor
-     * requires extra memory and time.
      *
-     * @param source    A string beginning
-     *  with <code>{</code>&nbsp;<small>(left brace)</small> and ending
-     *  with <code>}</code>&nbsp;<small>(right brace)</small>.
-     * @exception JSONException If there is a syntax error in the source
-     *  string or a duplicated key.
+     * @deprecated don't use this, use the JSONTokener
+     * instead.  The JSON stream should never be  a string, but
+     * instead should always be a Stream.  It is always more
+     * efficient to stream the JSON representation in and out.
+     * Never use a string for this.
      */
     public JSONObject(String source) throws JSONException {
         this(new JSONTokener(source));
@@ -538,19 +531,16 @@ public class JSONObject {
     /**
      * Get an array of field names from a JSONObject.
      *
-     * @return An array of field names, or null if there are no names.
+     * @return An array of field names.  Never returns null.
+     *    if there are no fields, returns an empty array.
      */
     public static String[] getNames(JSONObject jo) {
         int length = jo.length();
-        if (length == 0) {
-            return null;
-        }
-        Iterator<String> iterator = jo.keys();
         String[] names = new String[length];
         int i = 0;
-        while (iterator.hasNext()) {
-            names[i] = iterator.next();
-            i += 1;
+        for (String key : jo.keySet()) {
+            names[i] = key;
+            i++;
         }
         return names;
     }
@@ -559,11 +549,11 @@ public class JSONObject {
     /**
      * Get an array of field names from an Object.
      *
-     * @return An array of field names, or null if there are no names.
+     * @return An array of field names.  Never returns null.
      */
     public static String[] getNames(Object object) {
         if (object == null) {
-            return null;
+            return new String[0];
         }
         Class<? extends Object> klass = object.getClass();
         Field[] fields = klass.getFields();
@@ -597,12 +587,16 @@ public class JSONObject {
 
 
     /**
-     * Determine if the JSONObject contains a specific key.
+     * Determine if the JSONObject contains a value at a specific key.
+     * This is exactly the same as !isNull(key)
+     *
      * @param key   A key string.
-     * @return      true if the key exists in the JSONObject.
+     * @return      true if the key exists in the JSONObject
+     *              AND points to a non-null value.
      */
     public boolean has(String key) {
-        return this.map.containsKey(key);
+        return (this.map.containsKey(key) &&
+                !JSONObject.NULL.equals(this.opt(key)));
     }
 
 
@@ -636,7 +630,8 @@ public class JSONObject {
 
     /**
      * Determine if the value associated with the key is null or if there is
-     *  no value.
+     *  no value.  This is exactly the same as !has(key)
+     *
      * @param key   A key string.
      * @return      true if there is no value associated with the key or if
      *  the value is the JSONObject.NULL object.
@@ -697,17 +692,18 @@ public class JSONObject {
 
     /**
      * Produce a JSONArray containing the names of the elements of this
-     * JSONObject.
+     * JSONObject.  Never returns a null.  If there are no keys, it returns
+     * an empty array.
+     *
      * @return A JSONArray containing the key strings, or null if the JSONObject
      * is empty.
      */
     public JSONArray names() {
         JSONArray ja = new JSONArray();
-        Iterator<String>  keys = this.keys();
-        while (keys.hasNext()) {
-            ja.put(keys.next());
+        for (String key : keySet()) {
+            ja.put(key);
         }
-        return ja.length() == 0 ? null : ja;
+        return ja;
     }
 
     /**
@@ -741,6 +737,9 @@ public class JSONObject {
 
     /**
      * Get an optional value associated with a key.
+     * Returns a null if you pass in a null, or if there is no value
+     * at the specified key.
+     *
      * @param key   A key string.
      * @return      An object which is the value, or null if there is no value.
      */
