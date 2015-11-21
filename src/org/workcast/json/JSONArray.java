@@ -858,7 +858,8 @@ public class JSONArray {
     public String toString(int indentFactor) throws JSONException {
         StringWriter sw = new StringWriter();
         synchronized (sw.getBuffer()) {
-            return this.write(sw, indentFactor, 0).toString();
+            write(sw, indentFactor, 0);
+            return sw.toString();
         }
     }
 
@@ -873,7 +874,8 @@ public class JSONArray {
      * @throws JSONException
      */
     public Writer write(Writer writer) throws JSONException {
-        return this.write(writer, 0, 0);
+        write(writer, 0, 0);
+        return writer;
     }
 
     /**

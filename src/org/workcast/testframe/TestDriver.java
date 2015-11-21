@@ -25,6 +25,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -125,16 +126,14 @@ public class TestDriver {
             InputStreamReader isr = new InputStreamReader(is);
             reader = isr;
         }
-        Vector<String> v = new Vector<String>();
+        ArrayList<String> v = new ArrayList<String>();
         BufferedReader in = new BufferedReader(reader);
         String inputLine = null;
         while ((inputLine = in.readLine()) != null) {
-            v.addElement(inputLine);
+            v.add(inputLine);
         }
         reader.close();
-        String testList[] = new String[v.size()];
-        v.copyInto(testList);
-        return testList;
+        return v.toArray(new String[0]);
     }
 
     private void runTests(String fileName) throws Exception {
@@ -153,7 +152,7 @@ public class TestDriver {
                 lineCount = i;
 
                 int startPos = 0;
-                Vector<String> newArgs = new Vector<String>();
+                ArrayList<String> newArgs = new ArrayList<String>();
                 int pos = name.indexOf(" ");
                 while (pos >= 0 && startPos < name.length()) {
                     String token = name.substring(startPos, pos);
@@ -174,7 +173,7 @@ public class TestDriver {
                 // convert to string array
                 String[] newArgArray = new String[newArgs.size()];
                 for (int j = 0; j < newArgs.size(); j++) {
-                    newArgArray[j] = newArgs.elementAt(j);
+                    newArgArray[j] = newArgs.get(j);
                 }
 
                 runOneTest(newArgArray);

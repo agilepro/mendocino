@@ -20,12 +20,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
-import java.util.Vector;
 
 /**
  * TestRecorderText implements the TestRecorder interface so that:
@@ -108,7 +108,7 @@ public class TestRecorderText implements TestRecorder {
     // will be printed out before the failure message.
     // If a pass message is reported, then the vector is cleared.
     // Every element is a string.
-    private Vector<String> savedLog;
+    private ArrayList<String> savedLog;
 
     // save away the time that the test recorder was created so that time
     // can be recorded as a difference to this.
@@ -117,7 +117,7 @@ public class TestRecorderText implements TestRecorder {
     // keep the long term records
     public static Hashtable<String, int[]> records = new Hashtable<String, int[]>();
 
-    public static Vector<TestResultRecord> resultSet;
+    public static ArrayList<TestResultRecord> resultSet;
 
     public TestRecorderText(Writer forLog, boolean newVerbose, String[] args, Properties configProps)
             throws Exception {
@@ -175,7 +175,7 @@ public class TestRecorderText implements TestRecorder {
             verboseDefault = "true";
         }
         verbose = ("true".equals(getProperty("verbose", verboseDefault)));
-        savedLog = new Vector<String>();
+        savedLog = new ArrayList<String>();
 
         creationTime = System.currentTimeMillis();
 
@@ -183,7 +183,7 @@ public class TestRecorderText implements TestRecorder {
             records = new Hashtable<String, int[]>();
         }
         if (resultSet == null) {
-            resultSet = new Vector<TestResultRecord>();
+            resultSet = new ArrayList<TestResultRecord>();
         }
     }
 
@@ -352,7 +352,7 @@ public class TestRecorderText implements TestRecorder {
             trr.savedLog = savedLog;
             resultSet.add(trr);
             // create a new one because the old one stays with test result
-            savedLog = new Vector<String>();
+            savedLog = new ArrayList<String>();
         }
         catch (Exception e) {
             e.printStackTrace(logWriter);
@@ -410,7 +410,7 @@ public class TestRecorderText implements TestRecorder {
             trr.savedLog = savedLog;
             resultSet.add(trr);
             // create a new one because the old one stays with test result
-            savedLog = new Vector<String>();
+            savedLog = new ArrayList<String>();
         }
         catch (Exception e1) {
             e1.printStackTrace(logWriter);
@@ -467,7 +467,7 @@ public class TestRecorderText implements TestRecorder {
         int last = savedLog.size();
         for (int i = 0; i < last; i++) {
             logWriter.write("[      ] ???.??? ");
-            logWriter.write(savedLog.elementAt(i));
+            logWriter.write(savedLog.get(i));
             logWriter.write("\n");
         }
     }
@@ -552,13 +552,13 @@ public class TestRecorderText implements TestRecorder {
     }
 
     public static void clearResultSet() {
-        resultSet = new Vector<TestResultRecord>();
+        resultSet = new ArrayList<TestResultRecord>();
     }
 
-    public static Vector<TestResultRecord> getResults() {
+    public static ArrayList<TestResultRecord> getResults() {
         // will be null if no tests run yet....
         if (resultSet == null) {
-            resultSet = new Vector<TestResultRecord>();
+            resultSet = new ArrayList<TestResultRecord>();
         }
         else {
             TestResultComparator trc = new TestResultComparator();

@@ -18,8 +18,8 @@ package org.workcast.streams;
 
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Helps to read and write a CSV file, all methods are static writeLine:
@@ -66,7 +66,7 @@ public class CSVHelper {
         if (ch<0) {
             return null;
         }
-        Vector<String> store = new Vector<String>();
+        ArrayList<String> store = new ArrayList<String>();
         StringBuffer curVal = new StringBuffer();
         boolean inquotes = false;
         boolean started = false;

@@ -16,7 +16,7 @@
 
 package org.workcast.testframe;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  *
@@ -38,6 +38,6 @@ public class TestResultRecord {
     public String failureMessage;
     public String[] args;
     public int duration; // milliseconds
-    public Vector<String> savedLog;
+    public ArrayList<String> savedLog;
     public Exception fatalException;
 }

@@ -23,7 +23,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * Holds a stream of bytes in memory. It is a buffer that you can stream to, and
@@ -96,10 +96,17 @@ import java.util.Vector;
 public class MemFile {
 
     // holds all the bytes as byte arrays in this vector
-    Vector<byte[]> contents;
+    private ArrayList<byte[]> contents;
+
+    // this is the new, unfinished buffer must never be NULL!
+    private byte[] incomingBytes = null;
+    // position in the new buffer
+    private int    incomingPos   = 0;
+
 
     public MemFile() throws Exception {
-        contents = new Vector<byte[]>();
+        contents = new ArrayList<byte[]>();
+        incomingBytes = new byte[5000];
     }
 
     /**
@@ -108,7 +115,25 @@ public class MemFile {
      */
     public void clear() {
         contents.clear();
+        incomingPos = 0;
     }
+
+
+    /*
+     * This is the CORE routine for adding bytes to the internal buffers
+     */
+    private void addByte(int b) throws IOException {
+        if (incomingPos >= 5000) {
+            adopt(incomingBytes);
+            incomingBytes = new byte[5000];
+            incomingPos = 0;
+        }
+        incomingBytes[incomingPos] = (byte) b;
+        incomingPos++;
+    }
+
+
+
 
     /**
      * Reads all bytes from the passed in InputStream and stored the entire
@@ -123,7 +148,7 @@ public class MemFile {
                 buf = new byte[5000];
             }
             else {
-                addPartial(buf, len);
+                addPartial(buf, 0, len);
             }
             len = in.read(buf);
         }
@@ -158,6 +183,7 @@ public class MemFile {
         for (byte[] buf : contents) {
             out.write(buf);
         }
+        out.write(incomingBytes, 0, incomingPos);
     }
 
     /**
@@ -228,6 +254,8 @@ public class MemFile {
         for (byte[] buf : contents) {
             total += buf.length;
         }
+        //now account for the partial buffer
+        total += incomingPos;
         return total;
     }
 
@@ -255,6 +283,13 @@ public class MemFile {
                 }
             }
         }
+
+        //account for those in the incoming buffer
+        for (int i=0; i<incomingPos; i++) {
+            if (incomingBytes[i] >= -64) {
+                total++;
+            }
+        }
         return total;
     }
 
@@ -262,97 +297,137 @@ public class MemFile {
      * copies the specified number of bytes from the byte array and adds it to
      * the file. It is OK to use the buffer for other purposes after this.
      */
-    public void addPartial(byte[] buf, int len) {
-        if (len > 0) {
-            byte[] buf2 = new byte[len];
-            for (int i = 0; i < len; i++) {
-                buf2[i] = buf[i];
+    public void addPartial(byte[] buf, int pos, int len) {
+
+        // first test and handle the incoming overflow situation
+        // there might be many of these if incoming buffer is
+        // quite large
+        while (len - pos > 5000 - incomingPos) {
+            int amtToXFer = 5000 - incomingPos;
+            for (int i = 0; i < amtToXFer; i++) {
+                incomingBytes[i+incomingPos] = buf[i+pos];
             }
-            contents.add(buf2);
+            adopt(incomingBytes);
+            incomingBytes=new byte[5000];
+            incomingPos=0;
+            pos = pos + amtToXFer;
+        }
+
+        //now we have less than a full buffer to deal with, transfer the rest
+        if (len - pos > 0) {
+            int amtToXFer = len - pos;
+            for (int i = 0; i < amtToXFer; i++) {
+                incomingBytes[i+incomingPos] = buf[i+pos];
+            }
+            incomingPos = incomingPos + amtToXFer;
         }
     }
+
+
+    /**
+    * Returns the entire contents of the MemFile as a single string.
+    * It first figures out how many characters there are, and then
+    * allocates a single StringBuffer of the right size,
+    * puts the characters into it, and returns the string.
+    *
+    * It does this copying every time you call it, so be frugal.
+    */
+    public String toString() {
+        try {
+            int size = totalChars();
+            StringBuffer sb = new StringBuffer(size+10);
+            Reader r = getReader();
+            char[] buf = new char[1000];
+            int amt = r.read(buf, 0, 1000);
+            while (amt>0) {
+                sb.append(buf,0,amt);
+                amt = r.read(buf, 0, 1000);
+            }
+            String res = sb.toString();
+            if (res.length()!=size) {
+                System.out.println("MemFile calculate the length to be '"+size+"' but actually got '"+res.length()+"'");
+            }
+            return res;
+        }
+        catch (Exception e) {
+            throw new RuntimeException("FATAL ERROR while converting a MemFile to a String", e);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////
 
     class MemFileInputStream extends InputStream {
         MemFile mf = null;
         int idx = 0;
-        byte[] thisBuf = null;
-        int idxInBuf = 0;
+        byte[] currentBuf = null;
+        int currentBufAmt;
+        int posInBuf = 0;
 
         MemFileInputStream(MemFile newmf) {
             mf = newmf;
             if (mf.contents.size() > 0) {
-                thisBuf = mf.contents.elementAt(0);
+                currentBuf = mf.contents.get(0);
+                currentBufAmt = currentBuf.length;
+            }
+            else {
+                currentBuf = mf.incomingBytes;
+                currentBufAmt = mf.incomingPos;
             }
             idx = 1;
-            idxInBuf = 0;
+            posInBuf = 0;
         }
 
         public int read() throws IOException {
-            while (thisBuf != null) {
-                if (idxInBuf >= thisBuf.length) {
-                    if (idx >= mf.contents.size()) {
-                        return -1;
-                    }
-                    thisBuf = mf.contents.elementAt(idx);
-                    if (thisBuf == null) {
-                        return -1;
-                    }
-                    idxInBuf = 0;
-                    idx++;
+            if (posInBuf >= currentBufAmt) {
+                if (idx > mf.contents.size()) {
+                    return -1;
                 }
-                if (idxInBuf < thisBuf.length) {
-                    // unsigned value!
-                    int res = (thisBuf[idxInBuf]) & 0xFF;
-                    idxInBuf++;
-                    return res;
+                else if (idx == mf.contents.size()) {
+                    currentBuf = mf.incomingBytes;
+                    currentBufAmt = mf.incomingPos;
                 }
+                else {
+                    currentBuf = mf.contents.get(idx);
+                    currentBufAmt = currentBuf.length;
+                }
+                posInBuf = 0;
+                idx++;
             }
-            return -1;
+            // return an unsigned value!
+            int res = (currentBuf[posInBuf]) & 0xFF;
+            posInBuf++;
+            return res;
         }
 
         // returns the number of bytes in the current buffer
         public int available() throws IOException {
-            if (thisBuf != null) {
+            if (currentBuf == null) {
                 return 0;
             }
-            return thisBuf.length - idxInBuf;
+            return currentBufAmt - posInBuf;
         }
 
     }
 
+    ////////////////////////////////////////////////////////////////////
+
     class MemFileOutputStream extends OutputStream {
         MemFile mf = null;
-        byte[] thisBuf = null;
-        int idxInBuf = 0;
 
         MemFileOutputStream(MemFile newmf) {
             mf = newmf;
-            thisBuf = new byte[5000];
-            idxInBuf = 0;
         }
 
         public void write(int b) throws IOException {
-            if (idxInBuf >= 5000) {
-                mf.adopt(thisBuf);
-                thisBuf = new byte[5000];
-                idxInBuf = 0;
-            }
-            thisBuf[idxInBuf] = (byte) b;
-            idxInBuf++;
+            mf.addByte(b);
         }
 
         public void flush() throws IOException {
-            if (idxInBuf > 0) {
-                mf.addPartial(thisBuf, idxInBuf);
-                idxInBuf = 0;
-            }
+            //there is nothing to do, no flushing required
         }
 
         public void close() throws IOException {
-            if (idxInBuf > 0) {
-                mf.addPartial(thisBuf, idxInBuf);
-                idxInBuf = 0;
-            }
+            //there is nothing to do, no flushing required
         }
     }
 }
