@@ -13,6 +13,7 @@ mkdir %MENDO_TEST_OUT%
 :##################################################################################
 :##### Run tests
 :##################################################################################
+"%JAVA_HOME%/bin/java" -classpath %MENDO_CP% org.workcast.streams.MemFileTester %SOURCE_DIR% %MENDO_TEST_OUT%
 "%JAVA_HOME%/bin/java" -classpath %MENDO_CP% org.workcast.mendocinotest.Test1 %SOURCE_DIR% %MENDO_TEST_OUT%
 "%JAVA_HOME%/bin/java" -classpath %MENDO_CP% org.workcast.mendocinotest.Test2 %SOURCE_DIR% %MENDO_TEST_OUT%
 

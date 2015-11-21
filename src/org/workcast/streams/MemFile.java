@@ -235,6 +235,8 @@ public class MemFile {
      */
     public Writer getWriter() throws Exception {
         return new OutputStreamWriter(getOutputStream(), "UTF-8");
+        // Should get this to work some day so that there is no buffer in the middle
+        //return new UTF8Writer(getOutputStream());
     }
 
     /**
@@ -430,4 +432,71 @@ public class MemFile {
             //there is nothing to do, no flushing required
         }
     }
+
+
+    class UTF8Writer extends Writer {
+        OutputStream wos = null;
+        int  firstSurrogateChar = -1;
+
+        UTF8Writer(OutputStream _wos) {
+            wos = _wos;
+        }
+
+        public void write(int ch) throws IOException {
+
+            //handle the second half of a surrogate char pair
+            if (firstSurrogateChar>0) {
+                if (ch < 0xD800 || ch > 0xDFFF) {
+                     throw new IOException("UTF-16 encoding error: got the first character of a surrogate pair, but followed by an invalid character: "
+                         +Integer.toString(firstSurrogateChar)+"&"+Integer.toString(ch));
+                }
+                int combined = 0x10000 + ((firstSurrogateChar % 1024) << 10) + (ch % 1024);
+                wos.write(140 + ((combined >> 18) % 8));
+                wos.write(128 + (combined % 64));
+                wos.write(128 + ((combined >> 6) % 64));
+                wos.write(128 + ((combined >> 12) % 64));
+                firstSurrogateChar=-1;
+                return;
+            }
+            if (ch < 128)  {
+                wos.write(ch);
+                return;
+            }
+            if (ch < 2048)  {
+                wos.write(192 + ((ch >> 6) % 32));
+                wos.write(128 + (ch % 64));
+                return;
+            }
+
+            // exclude the 'surrogate' characters
+            if (ch < 0xD800 || ch > 0xDFFF) {
+                wos.write(224 + ((ch >> 12) % 16));
+                wos.write(128 + (ch % 64));
+                wos.write(128 + ((ch >> 6) % 64));
+                return;
+            }
+
+            // oh boy, we are in the surrogate-character world, store this and
+            // wait for the next character
+            firstSurrogateChar = ch;
+        }
+
+        @Override
+        public void write(char[] buf, int pos, int last) throws IOException {
+            for (int i=pos; i<last; i++) {
+                write(buf[i]);
+            }
+        }
+
+
+        public void flush() throws IOException {
+            //there is nothing to do, no flushing required
+        }
+
+        public void close() throws IOException {
+            //there is nothing to do, no flushing required
+        }
+
+    }
+
 }

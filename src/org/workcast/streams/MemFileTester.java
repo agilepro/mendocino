@@ -17,6 +17,8 @@
 package org.workcast.streams;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -24,6 +26,7 @@ import java.io.StringWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Properties;
+
 import org.workcast.testframe.TestRecorder;
 import org.workcast.testframe.TestRecorderText;
 
@@ -39,6 +42,17 @@ public class MemFileTester {
 
 	public MemFileTester() {
 	}
+
+
+	private byte[] getEncodedCase(String testCase) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Writer osw = new OutputStreamWriter(baos, "UTF-8");
+        osw.write(testCase);
+        osw.flush();
+        osw.close();
+        return baos.toByteArray();
+	}
+
 
 	public void runTests(TestRecorder newTr) throws Exception {
 		tr = newTr;
@@ -61,28 +75,27 @@ public class MemFileTester {
 		testWriteHTML("quote and angle", "the \"big\" and<or>case",
 				"the &quot;big&quot; and&lt;or&gt;case");
 		testWriteHTML("upper ascii", "Sämplé\nStrîñg\t", "Sämplé\nStrîñg\t");
+
+		letsTestAllPossibleCharacters();
 	}
 
 	private void testMemFiles(String caseDescription, String testCase) throws Exception {
-		// first, lets get an encoded copy of the test case
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		@SuppressWarnings("resource")
-		Writer osw = new OutputStreamWriter(baos, "UTF-8");
-		osw.write(testCase);
-		osw.flush();
-		osw.close();
-		byte[] encodedCase = baos.toByteArray();
-		int bytesInCase = encodedCase.length;
+
+	    byte[] encodedCase = getEncodedCase(testCase);
+	    int bytesInCase = encodedCase.length;
 
 		MemFile mf = new MemFile();
 
 		// write the same value 1000 items
-		osw = mf.getWriter();
+		Writer osw = mf.getWriter();
 		for (int i = 0; i < 1000; i++) {
 			osw.write(testCase);
 		}
+
+		//we are not supposed to need flushing and closing, so DONT do them
 		osw.flush();
 		osw.close();
+
 		tr.markPassed(caseDescription + " - Wrote 1000 iterations");
 
 		tr.testInt(caseDescription + " - Num bytes for 1000 copies", mf.totalBytes(),
@@ -183,7 +196,7 @@ public class MemFileTester {
 		for (int i = 0; i < 1000; i++) {
 			int last = encodedCase.length;
 			for (int j = 0; j < last; j++) {
-				byte testByte = encodedCase[j];
+				int testByte = (encodedCase[j]) & 0xFF;
 				int readByte = is.read();
 				if (readByte != testByte) {
 					tr.markFailed(thisTestId, "At position " + j + " of iteration " + i
@@ -300,14 +313,90 @@ public class MemFileTester {
 		return "Can't find any difference in these strings!";
 	}
 
-	public static void main(String args[]) {
-		try {
-			// if (args.length<2)
-			// {
-			// throw new Exception("USAGE: MemFileTester");
-			// }
 
-			TestRecorderText tr = new TestRecorderText(new OutputStreamWriter(System.out, "UTF-8"),
+	private void letsTestAllPossibleCharacters() throws Exception {
+
+	    MemFile mf = new MemFile();
+	    Writer w = mf.getWriter();
+	    char[] buf = new char[10];
+	    int failures = 0;
+
+	    for (int i=1; i<Character.MIN_SUPPLEMENTARY_CODE_POINT; i++) {
+            if (!Character.isHighSurrogate((char)i) && !Character.isLowSurrogate((char)i)) {
+    	        try {
+        	        int num = Character.toChars(i,buf,0);
+        	        for (int j=0; j<num; j++) {
+        	            w.write(buf[j]);
+        	        }
+    	        }
+    	        catch (Exception e) {
+    	            System.out.println("Conversion failure on "+Integer.toString(i,16));
+    	        }
+	        }
+	    }
+	    w.flush();
+
+	    Reader r = mf.getReader();
+
+        for (int i=1; i<Character.MIN_SUPPLEMENTARY_CODE_POINT; i++) {
+            if (!Character.isHighSurrogate((char)i) && !Character.isLowSurrogate((char)i)) {
+                try {
+                    int num = Character.toChars(i,buf,0);
+                    for (int j=0; j<num; j++) {
+                        int ch = r.read();
+                        if (ch!=buf[j]) {
+                            failures++;
+                            if (failures<100) {
+                                System.out.println("Character "+Integer.toString(i,16)+" failure: expected "+Integer.toString(buf[j],16)+" but got "+Integer.toString(ch,16));
+                            }
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    System.out.println("Failure on "+Integer.toString(i,16));
+                }
+            }
+        }
+
+        if (failures==0) {
+            tr.markPassed("All Possible Characters Test");
+        }
+        else {
+            tr.markFailed("All Possible Characters Test", "Number of bad characters: "+failures);
+        }
+
+	}
+
+	public static void main(String args[]) {
+	    TestRecorderText tr=null;
+		try {
+            if (args.length < 2) {
+                throw new Exception("USAGE: Test1  <source folder>  <test output folder>");
+            }
+            String sourceFolder = args[0];
+            String outputFolder = args[1];
+            Properties props = new Properties();
+            props.put("source", sourceFolder);
+            props.put("testoutput", outputFolder);
+
+            File testsrc = new File(sourceFolder, "testdata");
+            if (!testsrc.isDirectory()) {
+                throw new Exception(
+                        "Configuration error: first parameter must be the path to the source directory and it must exist.  The following was passed and does not exist: "
+                                + sourceFolder);
+            }
+            File testout = new File(outputFolder);
+            if (!testout.isDirectory()) {
+                throw new Exception(
+                        "Configuration error: second parameter must be the path to the test output directory and it must exist.  The following was passed and does not exist: "
+                                + outputFolder);
+            }
+            File outputFile = new File(testout, "output_MemFileTest.txt");
+            if (outputFile.exists()) {
+                outputFile.delete();
+            }
+
+			tr = new TestRecorderText(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8"),
 					true, new String[0], ".", new Properties());
 			MemFileTester t1 = new MemFileTester();
 			t1.runTests(tr);
@@ -317,6 +406,15 @@ public class MemFileTester {
 			System.out.print("\nEXCEPTION CAUGHT AT MAIN LEVEL:\n");
 			e.printStackTrace(System.out);
 		}
+        if (tr!=null) {
+            System.out.print("\n\n\n====================================================");
+            System.out.print("\n               FINISHED MemFileTest RUN");
+            System.out.print("\n====================================================");
+            System.out.print("\n Number PASSED: "+tr.passedCount());
+            System.out.print("\n Number FAILED: "+tr.failedCount());
+            System.out.print("\n Number FATAL:  "+tr.fatalCount());
+            System.out.print("\n====================================================\n");
+        }
 	}
 
 }
