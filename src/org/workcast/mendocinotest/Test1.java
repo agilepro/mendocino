@@ -27,10 +27,12 @@ import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Vector;
 
 import org.workcast.json.Dom2JSON;
 import org.workcast.json.JSONObject;
+import org.workcast.json.JSONTokener;
 import org.workcast.mendocino.Mel;
 import org.workcast.mendocino.Schema;
 import org.workcast.mendocino.SchemaGen;
@@ -331,15 +333,63 @@ public class Test1 implements TestSet {
         compareFiles(outputFile, fileName);
     }
 
+    static private Random rand = new Random();
+
+    /**
+     * Convert the XML to JSON
+     * write it to a file
+     * read that file
+     * write it again and compare to archive
+     */
     public void  writeJSONAndCompare(Mel me, String fileName, Hashtable<String,Integer> hints) throws Exception {
         JSONObject jsonRep = Dom2JSON.convertElementToJSON(me.getElement(), hints);
 
         File outputFile = new File(tr.getProperty("testoutput", null), fileName);
-        FileOutputStream fos = new FileOutputStream(outputFile);
-        Writer w = new OutputStreamWriter(fos);
-        jsonRep.write(w, 2, 0);
-        w.close();
-        fos.close();
+        File intermediateFile = new File(tr.getProperty("testoutput", null), fileName+"$testtmp$");
+
+        //randomly choose one method or the other.  I don't like randomness in tests
+        //but there is too much overhead in testing every case both ways.
+        //If they both work, they should be exactly equal....
+        //we just want to know that they both work.  If this test starts to fail
+        //we may need to isolate to one or the other.
+        //
+        // FIRST, write to intermediate file
+        if (rand.nextBoolean()) {
+            FileOutputStream fos = new FileOutputStream(intermediateFile);
+            Writer w = new OutputStreamWriter(fos);
+            jsonRep.write(w, 2, 0);
+            w.close();
+            fos.close();
+        }
+        else {
+            jsonRep.writeToFile(intermediateFile);
+        }
+
+        //SECOND read from intermediate
+        if (rand.nextBoolean()) {
+            FileInputStream fis = new FileInputStream(intermediateFile);
+            JSONTokener jt = new JSONTokener(fis);
+            jsonRep = new JSONObject(jt);
+            fis.close();
+        }
+        else {
+            jsonRep = JSONObject.readFromFile(intermediateFile);
+        }
+
+        //THIRD, write to final file
+        if (rand.nextBoolean()) {
+            FileOutputStream fos = new FileOutputStream(outputFile);
+            Writer w = new OutputStreamWriter(fos);
+            jsonRep.write(w, 2, 0);
+            w.close();
+            fos.close();
+        }
+        else {
+            jsonRep.writeToFile(outputFile);
+        }
+
+        //FOURTH delete the intermediate so it is not in the archive
+        intermediateFile.delete();
 
         compareFiles(outputFile, fileName);
     }
@@ -360,14 +410,21 @@ public class Test1 implements TestSet {
 
         int b1 = fis1.read();
         int b2 = fis2.read();
-        int charCount = 0;
+        int charCount = 1;
+        int lineCount = 1;
         while (b1 >= 0 && b2 >= 0) {
-            charCount++;
             if (b1 != b2) {
-                tr.markFailed(note, "file are different at character number " + charCount);
+                tr.markFailed(note, "file are different at number " + lineCount + " and character "+charCount);
                 fis1.close();
                 fis2.close();
                 return;
+            }
+            if (b1=='\n') {
+                lineCount++;
+                charCount = 1;
+            }
+            else {
+                charCount++;
             }
             b1 = fis1.read();
             b2 = fis2.read();

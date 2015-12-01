@@ -24,7 +24,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
@@ -110,42 +114,6 @@ import java.util.Set;
 public class JSONObject {
 
     /**
-     * JSONObject.NULL is equivalent to the value that JavaScript calls null,
-     * whilst Java's null is equivalent to the value that JavaScript calls
-     * undefined.
-     */
-     private static final class Null {
-
-        /**
-         * There is only intended to be a single instance of the NULL object,
-         * so the clone method returns itself.
-         * @return     NULL.
-         */
-        protected final Object clone() {
-            return this;
-        }
-
-        /**
-         * A Null object is equal to the null value and to itself.
-         * @param object    An object to test for nullness.
-         * @return true if the object parameter is the JSONObject.NULL object
-         *  or null.
-         */
-        public boolean equals(Object object) {
-            return object == null || object == this;
-        }
-
-        /**
-         * Get the "null" string value.
-         * @return The string "null".
-         */
-        public String toString() {
-            return "null";
-        }
-    }
-
-
-    /**
      * The map where the JSONObject's properties are kept.
      */
     private final Map<String, Object> map;
@@ -167,6 +135,27 @@ public class JSONObject {
         this.map = new HashMap<String,Object>();
     }
 
+
+    public static JSONObject readFromFile(File inFile) throws Exception {
+        FileInputStream fis = new FileInputStream(inFile);
+        JSONTokener jt = new JSONTokener(fis);
+        return new JSONObject(jt);
+    }
+    public void writeToFile(File outFile) throws Exception {
+        File folder = outFile.getParentFile();
+        File tempFile = new File(folder, "~"+outFile.getName()+"~tmp~");
+        if (tempFile.exists()) {
+            tempFile.delete();
+        }
+        FileOutputStream fos = new FileOutputStream(tempFile);
+        OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+        this.write(osw,2,0);
+        osw.close();
+        if (outFile.exists()) {
+            outFile.delete();
+        }
+        tempFile.renameTo(outFile);
+    }
 
     /**
      * Construct a JSONObject from a subset of another JSONObject.
@@ -1635,4 +1624,39 @@ public class JSONObject {
             throw new JSONException("Unable to write object JSONObject indent level: "+indent, exception);
         }
      }
+
+    /**
+     * JSONObject.NULL is equivalent to the value that JavaScript calls null,
+     * whilst Java's null is equivalent to the value that JavaScript calls
+     * undefined.
+     */
+     private static final class Null {
+
+        /**
+         * There is only intended to be a single instance of the NULL object,
+         * so the clone method returns itself.
+         * @return     NULL.
+         */
+        protected final Object clone() {
+            return this;
+        }
+
+        /**
+         * A Null object is equal to the null value and to itself.
+         * @param object    An object to test for nullness.
+         * @return true if the object parameter is the JSONObject.NULL object
+         *  or null.
+         */
+        public boolean equals(Object object) {
+            return object == null || object == this;
+        }
+
+        /**
+         * Get the "null" string value.
+         * @return The string "null".
+         */
+        public String toString() {
+            return "null";
+        }
+    }
 }

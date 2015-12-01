@@ -24,7 +24,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Array;
@@ -93,6 +97,31 @@ public class JSONArray {
      */
     public JSONArray() {
         this.myArrayList = new ArrayList<Object>();
+    }
+
+    /**
+     * Construct a JSONArray object from a file.
+     * Remember, the file has to start with a square brace.
+     */
+    public static JSONArray readFromFile(File inFile) throws Exception {
+        FileInputStream fis = new FileInputStream(inFile);
+        JSONTokener jt = new JSONTokener(fis);
+        return new JSONArray(jt);
+    }
+    public void writeToFile(File outFile) throws Exception {
+        File folder = outFile.getParentFile();
+        File tempFile = new File(folder, "~"+outFile.getName()+"~tmp~");
+        if (tempFile.exists()) {
+            tempFile.delete();
+        }
+        FileOutputStream fos = new FileOutputStream(tempFile);
+        OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+        this.write(osw,2,0);
+        osw.close();
+        if (outFile.exists()) {
+            outFile.delete();
+        }
+        tempFile.renameTo(outFile);
     }
 
     /**
