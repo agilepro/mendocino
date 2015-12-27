@@ -139,7 +139,9 @@ public class JSONObject {
     public static JSONObject readFromFile(File inFile) throws Exception {
         FileInputStream fis = new FileInputStream(inFile);
         JSONTokener jt = new JSONTokener(fis);
-        return new JSONObject(jt);
+        JSONObject jo = new JSONObject(jt);
+        fis.close();
+        return jo;
     }
     public void writeToFile(File outFile) throws Exception {
         File folder = outFile.getParentFile();
