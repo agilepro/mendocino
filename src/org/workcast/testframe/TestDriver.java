@@ -26,8 +26,6 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Vector;
 
 /**
  * The Test Driver reads the command line arguments, makes an instance of the
@@ -482,9 +480,7 @@ public class TestDriver {
             if (tr.fatalCount() > 0) {
                 w.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
                 w.write("Printing configuration since there was a fatal test\n");
-                Enumeration<?> e3 = tr.getProps().propertyNames();
-                while (e3.hasMoreElements()) {
-                    String aName = (String) e3.nextElement();
+                for  (String aName: tr.getProps().stringPropertyNames()) {
                     String val = tr.getProps().getProperty(aName);
                     w.write(aName + "=" + val + "\n");
                 }

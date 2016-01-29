@@ -108,8 +108,9 @@ import java.util.Set;
  * well as by <code>,</code> <small>(comma)</small>.</li>
  * </ul>
  *
- * @author JSON.org
- * @version 2012-10-26
+ * Originally written by JSON.org released 2012-10-26 but heavily modified
+ * by Keith Swenson in the years after that to make the object classes
+ * conform to style guidelines discussed in http://agiletribe.wordpress.com/
  */
 public class JSONObject {
 
@@ -136,6 +137,10 @@ public class JSONObject {
     }
 
 
+    /**
+     * Open the file if exists, read the contents, and return the
+     * JSONObject tree that the file represents.
+     */
     public static JSONObject readFromFile(File inFile) throws Exception {
         FileInputStream fis = new FileInputStream(inFile);
         JSONTokener jt = new JSONTokener(fis);
@@ -143,6 +148,21 @@ public class JSONObject {
         fis.close();
         return jo;
     }
+
+    /**
+     * Write the entire contents of the JSONObject tree to the specified
+     * file using JSON format.  This is written out properly and safely
+     * by first writing to a temporary file with the symbol ~tmp~ on the end.
+     * Then, once the file exists, the old
+     * file (if there was one) is deleted, and the temp file is renamed
+     * to be the desired output file name.  This guarantees that you will
+     * allways have a complete file on the disk (along with a vanishingly
+     * small possibility that there will be no file).  No matter if the
+     * host program crashes, or the power goes out, you will never have
+     * a half-written corrupted file on disk.
+     * @param outFile
+     * @throws Exception
+     */
     public void writeToFile(File outFile) throws Exception {
         File folder = outFile.getParentFile();
         File tempFile = new File(folder, "~"+outFile.getName()+"~tmp~");
@@ -305,10 +325,7 @@ public class JSONObject {
      * @throws JSONException If the value is an invalid number
      *  or if the key is null.
      */
-    public JSONObject accumulate(
-        String key,
-        Object value
-    ) throws JSONException {
+    public JSONObject accumulate( String key, Object value ) throws JSONException {
         testValidity(value);
         Object object = this.opt(key);
         if (object == null) {
@@ -653,8 +670,10 @@ public class JSONObject {
     }
 
     /**
-     * Get an enumeration of the keys of the JSONObject in alphabetically sorted order.
-     * @return An iterator that walks the keys in sorted order.
+     * Don't use this, because it is an iterator.  Deprecated.
+     * Use sortedKeySet instead which gives you the same functionality
+     * but as a List object which allows for the normal Java language
+     * capability to iterate automatically over it.
      * @deprecated use sortedKeySet instead because iterators are old fashioned
      */
     public Iterator<String> sortedKeys() {
@@ -662,9 +681,14 @@ public class JSONObject {
     }
 
     /**
-     * Get an enumeration of the keys of the JSONObject.
-     * @return An iterator of the keys.
-     * @deprecated use sortedKeySet instead because iterators are old fashioned
+     * Don't use this, because it is an iterator.  Deprecated.
+     * Use keySet instead which gives you the same functionality
+     * but as a List object which allows for the normal Java language
+     * capability to iterate automatically over it.
+     * Also, consider using sortedKeySet if you are outputting
+     * this to an external destination because getting the keys in a
+     * predictable order can help in some other ways.
+     * @deprecated use keySet instead because iterators are old fashioned
      */
     public Iterator<String> keys() {
         return this.map.keySet().iterator();
