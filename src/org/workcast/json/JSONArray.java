@@ -811,6 +811,16 @@ public class JSONArray {
         return o;
     }
 
+    /**
+     * Add all the elements from one JSONArray into the array this is called on.
+     */
+    public void addAll(JSONArray other) throws JSONException {
+        int last = other.length();
+        for (int i=0; i<last; i++) {
+            put(other.get(i));
+        }
+    }
+
 
     /**
      * Produce a JSONObject by combining a JSONArray of names with the values

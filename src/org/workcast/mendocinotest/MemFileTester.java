@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.workcast.streams;
+package org.workcast.mendocinotest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -27,6 +27,9 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.Properties;
 
+import org.workcast.streams.HTMLWriter;
+import org.workcast.streams.JavaScriptWriter;
+import org.workcast.streams.MemFile;
 import org.workcast.testframe.TestRecorder;
 import org.workcast.testframe.TestRecorderText;
 
