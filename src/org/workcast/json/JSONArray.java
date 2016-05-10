@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.List;
 
 /**
  * A JSONArray is an ordered sequence of values. Its external text form is a
@@ -819,6 +820,51 @@ public class JSONArray {
         for (int i=0; i<last; i++) {
             put(other.get(i));
         }
+    }
+
+
+    /**
+     * A convenience routine for use with native Java iterations.
+     * If the JSONArray is populated exclusively by JSONObjects, then use this
+     * method to get a List back, which can be iterated using:
+     *
+     *  for (JSONObject j : myList.getJSONObjectList()) {
+     *     ...
+     *  }
+     *
+     *  Returns all the elements as JSONObject in the same order
+     *  they are in the array.
+     *  Does not convert data from other data types.
+     *  Will throw an exception if any element is NOT a JSONObject
+     */
+    public List<JSONObject> getJSONObjectList() throws Exception {
+        ArrayList<JSONObject> res = new ArrayList<JSONObject>();
+        for (int i=0; i<this.length();i++) {
+            res.add(this.getJSONObject(i));
+        }
+        return res;
+    }
+
+    /**
+     * A convenience routine for use with native Java iterations.
+     * If the JSONArray is populated exclusively by Strings, then use this
+     * method to get a List back, which can be iterated using:
+     *
+     *  for (String s : myList.getStringList()) {
+     *     ...
+     *  }
+     *
+     *  Returns all the elements as Strings in the same order
+     *  they are in the array.
+     *  Does not convert data from other data types.
+     *  Will throw an exception if any element is NOT a String
+     */
+    public List<String> getStringList() throws Exception {
+        ArrayList<String> res = new ArrayList<String>();
+        for (int i=0; i<this.length();i++) {
+            res.add(this.getString(i));
+        }
+        return res;
     }
 
 

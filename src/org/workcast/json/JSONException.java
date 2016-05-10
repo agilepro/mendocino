@@ -32,4 +32,22 @@ public class JSONException extends Exception {
         super("Error while processing JSON", cause);
     }
 
+    /**
+    * Walks through a chain of exception objects, from the first, to each
+    * "cause" in turn, creating a single combined string message from all
+    * the exception objects in the chain, with newline characters between
+    * each exception message.
+    */
+    public static String getFullMessage(Throwable e)
+    {
+        StringBuffer retMsg = new StringBuffer();
+        while (e != null) {
+            retMsg.append(e.toString());
+            retMsg.append("\n");
+            e = e.getCause();
+        }
+        return retMsg.toString();
+    }
+
+
 }
