@@ -61,4 +61,33 @@ public interface TemplateTokenRetriever {
      */
     public void writeTokenValue(Writer out, String token) throws Exception;
 
+    /**
+     * A loop has an identifier which functions as the iterated data item,
+     * and a token which refers to the array that you are iterating over.
+     *
+     * The id passed was specified by the user, and it will serve as a
+     * variable that can access the iterated object.  This id value may
+     * be passed as a token in a regular data write token, so the TTR
+     * must remember this id, and check first for this.
+     *
+     * There could be any number of levels of loops, each one must have
+     * a unique id.
+     */
+    public int initLoop(String id, String token) throws Exception;
+
+
+    /**
+     * Before each time through a loop, this will be called to say which
+     * iteration of the loop it is in, and therevore which index element of the
+     * chosen array (see initLoop) should be accessed
+     */
+    public void setIteration(String id, int loopCount) throws Exception;
+
+
+    /**
+     * When a loop is finished, this is called so that the id can be freed up
+     * and references to this id value will no longer work.
+     */
+    public void closeLoop(String id) throws Exception;
+
 }

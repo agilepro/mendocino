@@ -1,0 +1,31 @@
+<html>
+<body>
+<h1>This is a compound page template</h1>
+
+Hello {{tester.name}},<br/>
+
+{{!LOOP addr address}}
+<p>People from {{addr.city}}, in {{addr.state}}, 
+can clearly see values substituted into the text.</p>
+{{!ENDLOOP}}
+
+Since you are a {{tester.age}} year-old {{tester.occupation}} you should
+be able to see it too.
+
+Please vote for {{!LOOP flavor flavors}}{{flavor}}, {{!ENDLOOP}} as the best flavors.
+
+<table>
+{{!LOOP addr1 address}}
+{{!LOOP addr2 address}}
+{{!LOOP flavor flavors}}
+<tr><td>{{addr1.city}}</td><td>is better than</td><td>{{addr2.city}}</td><td>for {{flavor}}</td></tr>
+{{!ENDLOOP}}
+{{!ENDLOOP}}
+{{!ENDLOOP}}
+</table>
+
+Goodbye
+
+</body>
+</html>
+

@@ -1,22 +1,13 @@
 package org.workcast.mendocinotest;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.List;
-import java.util.Random;
-import java.util.Vector;
-
 import org.workcast.json.JSONObject;
-import org.workcast.streams.CSVHelper;
-import org.workcast.streams.MemFile;
 import org.workcast.streams.TemplateJSONRetriever;
 import org.workcast.streams.TemplateStreamer;
 import org.workcast.testframe.TestRecorder;
@@ -41,6 +32,7 @@ public class TestTemplates implements TestSet {
         testGenTemplate("TemplateSimple");
         testGenTemplate("TemplateCompound");
         testGenTemplate("TemplateArray");
+        testGenTemplate("TemplateLoop");
     }
 
 

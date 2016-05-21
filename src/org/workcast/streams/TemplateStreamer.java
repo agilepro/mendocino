@@ -201,17 +201,81 @@ public class TemplateStreamer {
 
         ArrayList<TemplateChunk> chunks = parseChunks(template);
 
-        for (TemplateChunk chunk : chunks) {
+        int positionCounter = 0;
+        while (positionCounter < chunks.size()) {
+            TemplateChunk chunk = chunks.get(positionCounter);
 
             if (!chunk.isToken) {
                 out.write(chunk.value);
             }
+            else if (chunk.value.startsWith("!LOOP")) {
+                positionCounter = handleLoop(out, positionCounter, chunks, ttr);
+            }
             else {
                 ttr.writeTokenValue(out, chunk.value);
             }
-
+            positionCounter++;
         }
 
+    }
+
+    /**
+     * Pass in the position of the LOOP begin, and this will return
+     * the position of the LOOPEND so that process can continue AFTER that
+     */
+    private static int handleLoop(Writer out, int startPosition, ArrayList<TemplateChunk> chunks,
+            TemplateTokenRetriever ttr) throws Exception {
+
+        TemplateChunk loopStart = chunks.get(startPosition);
+        ArrayList<String> parts = splitSpaces(loopStart.value);
+        String command = parts.get(0);
+        if (!"!LOOP".equals(command)) {
+            throw new Exception("Don't understand the command "+command+" from template line "+loopStart.lineNumber);
+        }
+
+        if (parts.size()!=3) {
+            throw new Exception("A LOOP command should have 3 parts, but this one has "+parts.size()
+                    +" from template line "+loopStart.lineNumber);
+        }
+        String identifier = parts.get(1);
+        String dataPath = parts.get(2);
+        int loopCount = ttr.initLoop(identifier, dataPath);
+
+        int pass = 0;
+        int endPosition = -1;
+
+        while (pass<loopCount) {
+            int positionCounter = startPosition+1;
+            ttr.setIteration(identifier, pass);
+            while (positionCounter<chunks.size()) {
+                TemplateChunk chunk = chunks.get(positionCounter);
+
+                if (chunk.value.startsWith("!ENDLOOP")) {
+                    endPosition = positionCounter;
+                    break;
+                }
+
+                if (!chunk.isToken) {
+                    out.write(chunk.value);
+                }
+                else if (chunk.value.startsWith("!LOOP")) {
+                    positionCounter = handleLoop(out, positionCounter, chunks, ttr);
+                }
+                else {
+                    ttr.writeTokenValue(out, chunk.value);
+                }
+
+                positionCounter++;
+            }
+            pass++;
+        }
+
+        if (endPosition > 0 && endPosition < chunks.size()) {
+            return endPosition;
+        }
+
+        //if we never found the end, then just report the last chunk in the set
+        return chunks.size()-1;
     }
 
     private static ArrayList<TemplateChunk> parseChunks(Reader template) throws Exception {
@@ -221,10 +285,11 @@ public class TemplateStreamer {
 
         StringBuffer sb = new StringBuffer();
         while (true) {
+            int spanLineStart = lnr.getLineNumber();
 
             int ch = lnr.read();
             if (ch < 0) {
-                chunks.add(new TemplateChunk(false,sb.toString()));
+                chunks.add(new TemplateChunk(false,sb.toString(), spanLineStart));
                 return chunks;
             }
 
@@ -235,7 +300,7 @@ public class TemplateStreamer {
 
             ch = lnr.read();
             if (ch < 0) {
-                chunks.add(new TemplateChunk(false,sb.toString()));
+                chunks.add(new TemplateChunk(false,sb.toString(), spanLineStart));
                 return chunks;
             }
 
@@ -245,7 +310,7 @@ public class TemplateStreamer {
                 continue;
             }
 
-            chunks.add(new TemplateChunk(false,sb.toString()));
+            chunks.add(new TemplateChunk(false,sb.toString(), spanLineStart));
             sb = new StringBuffer();
 
             // now we definitely have a token
@@ -269,7 +334,7 @@ public class TemplateStreamer {
                 }
 
                 // now we have see the closing brace
-                chunks.add(new TemplateChunk(true,tokenVal.toString()));
+                chunks.add(new TemplateChunk(true,tokenVal.toString(), tokenLineStart));
 
 
                 // read one more character, to get rid of the second closing
@@ -289,12 +354,51 @@ public class TemplateStreamer {
 
     private static class TemplateChunk {
         boolean isToken;
+        int lineNumber;
         String value;
 
-        TemplateChunk(boolean m, String s) {
+        TemplateChunk(boolean m, String s, int line) {
             isToken = m;
             value = s;
+            lineNumber = line;
         }
+    }
+
+
+    /**
+     * Breaks a string into a list of strings using spaces
+     * as separators of the token, and trimming each token of
+     * extra spaces if there are any.
+     */
+    private static ArrayList<String> splitSpaces(String val) {
+        ArrayList<String> ret = new ArrayList<String>();
+
+        if (val==null) {
+            return ret;
+        }
+
+        int pos = 0;
+        int spacePos = val.indexOf(" ");
+        while (spacePos >= pos) {
+            if (spacePos > pos) {
+                ret.add(val.substring(pos,spacePos));
+            }
+            pos = spacePos + 1;
+
+            //skip any extra spaces
+            while (pos<val.length() && val.charAt(pos)==' ') {
+                pos++;
+            }
+
+            if (pos >= val.length()) {
+                break;
+            }
+            spacePos = val.indexOf(" ", pos);
+        }
+        if (pos<val.length()) {
+            ret.add(val.substring(pos).trim());
+        }
+        return ret;
     }
 
 }

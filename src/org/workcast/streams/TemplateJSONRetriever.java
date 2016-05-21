@@ -2,6 +2,7 @@ package org.workcast.streams;
 
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
@@ -44,6 +45,8 @@ import org.workcast.json.JSONObject;
  */
 public class TemplateJSONRetriever implements TemplateTokenRetriever {
     JSONObject data;
+    Hashtable<String,JSONArray> loopArray = new Hashtable<String,JSONArray>();
+    Hashtable<String,Object> loopValue = new Hashtable<String,Object>();
 
     public TemplateJSONRetriever(JSONObject _data) {
         data = _data;
@@ -54,8 +57,33 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
         ArrayList<String> tokens = splitDots(token);
 
         try {
-            String val = getValuefromObject(tokens, 0, data);
-            out.write(val);
+            //first token is special because it might be a loop iterator;
+            String firstToken = tokens.get(0);
+            JSONArray itArray = loopArray.get(firstToken);
+            Object val = null;
+
+            if (itArray!=null) {
+                Object o = loopValue.get(firstToken);
+                if (o==null) {
+                    throw new Exception("Problem that loop have been initiated, but the setIteration has not been called");
+                }
+                if (o instanceof JSONArray) {
+                    val = getValuefromArray(tokens, 1, (JSONArray)o);
+                }
+                else if (o instanceof JSONObject) {
+                    val = getValuefromObject(tokens, 1, (JSONObject)o);
+                }
+                else {
+                    val = o;
+                }
+            }
+            else {
+                val = getValuefromObject(tokens, 0, data);
+            }
+
+            if (val!=null) {
+                out.write(val.toString());
+            }
         }
         catch (Exception e) {
             throw new Exception("Unable to get value from path "+token, e);
@@ -63,7 +91,41 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
     }
 
 
-    private static String getValuefromObject(ArrayList<String> tokens, int index, JSONObject d) throws Exception {
+
+    public int initLoop(String id, String token) throws Exception {
+        //find the array that the token refers to
+        //and set up to handle as a loop
+        ArrayList<String> tokens = splitDots(token);
+        Object o = getValuefromObject(tokens, 0, data);
+
+        if (o instanceof JSONArray) {
+            loopArray.put(id, (JSONArray)o);
+            return ((JSONArray)o).length();
+        }
+        else {
+            throw new Exception("Loop data path parameter must address a JSON Array, but this one does not: "+token);
+        }
+    }
+
+    public void setIteration(String id, int loopCount) throws Exception {
+        JSONArray itArray = loopArray.get(id);
+        if (itArray==null) {
+            throw new Exception("Loop problem, no loop with id ("+id+") appears to have been initialized.");
+        }
+        if (loopCount>=itArray.length()) {
+            throw new Exception("Loop problem, seem to have iterated off end of array: "
+                    +loopCount+" is greater than "+(itArray.length()-1));
+        }
+        loopValue.put(id, itArray.get(loopCount));
+    }
+
+    public void closeLoop(String id) throws Exception {
+        loopArray.remove(id);
+        loopValue.remove(id);
+    }
+
+
+    private static Object getValuefromObject(ArrayList<String> tokens, int index, JSONObject d) throws Exception {
         String thisToken = tokens.get(index);
         if (!d.has(thisToken)) {
             //no member by this name, so return no value, keep it silent
@@ -75,7 +137,7 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
 
         if (index == tokens.size() - 1) {
             //in this case we actually need to get a string
-            return o.toString();
+            return o;
         }
 
         if (o instanceof JSONObject) {
@@ -86,11 +148,11 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
             return getValuefromArray(tokens, index+1, (JSONArray)o );
         }
 
-        //don't know what else it is, so just return string
-        return o.toString();
+        //don't know what else it is, so just return object
+        return o;
     }
 
-    private static String getValuefromArray(ArrayList<String> tokens, int index, JSONArray ja) throws Exception {
+    private static Object getValuefromArray(ArrayList<String> tokens, int index, JSONArray ja) throws Exception {
         String thisToken = tokens.get(index);
         int intIndex = safeConvertInt(thisToken);
         if (intIndex >= ja.length()) {
@@ -103,7 +165,7 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
 
         if (index == tokens.size() - 1) {
             //in this case we actually need to get a string
-            return ja.getString(intIndex);
+            return o;
         }
 
         if (o instanceof JSONObject) {
@@ -115,7 +177,7 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
         }
 
         //anything else, just return the string version of it
-        return o.toString();
+        return o;
     }
 
     /**
@@ -139,7 +201,12 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
         return res;
     }
 
-    private ArrayList<String> splitDots(String val) {
+    /**
+     * Breaks a string into a list of strings using dots (periods)
+     * as separators of the token, and trimming each token of
+     * spaces if there are any.
+     */
+    public static ArrayList<String> splitDots(String val) {
         ArrayList<String> ret = new ArrayList<String>();
 
         if (val==null) {
