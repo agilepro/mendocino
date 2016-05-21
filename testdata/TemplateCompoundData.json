@@ -1,0 +1,17 @@
+{
+    tester: {
+        name: "Harry Houdini",
+        age: 102,
+        occupation: "Escape Artist"
+    },
+    address: {
+        primary: {
+            city: "Tulsa",
+            state: "Oklahoma"
+            },
+        secondary: {
+            city: "Demoines",
+            state: "Iowa"
+        }
+    }
+}

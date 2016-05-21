@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.LineNumberReader;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 
 /**
  * <p>
@@ -197,40 +198,65 @@ public class TemplateStreamer {
      */
     public static void streamTemplate(Writer out, Reader template, TemplateTokenRetriever ttr)
             throws Exception {
-        LineNumberReader lnr = new LineNumberReader(template);
 
+        ArrayList<TemplateChunk> chunks = parseChunks(template);
+
+        for (TemplateChunk chunk : chunks) {
+
+            if (!chunk.isToken) {
+                out.write(chunk.value);
+            }
+            else {
+                ttr.writeTokenValue(out, chunk.value);
+            }
+
+        }
+
+    }
+
+    private static ArrayList<TemplateChunk> parseChunks(Reader template) throws Exception {
+        LineNumberReader lnr = new LineNumberReader(template);
+        ArrayList<TemplateChunk> chunks = new ArrayList<TemplateChunk>();
+
+
+        StringBuffer sb = new StringBuffer();
         while (true) {
 
             int ch = lnr.read();
             if (ch < 0) {
-                return;
+                chunks.add(new TemplateChunk(false,sb.toString()));
+                return chunks;
             }
 
             if (ch != '{') {
-                out.write(ch);
+                sb.append((char)ch);
                 continue;
             }
 
             ch = lnr.read();
             if (ch < 0) {
-                return;
+                chunks.add(new TemplateChunk(false,sb.toString()));
+                return chunks;
             }
 
             if (ch != '{') {
-                out.write('{');
-                out.write(ch);
+                sb.append('{');
+                sb.append((char)ch);
                 continue;
             }
 
-            // now we definitely have a token
-            int tokenLineStart = lnr.getLineNumber();
+            chunks.add(new TemplateChunk(false,sb.toString()));
+            sb = new StringBuffer();
 
+            // now we definitely have a token
+
+            int tokenLineStart = lnr.getLineNumber();
             try {
                 StringBuffer tokenVal = new StringBuffer();
                 ch = lnr.read();
                 if (ch < 0) {
                     throw new Exception(
-                            "Template source stream ended before finding a closing brace character");
+                        "Source stream ended before finding a closing brace character");
                 }
 
                 while (ch != '}') {
@@ -238,12 +264,13 @@ public class TemplateStreamer {
                     ch = lnr.read();
                     if (ch < 0) {
                         throw new Exception(
-                                "Template source stream ended before finding a closing brace character");
+                            "Source stream ended before finding a closing brace character");
                     }
                 }
 
                 // now we have see the closing brace
-                ttr.writeTokenValue(out, tokenVal.toString());
+                chunks.add(new TemplateChunk(true,tokenVal.toString()));
+
 
                 // read one more character, to get rid of the second closing
                 // brace.
@@ -255,8 +282,18 @@ public class TemplateStreamer {
             }
             catch (Exception e) {
                 throw new Exception("Problem with template token starting on line "
-                        + tokenLineStart);
+                        + tokenLineStart, e);
             }
+        }
+    }
+
+    private static class TemplateChunk {
+        boolean isToken;
+        String value;
+
+        TemplateChunk(boolean m, String s) {
+            isToken = m;
+            value = s;
         }
     }
 

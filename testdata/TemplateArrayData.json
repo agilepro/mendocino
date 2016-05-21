@@ -1,0 +1,18 @@
+{
+    tester: {
+        name: "Harry Houdini",
+        age: 102,
+        occupation: "Escape Artist"
+    },
+    address: [
+        {
+            city: "Tulsa",
+            state: "Oklahoma"
+            },
+        {
+            city: "Demoines",
+            state: "Iowa"
+        }
+    ],
+    flavors: ["cherry", "blueberry", "peach", "almond"]
+}

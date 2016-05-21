@@ -26,7 +26,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Properties;
 import java.util.Random;
 import java.util.Vector;
 
@@ -696,52 +695,9 @@ public class Test1 implements TestSet {
     }
 
     public static void main(String args[]) {
-        TestRecorderText tr=null;
-        try {
-            if (args.length < 2) {
-                throw new Exception("USAGE: Test1  <source folder>  <test output folder>");
-            }
-            String sourceFolder = args[0];
-            String outputFolder = args[1];
-            Properties props = new Properties();
-            props.put("source", sourceFolder);
-            props.put("testoutput", outputFolder);
-
-            File testsrc = new File(sourceFolder, "testdata");
-            if (!testsrc.isDirectory()) {
-                throw new Exception(
-                        "Configuration error: first parameter must be the path to the source directory and it must exist.  The following was passed and does not exist: "
-                                + sourceFolder);
-            }
-            File testout = new File(outputFolder);
-            if (!testout.isDirectory()) {
-                throw new Exception(
-                        "Configuration error: second parameter must be the path to the test output directory and it must exist.  The following was passed and does not exist: "
-                                + outputFolder);
-            }
-
-            File outputFile = new File(testout, "output_test1.txt");
-            if (outputFile.exists()) {
-                outputFile.delete();
-            }
-            tr = new TestRecorderText(new OutputStreamWriter(new FileOutputStream(outputFile), "UTF-8"),
-                    true, new String[0], ".", props);
-            Test1 t1 = new Test1();
-            t1.runTests(tr);
-        }
-        catch (Exception e) {
-            System.out.print("\n\n\n====================================================");
-            System.out.print("\nEXCEPTION CAUGHT AT MAIN LEVEL:\n");
-            e.printStackTrace(System.out);
-        }
-        if (tr!=null) {
-            System.out.print("\n\n\n====================================================");
-            System.out.print("\n               FINISHED TEST1 RUN");
-            System.out.print("\n====================================================");
-            System.out.print("\n Number PASSED: "+tr.passedCount());
-            System.out.print("\n Number FAILED: "+tr.failedCount());
-            System.out.print("\n Number FATAL:  "+tr.fatalCount());
-            System.out.print("\n====================================================\n");
-        }
+        Test1 thisTest = new Test1();
+        TestRecorderText.parseArgsRunTests(args, thisTest);
     }
+
+
 }
