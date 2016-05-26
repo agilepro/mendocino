@@ -209,7 +209,10 @@ public class TemplateStreamer {
                 out.write(chunk.value);
             }
             else if (chunk.value.startsWith("!LOOP")) {
-                positionCounter = handleLoop(out, positionCounter, chunks, ttr);
+                positionCounter = handleLoop(out, positionCounter, chunks, true, ttr);
+            }
+            else if (chunk.value.startsWith("!IF")) {
+                positionCounter = handleIf(out, positionCounter, chunks, true, ttr);
             }
             else {
                 ttr.writeTokenValue(out, chunk.value);
@@ -224,7 +227,7 @@ public class TemplateStreamer {
      * the position of the LOOPEND so that process can continue AFTER that
      */
     private static int handleLoop(Writer out, int startPosition, ArrayList<TemplateChunk> chunks,
-            TemplateTokenRetriever ttr) throws Exception {
+            boolean showOutput, TemplateTokenRetriever ttr) throws Exception {
 
         TemplateChunk loopStart = chunks.get(startPosition);
         ArrayList<String> parts = splitSpaces(loopStart.value);
@@ -256,18 +259,89 @@ public class TemplateStreamer {
                 }
 
                 if (!chunk.isToken) {
-                    out.write(chunk.value);
+                    if (showOutput) {
+                        out.write(chunk.value);
+                    }
                 }
                 else if (chunk.value.startsWith("!LOOP")) {
-                    positionCounter = handleLoop(out, positionCounter, chunks, ttr);
+                    positionCounter = handleLoop(out, positionCounter, chunks, showOutput, ttr);
+                }
+                else if (chunk.value.startsWith("!IF")) {
+                    positionCounter = handleIf(out, positionCounter, chunks, showOutput, ttr);
                 }
                 else {
-                    ttr.writeTokenValue(out, chunk.value);
+                    if (showOutput) {
+                        ttr.writeTokenValue(out, chunk.value);
+                    }
                 }
 
                 positionCounter++;
             }
             pass++;
+        }
+
+        ttr.closeLoop(identifier);
+
+        if (endPosition > 0 && endPosition < chunks.size()) {
+            return endPosition;
+        }
+
+        //if we never found the end, then just report the last chunk in the set
+        return chunks.size()-1;
+    }
+
+
+
+    /**
+     * Pass in the position of the LOOP begin, and this will return
+     * the position of the LOOPEND so that process can continue AFTER that
+     */
+    private static int handleIf(Writer out, int startPosition, ArrayList<TemplateChunk> chunks,
+            boolean showOutput, TemplateTokenRetriever ttr) throws Exception {
+
+        TemplateChunk loopStart = chunks.get(startPosition);
+        ArrayList<String> parts = splitSpaces(loopStart.value);
+        String command = parts.get(0);
+        if (!"!IF".equals(command)) {
+            throw new Exception("Don't understand the command "+command+" from template line "+loopStart.lineNumber);
+        }
+
+        if (parts.size()!=2) {
+            throw new Exception("A IF command should have 2 parts, but this one has "+parts.size()
+                    +" from template line "+loopStart.lineNumber);
+        }
+        String dataPath = parts.get(1);
+        boolean hasValue = ttr.ifValue(dataPath);
+
+        int endPosition = -1;
+
+        int positionCounter = startPosition+1;
+        while (positionCounter<chunks.size()) {
+            TemplateChunk chunk = chunks.get(positionCounter);
+
+            if (chunk.value.startsWith("!ENDIF")) {
+                endPosition = positionCounter;
+                break;
+            }
+
+            if (!chunk.isToken) {
+                if (showOutput && hasValue) {
+                    out.write(chunk.value);
+                }
+            }
+            else if (chunk.value.startsWith("!LOOP")) {
+                positionCounter = handleLoop(out, positionCounter, chunks, showOutput && hasValue, ttr);
+            }
+            else if (chunk.value.startsWith("!IF")) {
+                positionCounter = handleIf(out, positionCounter, chunks, showOutput && hasValue, ttr);
+            }
+            else {
+                if (showOutput && hasValue) {
+                    ttr.writeTokenValue(out, chunk.value);
+                }
+            }
+
+            positionCounter++;
         }
 
         if (endPosition > 0 && endPosition < chunks.size()) {
@@ -277,6 +351,8 @@ public class TemplateStreamer {
         //if we never found the end, then just report the last chunk in the set
         return chunks.size()-1;
     }
+
+
 
     private static ArrayList<TemplateChunk> parseChunks(Reader template) throws Exception {
         LineNumberReader lnr = new LineNumberReader(template);

@@ -33,6 +33,7 @@ public class TestTemplates implements TestSet {
         testGenTemplate("TemplateCompound");
         testGenTemplate("TemplateArray");
         testGenTemplate("TemplateLoop");
+        testGenTemplate("TemplateCondition");
     }
 
 

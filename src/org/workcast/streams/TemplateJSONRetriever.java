@@ -54,32 +54,8 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
 
 
     public void writeTokenValue(Writer out, String token) throws Exception {
-        ArrayList<String> tokens = splitDots(token);
-
         try {
-            //first token is special because it might be a loop iterator;
-            String firstToken = tokens.get(0);
-            JSONArray itArray = loopArray.get(firstToken);
-            Object val = null;
-
-            if (itArray!=null) {
-                Object o = loopValue.get(firstToken);
-                if (o==null) {
-                    throw new Exception("Problem that loop have been initiated, but the setIteration has not been called");
-                }
-                if (o instanceof JSONArray) {
-                    val = getValuefromArray(tokens, 1, (JSONArray)o);
-                }
-                else if (o instanceof JSONObject) {
-                    val = getValuefromObject(tokens, 1, (JSONObject)o);
-                }
-                else {
-                    val = o;
-                }
-            }
-            else {
-                val = getValuefromObject(tokens, 0, data);
-            }
+            Object val = getValueFromContext(token);
 
             if (val!=null) {
                 out.write(val.toString());
@@ -90,6 +66,36 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
         }
     }
 
+
+    private Object getValueFromContext(String token) throws Exception {
+        ArrayList<String> tokens = splitDots(token);
+        String firstToken = tokens.get(0);
+        JSONArray itArray = loopArray.get(firstToken);
+        Object val = null;
+
+        if (itArray!=null) {
+            Object o = loopValue.get(firstToken);
+            if (o==null) {
+                throw new Exception("Problem that loop have been initiated, but the setIteration has not been called");
+            }
+            if (tokens.size()<=1) {
+                val = o;
+            }
+            else if (o instanceof JSONArray) {
+                val = getValuefromArray(tokens, 1, (JSONArray)o);
+            }
+            else if (o instanceof JSONObject) {
+                val = getValuefromObject(tokens, 1, (JSONObject)o);
+            }
+            else {
+                val = o;
+            }
+        }
+        else {
+            val = getValuefromObject(tokens, 0, data);
+        }
+        return val;
+    }
 
 
     public int initLoop(String id, String token) throws Exception {
@@ -122,6 +128,35 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
     public void closeLoop(String id) throws Exception {
         loopArray.remove(id);
         loopValue.remove(id);
+    }
+
+    public boolean ifValue(String token) throws Exception {
+        try {
+            Object o = getValueFromContext(token);
+
+            if (o==null) {
+                //should never get a null back, but if so it is a false
+                return false;
+            }
+            if (o instanceof JSONObject) {
+                JSONObject jo = (JSONObject)o;
+                return (jo.length()>0);
+            }
+            else if (o instanceof JSONArray) {
+                JSONArray ja = (JSONArray)o;
+                return (ja.length()>0);
+            }
+            else if (o instanceof String) {
+                return ((String)o).length()>0;
+            }
+            else if (o instanceof Integer) {
+                return ((Integer)o).intValue()!=0;
+            }
+            return false;
+        }
+        catch (Exception e) {
+            throw new Exception("Unable to determine whether value exists: "+token, e);
+        }
     }
 
 

@@ -90,4 +90,20 @@ public interface TemplateTokenRetriever {
      */
     public void closeLoop(String id) throws Exception;
 
+
+    /**
+     * Looks at the value specified, and returns boolean
+     *
+     * scalar:
+     *     true means for a scalar that there is a value there, and that the
+     *          value is not 0, false, or null.
+     *     false means it is missing, empty, null, 0, or nullstring.
+     *
+     * array:
+     *     true means there is one or more entries
+     *     false means either it is missing, or it has no entries
+     *
+     */
+    public boolean ifValue(String token) throws Exception;
+
 }

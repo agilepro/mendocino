@@ -1,0 +1,54 @@
+<html>
+<body>
+<h1>This is a compound page template</h1>
+
+Hello {{tester.name}},<br/>
+
+See: {{!IF root}}should exist: {{root}}. {{!ENDIF}}
+Hide: {{!IF nullArray}}SHOULD NOT SEE nullArray{{!ENDIF}}
+Hide: {{!IF zeroValue}}SHOULD NOT SEE zeroValue{{!ENDIF}}
+Hide: {{!IF emptyValue}}SHOULD NOT SEE emptyValue{{!ENDIF}}
+See: {{!IF flavors.1}}index into string should exist{{!ENDIF}}
+Hide: {{!IF flavors.5}}out of bounds should not exist{{!ENDIF}}
+
+
+{{!LOOP addr address}}
+<p>People 
+See: {{!IF addr}}iterator value{{!ENDIF}}
+See: {{!IF addr.city}}iterator value sub field{{!ENDIF}}
+Hide: {{!IF nopenope}}random nonexisting value{{!ENDIF}}
+Hide: {{!IF nopenope.sub}}random nonexisting value subfield{{!ENDIF}}
+See: {{!IF root}}should exist: {{root}}. {{!ENDIF}}
+can clearly see values substituted into the text.</p>
+{{!ENDLOOP}}
+
+A {{tester.age}} year-old {{tester.occupation}} can see it too.
+
+{{!IF flavors}}
+Flavors Array Exists: {{!LOOP flavor flavors}}{{flavor}}, {{!ENDLOOP}}are the best flavors.
+{{!ENDIF}}
+
+Hide: {{!IF doesNotExist}}doesNotExist does not exist.{{!ENDIF}}
+
+Since you are a {{tester.age}} year-old {{tester.occupation}} you should
+be able to see it too.
+
+{{!IF address}}
+YES address exists, nesting inside true:
+See: {{!IF flavors.1}}index into string should exist{{!ENDIF}}
+Hide: {{!IF nullArray}}SHOULD NOT SEE nullArray{{!ENDIF}}
+Hide: {{!IF zeroValue}}SHOULD NOT SEE zeroValue{{!ENDIF}}
+Hide: {{!IF emptyValue}}SHOULD NOT SEE emptyValue{{!ENDIF}}
+and this should still be visible.
+{{!ENDIF}}
+
+Testing true nested inside false:
+{{!IF nullArray}}
+Should NOT see this: {{!IF root}}should exist: {{root}}. {{!ENDIF}}
+{{!ENDIF}}
+
+Goodbye
+
+</body>
+</html>
+
