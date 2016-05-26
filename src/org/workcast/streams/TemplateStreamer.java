@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.LineNumberReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -334,6 +334,10 @@ public class TemplateStreamer {
             }
             else if (chunk.value.startsWith("!IF")) {
                 positionCounter = handleIf(out, positionCounter, chunks, showOutput && hasValue, ttr);
+            }
+            else if (chunk.value.startsWith("!ELSE")) {
+                //only thing we do is switch the logic of writing to non-writing and vice versa
+                hasValue = !hasValue;
             }
             else {
                 if (showOutput && hasValue) {

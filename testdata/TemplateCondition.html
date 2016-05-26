@@ -4,8 +4,8 @@
 
 Hello {{tester.name}},<br/>
 
-See: {{!IF root}}should exist: {{root}}. {{!ENDIF}}
-Hide: {{!IF nullArray}}SHOULD NOT SEE nullArray{{!ENDIF}}
+See: {{!IF root}}should exist: {{root}}. {{!ELSE}}SHOULD NOT see ELSE{{!ENDIF}}
+Hide: {{!IF nullArray}}SHOULD NOT SEE nullArray{{!ELSE}}this is ELSE{{!ENDIF}}
 Hide: {{!IF zeroValue}}SHOULD NOT SEE zeroValue{{!ENDIF}}
 Hide: {{!IF emptyValue}}SHOULD NOT SEE emptyValue{{!ENDIF}}
 See: {{!IF flavors.1}}index into string should exist{{!ENDIF}}
