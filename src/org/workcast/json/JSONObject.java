@@ -142,11 +142,16 @@ public class JSONObject {
      * JSONObject tree that the file represents.
      */
     public static JSONObject readFromFile(File inFile) throws Exception {
-        FileInputStream fis = new FileInputStream(inFile);
-        JSONTokener jt = new JSONTokener(fis);
-        JSONObject jo = new JSONObject(jt);
-        fis.close();
-        return jo;
+        try {
+            FileInputStream fis = new FileInputStream(inFile);
+            JSONTokener jt = new JSONTokener(fis);
+            JSONObject jo = new JSONObject(jt);
+            fis.close();
+            return jo;
+        }
+        catch (Exception e) {
+            throw new Exception("Unable to read JSON objects from file: "+inFile, e);
+        }
     }
 
     /**
@@ -164,19 +169,27 @@ public class JSONObject {
      * @throws Exception
      */
     public void writeToFile(File outFile) throws Exception {
-        File folder = outFile.getParentFile();
-        File tempFile = new File(folder, "~"+outFile.getName()+"~tmp~");
-        if (tempFile.exists()) {
-            tempFile.delete();
+        try {
+            File folder = outFile.getParentFile();
+            File tempFile = new File(folder, "~"+outFile.getName()+"~tmp~");
+            if (tempFile.exists()) {
+                tempFile.delete();
+            }
+            FileOutputStream fos = new FileOutputStream(tempFile);
+            OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+            this.write(osw,2,0);
+            osw.close();
+            if (outFile.exists()) {
+                if (!outFile.delete()) {
+                    throw new Exception("Unable to delete the previous file ("+outFile
+                       +").  Did you close the previous input stream when you read this file before?");
+                }
+            }
+            tempFile.renameTo(outFile);
         }
-        FileOutputStream fos = new FileOutputStream(tempFile);
-        OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-        this.write(osw,2,0);
-        osw.close();
-        if (outFile.exists()) {
-            outFile.delete();
+        catch (Exception e) {
+            throw new Exception("Unable to write JSON objects to the file: "+outFile, e);
         }
-        tempFile.renameTo(outFile);
     }
 
     /**

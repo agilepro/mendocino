@@ -91,23 +91,32 @@ public class StreamHelper {
     * of the copy, the temporary file might remain.
     */
     public static void copyStreamToFile(InputStream is, File file) throws Exception {
-
-        File folder = file.getParentFile();
-        File tempFile = new File(folder, "~"+file.getName()+".tmp~");
-
-        if (tempFile.exists()) {
-            tempFile.delete();
+        try {
+            File folder = file.getParentFile();
+            File tempFile = new File(folder, "~"+file.getName()+".tmp~");
+    
+            if (tempFile.exists()) {
+                if (!tempFile.delete()) {
+                    throw new Exception("Unable to delete the previously existing temporary file: "+tempFile);
+                }
+            }
+    
+            FileOutputStream fos = new FileOutputStream(tempFile);
+    
+            copyInputToOutput(is, fos);
+            fos.close();
+    
+            if (file.exists()) {
+                if (!file.delete()) {
+                    throw new Exception("Unable to delete the previous output file: "+file
+                            +".  Is the input stream that was used to read the file closed?");
+                }
+            }
+            tempFile.renameTo(file);
         }
-
-        FileOutputStream fos = new FileOutputStream(tempFile);
-
-        copyInputToOutput(is, fos);
-        fos.close();
-
-        if (file.exists()) {
-            file.delete();
+        catch (Exception e) {
+            throw new Exception("Unable to copy the stream to the file: "+ file, e);
         }
-        tempFile.renameTo(file);
     }
 
     /**
@@ -133,24 +142,33 @@ public class StreamHelper {
     * of the copy, the temporary file might remain.
     */
     public static void copyReaderToFile(Reader r, File file, String encoding) throws Exception {
-
-        File folder = file.getParentFile();
-        File tempFile = new File(folder, "~"+file.getName()+".tmp~");
-
-        if (tempFile.exists()) {
-            tempFile.delete();
+        try {
+            File folder = file.getParentFile();
+            File tempFile = new File(folder, "~"+file.getName()+".tmp~");
+    
+            if (tempFile.exists()) {
+                if (!tempFile.delete()) {
+                    throw new Exception("Unable to delete the previously existing temporary file: "+tempFile);
+                }
+            }
+    
+            FileOutputStream fos = new FileOutputStream(tempFile);
+            OutputStreamWriter osw = new OutputStreamWriter(fos, encoding);
+    
+            copyReaderToWriter(r, osw);
+            fos.close();
+    
+            if (file.exists()) {
+                if (!file.delete()) {
+                    throw new Exception("Unable to delete the previous output file: "+file
+                            +".  Is the input stream that was used to read the file closed?");
+                }
+            }
+            tempFile.renameTo(file);
         }
-
-        FileOutputStream fos = new FileOutputStream(tempFile);
-        OutputStreamWriter osw = new OutputStreamWriter(fos, encoding);
-
-        copyReaderToWriter(r, osw);
-        fos.close();
-
-        if (file.exists()) {
-            file.delete();
+        catch (Exception e) {
+            throw new Exception("Unable to copy the Reader data to the file: "+file, e);
         }
-        tempFile.renameTo(file);
     }
 
     /**

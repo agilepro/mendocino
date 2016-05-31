@@ -606,6 +606,7 @@ public class TestRecorderText implements TestRecorder {
             Properties props = new Properties();
             props.put("source", sourceFolder);
             props.put("testoutput", outputFolder);
+            props.put("verbose", "true");
 
             File testsrc = new File(sourceFolder, "testdata");
             if (!testsrc.isDirectory()) {

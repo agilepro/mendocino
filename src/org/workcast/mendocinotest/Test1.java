@@ -355,7 +355,7 @@ public class Test1 implements TestSet {
         // FIRST, write to intermediate file
         if (rand.nextBoolean()) {
             FileOutputStream fos = new FileOutputStream(intermediateFile);
-            Writer w = new OutputStreamWriter(fos);
+            Writer w = new OutputStreamWriter(fos, "UTF-8");
             jsonRep.write(w, 2, 0);
             w.close();
             fos.close();
@@ -378,7 +378,7 @@ public class Test1 implements TestSet {
         //THIRD, write to final file
         if (rand.nextBoolean()) {
             FileOutputStream fos = new FileOutputStream(outputFile);
-            Writer w = new OutputStreamWriter(fos);
+            Writer w = new OutputStreamWriter(fos, "UTF-8");
             jsonRep.write(w, 2, 0);
             w.close();
             fos.close();
