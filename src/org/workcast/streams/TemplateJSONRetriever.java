@@ -58,7 +58,7 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
             Object val = getValueFromContext(token);
 
             if (val!=null) {
-                out.write(val.toString());
+                TemplateStreamer.writeHtml(out, val.toString());
             }
         }
         catch (Exception e) {
@@ -66,6 +66,18 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
         }
     }
 
+    public void writeTokenValueRaw(Writer out, String token) throws Exception {
+        try {
+            Object val = getValueFromContext(token);
+
+            if (val!=null) {
+                out.write(val.toString());
+            }
+        }
+        catch (Exception e) {
+            throw new Exception("Unable to get value from path "+token, e);
+        }
+    }
 
     private Object getValueFromContext(String token) throws Exception {
         ArrayList<String> tokens = splitDots(token);

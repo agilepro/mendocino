@@ -62,6 +62,14 @@ public interface TemplateTokenRetriever {
     public void writeTokenValue(Writer out, String token) throws Exception;
 
     /**
+     * List writeTokenValue, but without the HTML encoding.
+     * Used to include preformatted HTML into the output.
+     * BUt be careful, this can be dangerous.
+     */
+    public void writeTokenValueRaw(Writer out, String token) throws Exception;
+
+
+    /**
      * A loop has an identifier which functions as the iterated data item,
      * and a token which refers to the array that you are iterating over.
      *

@@ -621,7 +621,7 @@ public class TestRecorderText implements TestRecorder {
                                 + outputFolder);
             }
 
-            File outputFile = new File(testout, "output_test1.txt");
+            File outputFile = new File(testout, "output_"+ts.getClass().getSimpleName()+".txt");
             if (outputFile.exists()) {
                 outputFile.delete();
             }

@@ -214,6 +214,10 @@ public class TemplateStreamer {
             else if (chunk.value.startsWith("!IF")) {
                 positionCounter = handleIf(out, positionCounter, chunks, true, ttr);
             }
+            else if (chunk.value.startsWith("!RAW")) {
+                ArrayList<String> subparts = splitSpaces(chunk.value);
+                ttr.writeTokenValueRaw(out, subparts.get(1));
+            }
             else {
                 ttr.writeTokenValue(out, chunk.value);
             }
@@ -268,6 +272,12 @@ public class TemplateStreamer {
                 }
                 else if (chunk.value.startsWith("!IF")) {
                     positionCounter = handleIf(out, positionCounter, chunks, showOutput, ttr);
+                }
+                else if (chunk.value.startsWith("!RAW")) {
+                    if (showOutput) {
+                        ArrayList<String> subparts = splitSpaces(chunk.value);
+                        ttr.writeTokenValueRaw(out, subparts.get(1));
+                    }
                 }
                 else {
                     if (showOutput) {
