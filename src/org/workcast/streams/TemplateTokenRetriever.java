@@ -68,6 +68,13 @@ public interface TemplateTokenRetriever {
      */
     public void writeTokenValueRaw(Writer out, String token) throws Exception;
 
+    
+    /**
+     * token specifies a date, and this will format the date for 
+     * inclusion in the form using the format specified in the last parameter.
+     */
+    public void writeTokenDate(Writer out, String token, String format) throws Exception;
+
 
     /**
      * A loop has an identifier which functions as the iterated data item,
@@ -113,5 +120,13 @@ public interface TemplateTokenRetriever {
      *
      */
     public boolean ifValue(String token) throws Exception;
+    
+    /**
+     * Produce an output which represents all of the tokens that can be used
+     * in the current template given the specific context.  In other words
+     * make a dump of all the data values right now so we know what values can
+     * be used in the tokens.
+     */
+    public void debugDump(Writer out) throws Exception;
 
 }

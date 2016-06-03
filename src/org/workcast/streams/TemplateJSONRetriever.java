@@ -1,6 +1,7 @@
 package org.workcast.streams;
 
 import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -75,12 +76,37 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
             }
         }
         catch (Exception e) {
-            throw new Exception("Unable to get value from path "+token, e);
+            throw new Exception("Unable to get RAW value from path "+token, e);
         }
     }
 
+    
+    public void writeTokenDate(Writer out, String token, String format) throws Exception {
+        try {
+            Object val = getValueFromContext(token);
+
+            if (val!=null && val instanceof String) {
+                long dateVal = safeConvertLong((String)val);
+                if (format==null) {
+                    format = "yyyy-mm-dd hh:mm:ss z";
+                }
+                SimpleDateFormat ff = new SimpleDateFormat(format);
+                out.write("@@DATE: "+token+"="+val+","+format+"@@");
+                out.write(ff.format(dateVal));
+            }
+        }
+        catch (Exception e) {
+            throw new Exception("Unable to format Date value from path "+token+", with format "+format, e);
+        }
+    }
+    
+    
+    
     private Object getValueFromContext(String token) throws Exception {
         ArrayList<String> tokens = splitDots(token);
+        if (tokens.size()==0) {
+            throw new Exception("Strange, the token value passed yeilded no tokens: "+token);
+        }
         String firstToken = tokens.get(0);
         JSONArray itArray = loopArray.get(firstToken);
         Object val = null;
@@ -171,7 +197,11 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
         }
     }
 
-
+    public void debugDump(Writer out) throws Exception {
+        data.write(out, 2, 0);
+    }
+    
+    
     private static Object getValuefromObject(ArrayList<String> tokens, int index, JSONObject d) throws Exception {
         String thisToken = tokens.get(index);
         if (!d.has(thisToken)) {
@@ -248,6 +278,22 @@ public class TemplateJSONRetriever implements TemplateTokenRetriever {
         return res;
     }
 
+    public static long safeConvertLong(String val) {
+        if (val == null) {
+            return 0;
+        }
+        long res = 0;
+        int last = val.length();
+        for (int i = 0; i < last; i++) {
+            char ch = val.charAt(i);
+            if (ch >= '0' && ch <= '9') {
+                res = res * 10 + ch - '0';
+            }
+        }
+        return res;
+    }
+    
+    
     /**
      * Breaks a string into a list of strings using dots (periods)
      * as separators of the token, and trimming each token of

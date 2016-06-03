@@ -205,23 +205,38 @@ public class TemplateStreamer {
         while (positionCounter < chunks.size()) {
             TemplateChunk chunk = chunks.get(positionCounter);
 
-            if (!chunk.isToken) {
-                out.write(chunk.value);
+            try {
+                if (!chunk.isToken) {
+                    out.write(chunk.value);
+                }
+                else if (chunk.value.startsWith("!LOOP")) {
+                    positionCounter = handleLoop(out, positionCounter, chunks, true, ttr);
+                }
+                else if (chunk.value.startsWith("!IF")) {
+                    positionCounter = handleIf(out, positionCounter, chunks, true, ttr);
+                }
+                else if (chunk.value.startsWith("!RAW")) {
+                    ArrayList<String> subparts = splitSpaces(chunk.value);
+                    ttr.writeTokenValueRaw(out, subparts.get(1));
+                }
+                else if (chunk.value.startsWith("!DATE")) {
+                    ArrayList<String> subparts = splitSpaces(chunk.value);
+                    if (subparts.size()<3) {
+                        throw new Exception("!DATE command must have two parameters, one for token and one for date format.");
+                    }
+                    ttr.writeTokenDate(out, subparts.get(1), subparts.get(2));
+                }
+                else if (chunk.value.startsWith("!DEBUG")) {
+                    ttr.debugDump(out);
+                }
+                else {
+                    ttr.writeTokenValue(out, chunk.value);
+                }
+                positionCounter++;
             }
-            else if (chunk.value.startsWith("!LOOP")) {
-                positionCounter = handleLoop(out, positionCounter, chunks, true, ttr);
+            catch (Exception e) {
+                throw new Exception("Problem on line "+chunk.lineNumber+" of template file.",e);
             }
-            else if (chunk.value.startsWith("!IF")) {
-                positionCounter = handleIf(out, positionCounter, chunks, true, ttr);
-            }
-            else if (chunk.value.startsWith("!RAW")) {
-                ArrayList<String> subparts = splitSpaces(chunk.value);
-                ttr.writeTokenValueRaw(out, subparts.get(1));
-            }
-            else {
-                ttr.writeTokenValue(out, chunk.value);
-            }
-            positionCounter++;
         }
 
     }
@@ -278,6 +293,18 @@ public class TemplateStreamer {
                         ArrayList<String> subparts = splitSpaces(chunk.value);
                         ttr.writeTokenValueRaw(out, subparts.get(1));
                     }
+                }
+                else if (chunk.value.startsWith("!DATE")) {
+                    if (showOutput) {
+                        ArrayList<String> subparts = splitSpaces(chunk.value);
+                        if (subparts.size()<3) {
+                            throw new Exception("!DATE command must have two parameters, one for token and one for date format.");
+                        }
+                        ttr.writeTokenDate(out, subparts.get(1), subparts.get(2));
+                    }
+                }
+                else if (chunk.value.startsWith("!DEBUG")) {
+                    ttr.debugDump(out);
                 }
                 else {
                     if (showOutput) {
@@ -348,6 +375,24 @@ public class TemplateStreamer {
             else if (chunk.value.startsWith("!ELSE")) {
                 //only thing we do is switch the logic of writing to non-writing and vice versa
                 hasValue = !hasValue;
+            }
+            else if (chunk.value.startsWith("!RAW")) {
+                if (showOutput) {
+                    ArrayList<String> subparts = splitSpaces(chunk.value);
+                    ttr.writeTokenValueRaw(out, subparts.get(1));
+                }
+            }
+            else if (chunk.value.startsWith("!DATE")) {
+                if (showOutput) {
+                    ArrayList<String> subparts = splitSpaces(chunk.value);
+                    if (subparts.size()<3) {
+                        throw new Exception("!DATE command must have two parameters, one for token and one for date format.");
+                    }
+                    ttr.writeTokenDate(out, subparts.get(1), subparts.get(2));
+                }
+            }
+            else if (chunk.value.startsWith("!DEBUG")) {
+                ttr.debugDump(out);
             }
             else {
                 if (showOutput && hasValue) {
