@@ -31,7 +31,7 @@ set HTMLUNIT_CP=%HTMLUNIT_LIB%\commons-codec-1.3.jar;%HTMLUNIT_LIB%\commons-coll
 set MENDO_CP=%SOURCE_DIR%
 
 :### compile java classes
-"%JAVA_HOME%\bin\javac" -source 1.5 -target 1.5 -d %TARGET_DIR%\mendo %SOURCE_DIR%\src\org\workcast\mendocino\*.java %SOURCE_DIR%\src\org\workcast\mendocinotest\*.java %SOURCE_DIR%\src\org\workcast\testframe\*.java %SOURCE_DIR%\src\org\workcast\streams\*.java %SOURCE_DIR%\src\org\workcast\json\*.java
+"%JAVA_HOME%\bin\javac" -source 1.6 -target 1.6 -d %TARGET_DIR%\mendo %SOURCE_DIR%\src\org\workcast\mendocino\*.java %SOURCE_DIR%\src\org\workcast\mendocinotest\*.java %SOURCE_DIR%\src\org\workcast\testframe\*.java %SOURCE_DIR%\src\org\workcast\streams\*.java %SOURCE_DIR%\src\org\workcast\json\*.java
 
 if errorlevel 1 goto EXIT
 
