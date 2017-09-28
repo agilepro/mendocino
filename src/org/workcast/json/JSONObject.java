@@ -1418,10 +1418,17 @@ public class JSONObject {
      *  with <code>}</code>&nbsp;<small>(right brace)</small>.
      * @throws JSONException If the object contains an invalid number.
      */
-    public String toString(int indentFactor) throws JSONException {
-        StringWriter w = new StringWriter();
-        synchronized (w.getBuffer()) {
-            return this.write(w, indentFactor, 0).toString();
+    public String toString(int indentFactor) {
+        try {
+            StringWriter w = new StringWriter();
+            synchronized (w.getBuffer()) {
+                return this.write(w, indentFactor, 0).toString();
+            }
+        }
+        catch (Exception e) {
+            //there is no conceivable exception that can come out of this, but throw something 
+            //just in case.   Want the signature to not have exception in it.
+            throw new RuntimeException("Can not serialize JSONObject????", e);
         }
     }
 

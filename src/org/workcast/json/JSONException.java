@@ -1,8 +1,11 @@
 package org.workcast.json;
 
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,6 +57,23 @@ public class JSONException extends Exception {
         return retMsg.toString();
     }
 
+    /**
+    * When an exception is caught, you will want to test whether the exception, or any of 
+    * the causing exceptions contains a particular string fragment.  This routine searches
+    * the entire cascading chain of exceptions and return true if the string fragment is 
+    * found in any of the exception, and false if the fragment is not found anywhere.
+    */
+    public static boolean containsMessage(Throwable t, String fragment) {
+        while (t!=null) {
+            if (t.getMessage().contains("retrieve the workitem")) {
+                return true;
+            }
+            t = t.getCause();
+        }
+        return false;
+    }
+
+    
     
     /**
      * In any kind of JSON protocol, you need to return an exception back to the caller.
@@ -76,7 +96,7 @@ public class JSONException extends Exception {
         responseBody.put("error", errorTag);
 
         errorTag.put("code", 400);
-        errorTag.put("target", context);
+        errorTag.put("context", context);
 
         JSONArray detailList = new JSONArray();
         errorTag.put("details", detailList);
@@ -178,6 +198,78 @@ public class JSONException extends Exception {
             pos = input.indexOf('\r', start);
         }
         return res;
+    }
+    
+    
+    /**
+     * A standardized way to trace a given exception to the system out.
+     */
+    public static JSONObject traceException(Exception e, String context) {
+        JSONObject errOB = traceException(System.out, e, context);
+        return errOB;
+    }
+    
+    /**
+     * A standardized way to trace a given exception to the system out.
+     */
+    public static JSONObject traceException(PrintStream out, Exception e, String context) {
+        if (out==null) {
+            System.out.println("$$$$$$$$ traceException requires an out parameter");
+            return null;
+        }
+        if (e==null) {
+            System.out.println("$$$$$$$$ traceException requires an e parameter");
+            return null;
+        }
+        if (context==null || context.length()==0) {
+            System.out.println("$$$$$$$$ traceException requires a context parameter");
+            return null;
+        }
+        try {
+            JSONObject errOb = convertToJSON(e, context);
+            traceConvertedException(out, errOb);
+            return errOb;
+        }
+        catch (Exception eee) {
+            System.out.println("$$$$$$$$ FAILURE TRACING AN EXCEPTION TO JSON");
+            eee.printStackTrace();
+            return null;
+        }
+    }
+    
+
+    /**
+     * If you have already converted to a JSONOBject, you can use this method to 
+     * get a standard trace of that object to the output writer.
+     */
+    public static void traceConvertedException(PrintStream out, JSONObject errOb) {
+        try {
+            out.println(getTraceExceptionFormat(errOb));
+        }
+        catch (Exception eee) {
+            System.out.println("$$$$$$$$ FAILURE TRACING A CONVERTED EXCEPTION");
+            eee.printStackTrace();
+        }
+    }
+
+    /**
+     * If you have already converted to a JSONOBject, you can use this method to 
+     * get a standard trace of that object to the output writer.
+     * 
+     * This returns a string because it was too difficult to sort out the 
+     * PrintWriter, Writer, PrintStream differences, and because all of the 
+     * exceptions within exception need to be handled with output streams.
+     * Clearly returning a string is not efficient memory-wise, but exceptions
+     * should be rare, so don't worry about it.
+     */
+    public static String getTraceExceptionFormat(JSONObject errOb) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n~~~~~~~~~~~~~EXCEPTION~~~~~~~~~~~~~~~~ ");
+        sb.append(new Date().toString());
+        sb.append("\n");
+        sb.append(errOb.toString(2));
+        sb.append("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n");
+        return sb.toString();
     }
     
 }
