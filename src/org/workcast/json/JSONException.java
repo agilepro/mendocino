@@ -145,7 +145,6 @@ public class JSONException extends Exception {
                 className = className.substring(dotPos+1);
             }
             detailObj.put("code",className);
-            System.out.println("          ERR: "+msg);
             detailList.put(detailObj);
         }
 
