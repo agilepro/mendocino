@@ -270,4 +270,52 @@ public class JSONException extends Exception {
         return sb.toString();
     }
     
+    /**
+     * Given a JSON representation of an exception, this re-constructs the Exception
+     * chain (linked cause exceptions) and returns the Exception object.
+     * The main purpose of this is when calling a web service, if it returns
+     * this standard kind of JSON representation, then this converts it back
+     * to exception objects so that can be thrown.  Thus the exception on the server
+     * is reproduced to the client.
+     * 
+     * This does not copy the stack traces, only the 'stack' of messages.
+     */
+    public static Exception convertJSONToException(JSONObject ex) {
+        Exception trailer = null;
+        try {
+            if (ex==null) {
+                return new Exception("Failure converting JSONToException: Null parameter to JSONToException");
+            }
+            if (!ex.has("error")) {
+                return new Exception("Failure converting JSONToException: no 'error' member in object.");
+            }
+            JSONObject error = ex.getJSONObject("error");
+            if (!error.has("details")) {
+                return new Exception("Failure converting JSONToException: no 'error.details' member in object.");
+            }
+            JSONArray details = error.getJSONArray("details");
+            for (int i=details.length()-1; i>=0; i--) {
+                JSONObject oneDetail = details.getJSONObject(i);
+                if (trailer!=null) {
+                    trailer = new Exception(oneDetail.getString("message"), trailer);
+                }
+                else {
+                    trailer = new Exception(oneDetail.getString("message"));
+                }
+            }
+            if (trailer!=null) {
+                return trailer;
+            }
+            return new Exception("Failure converting JSONToException: no details of the error.");
+        }
+        catch (Exception xxx) {
+            if (trailer!=null) {
+                return new Exception("Failure converting JSONToException: "+xxx.toString());
+            }
+            else {
+                return new Exception("Failure converting JSONToException: "+xxx.toString(), xxx);
+            }
+        }
+    }
+        
 }
