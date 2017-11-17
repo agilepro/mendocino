@@ -64,7 +64,7 @@ public class JSONException extends Exception {
     */
     public static boolean containsMessage(Throwable t, String fragment) {
         while (t!=null) {
-            if (t.getMessage().contains("retrieve the workitem")) {
+            if (t.getMessage().contains(fragment)) {
                 return true;
             }
             t = t.getCause();
