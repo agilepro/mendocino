@@ -68,7 +68,11 @@ public class ClusterJSONFile {
      * So use this to test whether you need to call initializeFile.
      */
     public boolean exists() {
-        return target.exists();
+        //A JSON file has to have at least two characters in it:  {}
+        //Sometimes empty files are created that cause parsing errors
+        //so it is simple enough to test the file length here.  If it is 
+        //empty it is the same as not existing.
+        return target.exists() && target.length()>=2;
     }
 
     /**
