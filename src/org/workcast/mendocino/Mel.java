@@ -173,6 +173,8 @@ public class Mel {
         Element docElement = doc.getDocumentElement();
         return construct(rootClass, doc, docElement);
     }
+    
+    
 
     /**
      * writeToOutputStream streams the entire XML output that reflects the
@@ -183,6 +185,16 @@ public class Mel {
         DOMSource docSource = new DOMSource(fDoc);
         Transformer transformer = getXmlTransformer();
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        
+        //after Java version 1.6 came out, the underlying support for XML can not produce the 
+        //right header.  Even when you specify the output to be UTF-8, it writes a header with
+        //whatever character set the input was using, and then outputs the contents in UTF-8.
+        //I have raised this as a bug, but no response from Java community.
+        //see: https://stackoverflow.com/questions/15592025/transformer-setoutputpropertyoutputkeys-encoding-utf-8-is-not-working/47683768#47683768
+        //We solve this here by writing out the correct header, and asking the XML support to write
+        //the XML without a header.
+        out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>".getBytes("UTF-8"));
         transformer.transform(docSource, new StreamResult(out));
     }
 
