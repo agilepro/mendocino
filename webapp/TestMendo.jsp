@@ -13,9 +13,9 @@
 %><%@page import="org.w3c.dom.Element"
 %><%@page import="org.w3c.dom.Node"
 %><%@page import="org.w3c.dom.NodeList"
-%><%@page import="org.workcast.mendocino.Mel"
-%><%@page import="org.workcast.mendocinotest.Test1"
-%><%@page import="org.workcast.testframe.TestRecorderText"
+%><%@page import="com.purplehillsbooks.xml.Mel"
+%><%@page import="com.purplehillsbooks.xmltest.Test1"
+%><%@page import="com.purplehillsbooks.testframe.TestRecorderText"
 %>
 
 <h1>Mendocino Testing</h1>
