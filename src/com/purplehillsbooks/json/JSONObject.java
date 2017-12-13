@@ -53,7 +53,7 @@ import java.util.Set;
  * difference will be more meaningful.   Otherwise, the order of the members does
  * not matter.</p>
  * 
- * <p> This org.workcast.json version also provides human readible, indented output
+ * <p> This com.purplehillsbooks.json version also provides human readible, indented output
  * when you use the <code>write(stream, indent, offset)</code> method.</p>
  * 
  * <p>The JSONObject serialized
