@@ -1,20 +1,17 @@
 package com.purplehillsbooks.json;
 
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
- * JSONException is nothing special, and one should really use Exception instead.
- * Never never NEVER catch a JSONException, always catch 'Exception' instead.
- * It is just a favorite pattern that programmers like to have their own exception class
- * and now that the API is distributd we are stuck with maintaining this class.
- * But there is no value, and it would be unsafe to treat JSONException as if it indicated
- * any thing different from any other exception.
- * Nothing to see here, just keep on moving .....
+ * JSONException is mainly a class that has a few helpful methods for handling 
+ * exceptions, such as:
+ * to get the full message of a chain of exceptions,
+ * to test if a particular message is anywhere in a chain,
+ * to convert an exception to JSON in a standard way
+ * to trace an exception to the output stream in a standard way. 
  */
 public class JSONException extends Exception {
     private static final long serialVersionUID = 0;
@@ -71,8 +68,6 @@ public class JSONException extends Exception {
         }
         return false;
     }
-
-    
     
     /**
      * In any kind of JSON protocol, you need to return an exception back to the caller.
@@ -102,6 +97,7 @@ public class JSONException extends Exception {
 
         String lastMessage = "";
         Throwable runner = e;
+        List<ExceptionTracer> traceHolder = new ArrayList<ExceptionTracer>();
         while (runner!=null) {
             String className =  runner.getClass().getName();
             String msg =  runner.toString();
@@ -128,14 +124,22 @@ public class JSONException extends Exception {
                 }
                 msg = msg.substring(skipTo);
             }
-
-            runner = runner.getCause();
+            
             if (lastMessage.equals(msg)) {
                 //model api has an incredibly stupid pattern of catching an exception, and then throwing a
                 //new exception with the exact same message.  This ends up in three or four duplicate messages.
                 //Check here for that problem, and eliminate duplicate messages by skipping rest of loop.
                 continue;
             }
+            
+            ExceptionTracer et = new ExceptionTracer();
+            et.t = runner;
+            et.msg = msg;
+            et.captureTrace();
+            traceHolder.add(et);
+
+            runner = runner.getCause();
+            
             lastMessage = msg;
 
             JSONObject detailObj = new JSONObject();
@@ -151,27 +155,67 @@ public class JSONException extends Exception {
         JSONObject innerError = new JSONObject();
         errorTag.put("innerError", innerError);
 
+        //now do them in the opposite order for the stack trace.
         JSONArray stackList = new JSONArray();
-        runner = e;
-        while (runner != null) {
-            for (StackTraceElement ste : runner.getStackTrace()) {
-                String line = ste.getFileName() + ":" + ste.getMethodName() + ":" + ste.getLineNumber();
-                stackList.put(line);
+        for (int i=traceHolder.size()-1;i>=0;i--) {
+            ExceptionTracer et = traceHolder.get(i);
+            if (i>0) {
+                ExceptionTracer lower = traceHolder.get(i-1);
+                et.removeTail(lower.trace);
             }
-            stackList.put("----------------");
-            runner = runner.getCause();
+            et.insertIntoArray(stackList);
         }
         errorTag.put("stack", stackList);
 
+        /*
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
         List<String> nicerStack = prettifyStack(sw.toString());
         for (String onePart : nicerStack) {
             stackList.put(onePart);
         }
+        */
         return responseBody;
     }
     
+    static class ExceptionTracer {
+        public Throwable t;
+        public String msg;
+        public List<String> trace = new ArrayList<String>();
+        boolean wasTrimmed = false;
+
+        public ExceptionTracer() {}
+        
+        public void captureTrace() {
+            for (StackTraceElement ste : t.getStackTrace()) {
+                String line = "    "+ste.getFileName() + ": " + ste.getMethodName() + ": " + ste.getLineNumber();
+                trace.add(line);
+            }
+        }
+        public void removeTail(List<String> lower) {
+            int offUpper = trace.size()-1;
+            int offLower = lower.size()-1;
+            while (offUpper>0 && offLower>0 
+                    && trace.get(offUpper).equals(lower.get(offLower))) {
+                trace.remove(offUpper);
+                offUpper--;
+                offLower--;
+                wasTrimmed = true;
+            }
+        }
+        
+        public void insertIntoArray(JSONArray ja) {
+            ja.put(msg);
+            for (String line : trace) {
+                ja.put(line);
+            }
+            if (wasTrimmed) {
+                ja.put("    (continued below)");
+            }
+        }
+    }
+    
+    /*
     private static List<String> prettifyStack(String input) {
         ArrayList<String> res = new ArrayList<String>();
         int start = 0;
@@ -197,6 +241,7 @@ public class JSONException extends Exception {
         }
         return res;
     }
+    */
     
     
     /**

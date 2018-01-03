@@ -1,0 +1,19 @@
+{"error": {
+  "code": 400,
+  "context": "Test file ExTest2.json for course 3",
+  "details": [{
+    "code": "Exception",
+    "message": "top level exception thrown by exception test when course string ran out"
+  }],
+  "innerError": {},
+  "stack": [
+    "top level exception thrown by exception test when course string ran out",
+    "    TestExceptions.java: callHigher: 58",
+    "    TestExceptions.java: sampleMethod3: 53",
+    "    TestExceptions.java: callHigher: 68",
+    "    TestExceptions.java: runCourse: 94",
+    "    TestExceptions.java: runTests: 33",
+    "    TestRecorderText.java: parseArgsRunTests: 630",
+    "    TestExceptions.java: main: 114"
+  ]
+}}

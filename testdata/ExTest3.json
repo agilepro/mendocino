@@ -1,0 +1,48 @@
+{"error": {
+  "code": 400,
+  "context": "Test file ExTest3.json for course 1222",
+  "details": [
+    {
+      "code": "Exception",
+      "message": "caught and rethrow from level: 22"
+    },
+    {
+      "code": "Exception",
+      "message": "caught and rethrow from level: 2"
+    },
+    {
+      "code": "Exception",
+      "message": "caught and rethrow from level: "
+    },
+    {
+      "code": "Exception",
+      "message": "top level exception thrown by exception test when course string ran out"
+    }
+  ],
+  "innerError": {},
+  "stack": [
+    "top level exception thrown by exception test when course string ran out",
+    "    TestExceptions.java: callHigher: 58",
+    "    TestExceptions.java: sampleMethod2: 45",
+    "    (continued below)",
+    "caught and rethrow from level: ",
+    "    TestExceptions.java: sampleMethod2: 48",
+    "    TestExceptions.java: callHigher: 65",
+    "    TestExceptions.java: sampleMethod2: 45",
+    "    (continued below)",
+    "caught and rethrow from level: 2",
+    "    TestExceptions.java: sampleMethod2: 48",
+    "    TestExceptions.java: callHigher: 65",
+    "    TestExceptions.java: sampleMethod2: 45",
+    "    (continued below)",
+    "caught and rethrow from level: 22",
+    "    TestExceptions.java: sampleMethod2: 48",
+    "    TestExceptions.java: callHigher: 65",
+    "    TestExceptions.java: sampleMethod1: 40",
+    "    TestExceptions.java: callHigher: 62",
+    "    TestExceptions.java: runCourse: 94",
+    "    TestExceptions.java: runTests: 34",
+    "    TestRecorderText.java: parseArgsRunTests: 630",
+    "    TestExceptions.java: main: 114"
+  ]
+}}

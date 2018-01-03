@@ -13,6 +13,7 @@ mkdir %MENDO_TEST_OUT%
 :##################################################################################
 :##### Run tests
 :##################################################################################
+"%JAVA_HOME%/bin/java" -classpath %MENDO_CP% com.purplehillsbooks.testcase.TestExceptions %SOURCE_DIR% %MENDO_TEST_OUT%
 "%JAVA_HOME%/bin/java" -classpath %MENDO_CP% com.purplehillsbooks.testcase.JSONTest %SOURCE_DIR% %MENDO_TEST_OUT%
 "%JAVA_HOME%/bin/java" -classpath %MENDO_CP% com.purplehillsbooks.testcase.MemFileTester %SOURCE_DIR% %MENDO_TEST_OUT%
 "%JAVA_HOME%/bin/java" -classpath %MENDO_CP% com.purplehillsbooks.testcase.Test2 %SOURCE_DIR% %MENDO_TEST_OUT%

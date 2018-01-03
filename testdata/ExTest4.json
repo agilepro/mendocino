@@ -1,0 +1,28 @@
+{"error": {
+  "code": 400,
+  "context": "Test file ExTest4.json for course 2",
+  "details": [
+    {
+      "code": "Exception",
+      "message": "caught and rethrow from level: "
+    },
+    {
+      "code": "Exception",
+      "message": "top level exception thrown by exception test when course string ran out"
+    }
+  ],
+  "innerError": {},
+  "stack": [
+    "top level exception thrown by exception test when course string ran out",
+    "    TestExceptions.java: callHigher: 58",
+    "    TestExceptions.java: sampleMethod2: 45",
+    "    (continued below)",
+    "caught and rethrow from level: ",
+    "    TestExceptions.java: sampleMethod2: 48",
+    "    TestExceptions.java: callHigher: 65",
+    "    TestExceptions.java: runCourse: 94",
+    "    TestExceptions.java: runTests: 35",
+    "    TestRecorderText.java: parseArgsRunTests: 630",
+    "    TestExceptions.java: main: 114"
+  ]
+}}

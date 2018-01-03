@@ -1,0 +1,55 @@
+{"error": {
+  "code": 400,
+  "context": "Test file ExTest1.json for course 11121112333",
+  "details": [
+    {
+      "code": "Exception",
+      "message": "caught and rethrow from level: 1112333"
+    },
+    {
+      "code": "Exception",
+      "message": "caught and rethrow from level: 333"
+    },
+    {
+      "code": "Exception",
+      "message": "top level exception thrown by exception test when course string ran out"
+    }
+  ],
+  "innerError": {},
+  "stack": [
+    "top level exception thrown by exception test when course string ran out",
+    "    TestExceptions.java: callHigher: 58",
+    "    TestExceptions.java: sampleMethod3: 53",
+    "    TestExceptions.java: callHigher: 68",
+    "    TestExceptions.java: sampleMethod3: 53",
+    "    TestExceptions.java: callHigher: 68",
+    "    TestExceptions.java: sampleMethod3: 53",
+    "    TestExceptions.java: callHigher: 68",
+    "    TestExceptions.java: sampleMethod2: 45",
+    "    (continued below)",
+    "caught and rethrow from level: 333",
+    "    TestExceptions.java: sampleMethod2: 48",
+    "    TestExceptions.java: callHigher: 65",
+    "    TestExceptions.java: sampleMethod1: 40",
+    "    TestExceptions.java: callHigher: 62",
+    "    TestExceptions.java: sampleMethod1: 40",
+    "    TestExceptions.java: callHigher: 62",
+    "    TestExceptions.java: sampleMethod1: 40",
+    "    TestExceptions.java: callHigher: 62",
+    "    TestExceptions.java: sampleMethod2: 45",
+    "    (continued below)",
+    "caught and rethrow from level: 1112333",
+    "    TestExceptions.java: sampleMethod2: 48",
+    "    TestExceptions.java: callHigher: 65",
+    "    TestExceptions.java: sampleMethod1: 40",
+    "    TestExceptions.java: callHigher: 62",
+    "    TestExceptions.java: sampleMethod1: 40",
+    "    TestExceptions.java: callHigher: 62",
+    "    TestExceptions.java: sampleMethod1: 40",
+    "    TestExceptions.java: callHigher: 62",
+    "    TestExceptions.java: runCourse: 94",
+    "    TestExceptions.java: runTests: 32",
+    "    TestRecorderText.java: parseArgsRunTests: 630",
+    "    TestExceptions.java: main: 114"
+  ]
+}}
