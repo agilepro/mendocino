@@ -96,9 +96,14 @@ public class JSONException extends Exception {
         errorTag.put("details", detailList);
 
         String lastMessage = "";
-        Throwable runner = e;
+        
+        Throwable nextRunner = e;
         List<ExceptionTracer> traceHolder = new ArrayList<ExceptionTracer>();
-        while (runner!=null) {
+        while (nextRunner!=null) {
+            //doing this at the top allows 'continues' statements to be safe
+            Throwable runner = nextRunner;
+            nextRunner = runner.getCause();
+            
             String className =  runner.getClass().getName();
             String msg =  runner.toString();
 
@@ -138,8 +143,6 @@ public class JSONException extends Exception {
             et.captureTrace();
             traceHolder.add(et);
 
-            runner = runner.getCause();
-            
             lastMessage = msg;
 
             JSONObject detailObj = new JSONObject();
