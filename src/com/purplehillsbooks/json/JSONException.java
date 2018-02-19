@@ -170,14 +170,6 @@ public class JSONException extends Exception {
         }
         errorTag.put("stack", stackList);
 
-        /*
-        StringWriter sw = new StringWriter();
-        e.printStackTrace(new PrintWriter(sw));
-        List<String> nicerStack = prettifyStack(sw.toString());
-        for (String onePart : nicerStack) {
-            stackList.put(onePart);
-        }
-        */
         return responseBody;
     }
     

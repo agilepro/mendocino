@@ -67,7 +67,7 @@ public class CSVHelper {
             return null;
         }
         ArrayList<String> store = new ArrayList<String>();
-        StringBuffer curVal = new StringBuffer();
+        StringBuilder curVal = new StringBuilder();
         boolean inquotes = false;
         boolean started = false;
         while (ch>=0) {
@@ -91,7 +91,7 @@ public class CSVHelper {
                 }
                 else if (ch == ',') {
                     store.add(curVal.toString());
-                    curVal = new StringBuffer();
+                    curVal = new StringBuilder();
                     started = false;
                 }
                 else if (ch == '\r') {

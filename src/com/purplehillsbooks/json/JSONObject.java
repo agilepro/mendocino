@@ -34,6 +34,11 @@ import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -222,15 +227,21 @@ public class JSONObject {
             }
             FileOutputStream fos = new FileOutputStream(tempFile);
             OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-            this.write(osw,2,0);
-            osw.close();
+            try {
+                this.write(osw,2,0);
+            }
+            finally {
+                osw.close();
+            }
             if (outFile.exists()) {
                 if (!outFile.delete()) {
                     throw new Exception("Unable to delete the previous file ("+outFile
                        +").  Did you close the previous input stream when you read this file before?");
                 }
             }
-            tempFile.renameTo(outFile);
+            Path sourcePath      = Paths.get(tempFile.toString());
+            Path destinationPath = Paths.get(outFile.toString());
+            Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
         }
         catch (Exception e) {
             throw new Exception("Unable to write JSON objects to the file: "+outFile, e);
