@@ -207,11 +207,12 @@ public class JSONObject {
     /**
      * Write the entire contents of the JSONObject tree to the specified
      * file using JSON format.  This is written out properly and safely
-     * by first writing to a temporary file with the symbol ~tmp~ on the end.
-     * Then, once the file exists, the old
+     * by first writing to a temporary file with the symbol ~tmp~ on the end,
+     * as well as a time stamp to ensure uniqueness.
+     * Then, once the temp file exists, the old
      * file (if there was one) is deleted, and the temp file is renamed
      * to be the desired output file name.  This guarantees that you will
-     * allways have a complete file on the disk (along with a vanishingly
+     * Always have a complete file on the disk (along with a vanishingly
      * small possibility that there will be no file).  No matter if the
      * host program crashes, or the power goes out, you will never have
      * a half-written corrupted file on disk.
@@ -221,9 +222,12 @@ public class JSONObject {
     public void writeToFile(File outFile) throws Exception {
         try {
             File folder = outFile.getParentFile();
-            File tempFile = new File(folder, "~"+outFile.getName()+"~tmp~");
+            File tempFile = new File(folder, "~"+outFile.getName()+"~tmp~"+System.currentTimeMillis());
             if (tempFile.exists()) {
                 tempFile.delete();
+                if (tempFile.exists()) {
+                    throw new Exception("Before writing JSON tmp file, unable to delete the old tmp file: "+tempFile);
+                }
             }
             FileOutputStream fos = new FileOutputStream(tempFile);
             OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
@@ -236,12 +240,23 @@ public class JSONObject {
             if (outFile.exists()) {
                 if (!outFile.delete()) {
                     throw new Exception("Unable to delete the previous file ("+outFile
-                       +").  Did you close the previous input stream when you read this file before?");
+                       +") after writing tmp file ("+tempFile+").  Is some process holding on to a file handle someplace?");
+                }
+                if (outFile.exists()) {
+                    throw new Exception("Unable to delete the previous file ("+outFile+") after writing tmp file ("+tempFile+")");
                 }
             }
             Path sourcePath      = Paths.get(tempFile.toString());
             Path destinationPath = Paths.get(outFile.toString());
             Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            //on some shared file systems, this step was failing but there was no indication at the time of the fail.
+            //So the following two steps check for that, and produce an error when it is detected.
+            if (!outFile.exists()) {
+                throw new Exception("Unable to rename the JSON tmp file ("+tempFile+") to the actual file name("+outFile+")");
+            }
+            if (tempFile.exists()) {
+                throw new Exception("Very strange, the JSON tmp file ("+tempFile+") remains in the folder after renaming to the actual file.");
+            }
         }
         catch (Exception e) {
             throw new Exception("Unable to write JSON objects to the file: "+outFile, e);

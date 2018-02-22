@@ -16,8 +16,8 @@
 
 package com.purplehillsbooks.streams;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Given an InputStream to read a raw NNTP message body, this will decode the
