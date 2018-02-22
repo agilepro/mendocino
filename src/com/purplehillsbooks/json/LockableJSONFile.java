@@ -101,12 +101,11 @@ import java.util.Hashtable;
  */
 public class LockableJSONFile {
 
-    File target;
-    File lockFile;
-    boolean isLocked = false;
-    long lastUseTime = 0;
-    RandomAccessFile lockAccessFile = null;
-    FileLock lock = null;
+    private File target;
+    private File lockFile;
+    private long lastUseTime = 0;
+    private RandomAccessFile lockAccessFile = null;
+    private FileLock lock = null;
     
     private static Hashtable<String, LockableJSONFile> surrogates = new Hashtable<String, LockableJSONFile>();
 
