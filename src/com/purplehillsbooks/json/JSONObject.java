@@ -237,18 +237,29 @@ public class JSONObject {
             finally {
                 osw.close();
             }
-            if (outFile.exists()) {
-                if (!outFile.delete()) {
-                    throw new Exception("Unable to delete the previous file ("+outFile
-                       +") after writing tmp file ("+tempFile+").  Is some process holding on to a file handle someplace?");
-                }
-                if (outFile.exists()) {
-                    throw new Exception("Unable to delete the previous file ("+outFile+") after writing tmp file ("+tempFile+")");
-                }
-            }
+
             Path sourcePath      = Paths.get(tempFile.toString());
             Path destinationPath = Paths.get(outFile.toString());
-            Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            
+            boolean failedToMove = false;
+            try {
+                Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            }
+            catch (Exception e) {
+                System.out.println("RETRYING-FAILURE renaming file ("+tempFile+") because: "+e.toString());
+                failedToMove = true;
+            }
+            
+            //This is really gross, but it seems that this call will fail about 1% of the time,  we 
+            //suspect it is due to virus-scan or something else.   It does not fail every time, and it
+            //is timing dependent, so hard to prove either way.   This causes a slight slow down in 
+            //maybe 1% of the cases, but there is no real way around it.
+            if (failedToMove) {
+                Thread.sleep(10);
+                //after waiting just a moment, if this fails, then it fails for good
+                Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            }
+            
             //on some shared file systems, this step was failing but there was no indication at the time of the fail.
             //So the following two steps check for that, and produce an error when it is detected.
             if (!outFile.exists()) {

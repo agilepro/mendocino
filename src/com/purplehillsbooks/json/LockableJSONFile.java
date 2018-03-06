@@ -44,9 +44,14 @@ import java.util.Hashtable;
  * File myFile = new File("c:/a/b/c/file.json");
  * LockableJSONFile ljf = LockableJSONFile.getSurrogate(myFile);   //retrieve
  * synchronized (ljf) {
- *     JSONObject jo = ljf.lockAndRead();                   //read and lock
- *     ...                                                  //exclusive actions while locked
- *     ljf.writeAndUnlock(jo);                              //write and release lock
+ *     try {
+ *         JSONObject jo = ljf.lockAndRead();       //read and lock
+ *         ...                                      //exclusive actions while locked
+ *         ljf.writeAndUnlock(jo);                  //write and release lock
+ *     }
+ *     finally {
+ *         ljf.unlock();
+ *     }
  * }
  * ljf.free();
  * </pre>
@@ -64,12 +69,21 @@ import java.util.Hashtable;
  * 
  * <pre>
  * File myFile = new File("c:/a/b/c/file.json");
- * ClusterJSONFile cjf = new ClusterJSONFile(myFile);   //declare
+ * ClusterJSONFile ljf = new ClusterJSONFile(myFile);   //declare
  * JSONObject jo = new JSONObject();                    //create JSON contents
- * cjf.initializeFile(jo);                              //create the file
+ * synchronized(ljf) {
+ *     try {
+ *         ljf.initializeFile(jo);                      //create the file
+ *     }
+ *     finally {
+ *         ljf.unlock();
+ *     }
+ * }
  * </pre>
  * 
- * <p>The file is not locked.  If you want to read and update the new file, use the regular readAndLock
+ * <p>The file is not locked guaranteed to be locked after the call, but if an 
+ * exception is thrown in the middle, it might be in a locked state, so be sure
+ * to call unlock in a finally block.  If you want to read and update the new file, use the regular readAndLock
  * method to assure that this process has exclusive access, just like normal.
  * 
  * <h1>USAGE - exceptions</h1>
@@ -85,14 +99,17 @@ import java.util.Hashtable;
  *         ljf.writeAndUnlock(jo);                          //write and release lock
  *     }
  *     catch (Exception e) {
+ *         throw new Exception("Unable to ... (details about goals of this method)", e);
+ *     }
+ *     finally {
  *         ljf.unlock();                                    //unlock WITHOUT writing content
- *         throw new Exception("Unable to update "+myFile, e);
  *     }
  * }
  * ljf.free();
  * </pre>
  * 
  * <p>It is important to assure that if you lock the file, you also unlock it.
+ * It is OK to call unlock redundant times, the unnecessary unlocks are ignored.
  * If you hit an error, you generally don't want to write out the file with an undetermined
  * amount of update to the content.  Unless you know how to 'fix' the problem, you 
  * generally want to leave the file untouched, but you want to clear the file lock
@@ -200,18 +217,25 @@ public class LockableJSONFile {
         lockAccessFile = new RandomAccessFile(lockFile, "rw");
         FileChannel lockChannel = lockAccessFile.getChannel();
         lock = lockChannel.lock();
-        return readWithoutLock();
+        return JSONObject.readFromFile(target);
     }
 
     /**
      * Use this to read the file if you are NOT going to update it.
-     * Gives you the contents, but does not lock the file.
+     * It locks the file briefly, reads it, and guarantees that the 
+     * file is unlocked at the end.
+     * 
+     * It is synchronized so you don't need to do a synchronize on the object.
+     * 
+     * This is the simplest way to safely read a shared file.
      */
-    public JSONObject readWithoutLock() throws Exception {
-        if (!target.exists()) {
-            throw new Exception("File does not exist.  File must be initialized before reading: "+target);
+    public synchronized JSONObject lockReadUnlock() throws Exception {
+        try {
+            return lockAndRead();
         }
-        return JSONObject.readFromFile(target);
+        finally {
+            unlock();
+        }
     }
 
     /**
