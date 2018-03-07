@@ -34,7 +34,6 @@ import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -241,20 +240,38 @@ public class JSONObject {
             Path sourcePath      = Paths.get(tempFile.toString());
             Path destinationPath = Paths.get(outFile.toString());
             
-            boolean failedToMove = false;
+            boolean failedOnce = false;
+            if (Files.exists(destinationPath)) {
+                try {
+                    Files.delete(destinationPath);
+                }
+                catch (Exception e) {
+                    System.out.println("RETRYING-FAILURE deleting file ("+tempFile+") because: "+e.toString());
+                    failedOnce = true;
+                }
+            }
+            if (failedOnce) {
+                //This is really gross, but if the delete fails, try it again, if needed.
+                if (Files.exists(destinationPath)) {                
+                    Files.delete(destinationPath);
+                }
+            }
+
+            
+            failedOnce = false;
             try {
                 Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             }
             catch (Exception e) {
                 System.out.println("RETRYING-FAILURE renaming file ("+tempFile+") because: "+e.toString());
-                failedToMove = true;
+                failedOnce = true;
             }
             
             //This is really gross, but it seems that this call will fail about 1% of the time,  we 
             //suspect it is due to virus-scan or something else.   It does not fail every time, and it
             //is timing dependent, so hard to prove either way.   This causes a slight slow down in 
             //maybe 1% of the cases, but there is no real way around it.
-            if (failedToMove) {
+            if (failedOnce) {
                 Thread.sleep(10);
                 //after waiting just a moment, if this fails, then it fails for good
                 Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
@@ -263,6 +280,9 @@ public class JSONObject {
             //on some shared file systems, this step was failing but there was no indication at the time of the fail.
             //So the following two steps check for that, and produce an error when it is detected.
             if (!outFile.exists()) {
+                throw new Exception("Unable to rename the JSON tmp file ("+tempFile+") to the actual file name("+outFile+")");
+            }
+            if (!Files.exists(destinationPath)) {
                 throw new Exception("Unable to rename the JSON tmp file ("+tempFile+") to the actual file name("+outFile+")");
             }
             if (tempFile.exists()) {

@@ -1,10 +1,12 @@
 package com.purplehillsbooks.json;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Hashtable;
 
 /**
@@ -119,6 +121,7 @@ import java.util.Hashtable;
 public class LockableJSONFile {
 
     private File target;
+    private Path targetPath;
     private File lockFile;
     private long lastUseTime = 0;
     private RandomAccessFile lockAccessFile = null;
@@ -128,7 +131,9 @@ public class LockableJSONFile {
 
     private LockableJSONFile(File targetFile) throws Exception {
         //private constructor
-        target = targetFile;
+        target     = targetFile;
+        targetPath = Paths.get(targetFile.toString());
+        
         lockFile = new File(target.getParent(), target.getName() + "#LOCK");
         if (!lockFile.exists()) {
             //this will leave these lock file around ... but there is no harm done
@@ -174,104 +179,21 @@ public class LockableJSONFile {
     }
     
     
+    
     /**
-     * <p>Test to see if the target file exists.  Generally, you need to assure that the file
-     * exists, and to initialize with an empty JSON structure if it does not exist.
-     * So use this to test whether you need to call initializeFile.</p>
-     * <p>Note: since the smallest JSON file has two characters (just the open and close brace)
-     * this method will return FALSE when an empty file exists at that name.  The file must be 
-     * 2 byte or longer to be existing according to this routine.</p>
+     * This is the basic lock command.  It will block until the lock on the LOCK file
+     * can be gotten.  You should only call lock once, before calling unlock.
      */
-    public boolean exists() {
-        //A JSON file has to have at least two characters in it:  {}
-        //Sometimes empty files are created that cause parsing errors
-        //so it is simple enough to test the file length here.  If it is 
-        //empty it is the same as not existing.
-        return target.exists() && target.length()>=2;
-    }
-
-    /**
-     * Pass a JSON object to create the file.  Does not lock the file.
-     */
-    public void initializeFile(JSONObject newContent) throws Exception {
-        newContent.writeToFile(target);
-        if (!exists()) {
-            throw new Exception("LockableJSONFile.initializeFile tried to create file, but it did not get created: "+target);
-        }
-    }
-
-    /**
-     * <p>Use this method to read a file, if you are planning to update the file.
-     * If you do, be sure to unlock the file using writeAndUnlock.</p>
-     * 
-     * <p>If during processing you run into an error, and you don't want to write the 
-     * file, be sure to unlock with unlock.</p>
-     */
-    public JSONObject lockAndRead() throws Exception {
-        if (!target.exists()) {
-            throw new Exception("File does not exist.  File must be initialized before reading: "+target);
-        }
+    public void lock() throws Exception {
         if (lock != null || lockAccessFile != null) {
             throw new Exception("Seem to be locking a second time before unlocking the last time: "+target);
         }
         lockAccessFile = new RandomAccessFile(lockFile, "rw");
         FileChannel lockChannel = lockAccessFile.getChannel();
         lock = lockChannel.lock();
-        return JSONObject.readFromFile(target);
     }
 
-    /**
-     * Use this to read the file if you are NOT going to update it.
-     * It locks the file briefly, reads it, and guarantees that the 
-     * file is unlocked at the end.
-     * 
-     * It is synchronized so you don't need to do a synchronize on the object.
-     * 
-     * This is the simplest way to safely read a shared file.
-     */
-    public synchronized JSONObject lockReadUnlock() throws Exception {
-        try {
-            return lockAndRead();
-        }
-        finally {
-            unlock();
-        }
-    }
-
-    /**
-     * Tells whether the calling program/thead is holding the lock.  It does not tell you whether
-     * any other thread or program is holding the lock at the current moment.
-     */
-    public boolean isLocked() {
-        return (lock!=null && lock.isValid());
-    }
-
-    /**
-     * This will update the contents of the file on disk, but retains the lock.
-     * This would be used when you are in a long running loop, and you want to update the 
-     * file to preserve the partial results for every pass through the loop.
-     * The host program might be shut down at any time, and you don't want to have
-     * to start the loop all over from the beginning, so the partial results are needed.
-     * But in that loop you want to hold on to the lock after writing because you are
-     * not completely done.
-     */
-    public void writeWithoutUnlock(JSONObject newContent) throws Exception {
-        newContent.writeToFile(target);
-    }
-
-    /**
-     * This is the standard way to update the file when you are done.
-     * Will write the contents safely, and then unlock to allow the other
-     * processes to have a chance at the file.
-     */
-    public void writeAndUnlock(JSONObject newContent) throws Exception {
-        if (lock == null || lockAccessFile == null) {
-            throw new Exception("Attempt to unlock a file that was not locked or already unlocked."+target);
-        }
-        newContent.writeToFile(target);
-        unlock();
-    }
-
+    
     /**
      * Use this to unlock the file when you don't need to update the contents.
      * This method is particularly useful in 'finally' statements, where an 
@@ -286,6 +208,90 @@ public class LockableJSONFile {
         if (lockAccessFile != null) {
             lockAccessFile.close();
             lockAccessFile = null;
+        }
+    }
+    
+    /**
+     * Tells whether the calling program/thead is holding the lock.  It does not tell you whether
+     * any other thread or program is holding the lock at the current moment.
+     */
+    public boolean isLocked() {
+        return (lock!=null && lock.isValid());
+    }
+    
+
+    
+    /**
+     * <p>Test to see if the target file exists.  Generally, you need to assure that the file
+     * exists, and to initialize with an empty JSON structure if it does not exist.
+     * So use this to test whether you need to call initializeFile.</p>
+     * <p>Note: since the smallest JSON file has two characters (just the open and close brace)
+     * this method will return FALSE when an empty file exists at that name.  The file must be 
+     * 2 byte or longer to be existing according to this routine.</p>
+     * <p>Note2: file must be locked BEFORE calling this to be sure that it does not change
+     * in the mean time.</p>
+     */
+    public boolean exists() throws Exception {
+        //consistency check
+        if (!isLocked()) {
+            throw new Exception("File was not locked before checking if it exists: "+target);
+        }
+        return Files.exists(targetPath) && target.length()>=2;
+    }
+    
+    
+    /**
+     * This will update the contents of the file on disk, without changing
+     * the lock state.
+     * 
+     * The file must be locked before calling this.
+     */
+    public void writeTarget(JSONObject newContent) throws Exception {
+        //consistency check
+        if (!isLocked()) {
+            throw new Exception("File was not locked before calling writeTarget: "+target);
+        }
+        newContent.writeToFile(target);
+        //check and make sure it exists!
+        if (!exists()) {
+            throw new Exception("LockableJSONFile.initializeFile tried to create file, but it did not get created: "+target);
+        }
+        //This is to make sure that the file system has a chance to really know that the file is there.
+        //kind of stupid really, but we have seen failures otherwise.
+        //readTarget(outFile);
+    }
+
+    /**
+     * Read and return the contents of the file.
+     * You must lock the file before calling this.
+     */
+    public JSONObject readTarget() throws Exception {
+        //consistency check
+        if (!isLocked()) {
+            throw new Exception("File was not locked before calling readTarget: "+target);
+        }
+        return JSONObject.readFromFile(target);
+    }
+    
+
+
+    /**
+     * The easiest way to safely read a file.
+     * Use this to read the file if you are NOT going to update it.
+     * It locks the file briefly, reads it, and guarantees that the 
+     * file is unlocked at the end.
+     * 
+     * It is synchronized so you don't need to do a synchronize on the object.
+     * 
+     * This is the simplest way to safely read a shared file.
+     */
+    public synchronized JSONObject lockReadUnlock() throws Exception {
+        try {
+            lock();
+            return readTarget();
+        }
+        finally {
+            unlock();
         }
     }
 

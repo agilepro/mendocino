@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.Random;
 
+import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.LockableJSONFile;
@@ -20,6 +21,7 @@ public class FileLockThread extends Thread {
     String threadName;
     long lockHoldMillis = 20;
     Random rand;
+    JSONArray stats = new JSONArray();
     
     public FileLockThread(String name) throws Exception {
         threadName = name;
@@ -29,6 +31,7 @@ public class FileLockThread extends Thread {
 
         synchronized(ljf) {
             try {
+                ljf.lock();
                 if (!ljf.exists()) {
                     JSONObject jo = new JSONObject();
                     jo.put("testVal1", "1");
@@ -38,7 +41,7 @@ public class FileLockThread extends Thread {
                     jo.put("updated", System.currentTimeMillis());
                     jo.put("thread", threadName);
                     jo.put("longString", "?");
-                    ljf.initializeFile(jo);
+                    ljf.writeTarget(jo);
                     System.out.println("Thread "+threadName+" initialized the file: "+testFile);
                 }
                 else {
@@ -74,22 +77,27 @@ public class FileLockThread extends Thread {
     }   
     
     public void incrementLocalJSON() throws Exception {
-        //System.out.println("Thread "+threadName+" ready");
         lastSetValue = 1;
+        JSONObject stat = new JSONObject();
+        stat.put("thread", threadName);
+        long dur = 0;
         File testFile = new File("./ConFileTest.json");
         try {
             LockableJSONFile ljf = LockableJSONFile.getSurrogate(testFile);
             
             synchronized(ljf) {
+                long startTime = 0;
                 try {
+                    ljf.lock();
+                    startTime = System.currentTimeMillis();
                     if (!ljf.exists()) {
-                        //need to sleep AFTER thetest, but before the throw or anything else 
+                        //need to sleep AFTER the test, but before the throw or anything else 
                         Thread.sleep(lockHoldMillis);
                         throw new Exception("Test file NOT FOUND: "+testFile);
                     }
                     Thread.sleep(lockHoldMillis);
                     
-                    JSONObject newVersion = ljf.lockAndRead();
+                    JSONObject newVersion = ljf.readTarget();
                     //System.out.println("Thread "+threadName+" locked file");
                     //now update them
                     lastSetValue = incrementOneValue(newVersion, "testVal1");
@@ -100,20 +108,26 @@ public class FileLockThread extends Thread {
                     //add one character each time to make the file longer and longer over time.
                     newVersion.put("longString", newVersion.getString("longString")+((char)(65+rand.nextInt(26))));
                     
+                    ljf.writeTarget(newVersion);
                     System.out.print(".");
-                    //Thread.sleep(lockHoldMillis);
-                    ljf.writeAndUnlock(newVersion);
                 }
                 finally {
                     //System.out.println("Thread "+threadName+" unlock");
                     ljf.unlock();
                 }
+                dur = System.currentTimeMillis() - startTime;
+                if (dur > 500) {
+                     System.out.println("\nThread "+threadName+" slow file access held lock "+dur+"ms!");
+                }
+                stat.put("duration", dur);
+                stats.put(stat);
             }
 
         } catch (Exception e) {
+            stat.put("error", e.toString());
+            stats.put(stat);
             throw new Exception("Thread "+threadName+" failed to process file: "+testFile,e);
         }
-        //System.out.println("Thread "+threadName+" complete update "+foundValue);
     }
     
     public int incrementOneValue(JSONObject output, String name) throws Exception {
