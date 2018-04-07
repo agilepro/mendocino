@@ -151,9 +151,9 @@ import java.util.Set;
  * the file system.</p>
  * 
  * <p>If you have multiple programs running which will be updating a JSON file, please look
- * into ClusterJSONFile for proper file system level locking of JSON files.</p>
+ * into LockableJSONFile for proper file system level locking of JSON files.</p>
  * 
- * @see com.purplehillsbooks.json.ClusterJSONFile
+ * @see com.purplehillsbooks.json.LockableJSONFile
  * 
  * <hr/>
  * 
@@ -203,6 +203,33 @@ public class JSONObject {
         }
     }
 
+    
+    /**
+     * Open the file if exists, read the contents, and return the
+     * JSONObject tree that the file represents.
+     * If the file does not exist, then it return an empty JSONObject
+     * representing the content of the file that does not exist.
+     * This is useful for files that lazily created and that start
+     * as an empty JSONObject.  This makes a missing file acts as if 
+     * the file had been initialized with an empty JSONObject, but it 
+     * does not actually update the file system with a new file.
+     */
+    public static JSONObject readFileIfExists(File inFile) throws Exception {
+        try {
+            if (!inFile.exists()) {
+                return new JSONObject();
+            }
+            FileInputStream fis = new FileInputStream(inFile);
+            JSONTokener jt = new JSONTokener(fis);
+            JSONObject jo = new JSONObject(jt);
+            fis.close();
+            return jo;
+        }
+        catch (Exception e) {
+            throw new Exception("Unable to read JSON objects from file: "+inFile, e);
+        }
+    }
+    
     /**
      * Write the entire contents of the JSONObject tree to the specified
      * file using JSON format.  This is written out properly and safely
@@ -611,6 +638,29 @@ public class JSONObject {
                 "] is not a JSONArray.");
     }
 
+    
+    /**
+     * Get the JSONArray value associated with a key
+     * and create an empty array with that key if it does not yet exist.
+     *
+     * @param key   A key string.
+     * @return      A JSONArray which is the value.
+     * @throws      JSONException if the key exists but value is not a JSONArray.
+     */
+    public JSONArray requireJSONArray(String key) throws JSONException {
+        Object object = this.get(key);
+        if (null == object) {
+            JSONArray newVal = new JSONArray();
+            this.put(key, newVal);
+            return newVal;
+        }
+        if (object instanceof JSONArray) {
+            return (JSONArray)object;
+        }
+        throw new JSONException("JSONObject[" + quote(key) +
+                "] is not a JSONArray.");
+    }
+    
 
     /**
      * Get the JSONObject value associated with a key.
@@ -622,6 +672,28 @@ public class JSONObject {
      */
     public JSONObject getJSONObject(String key) throws JSONException {
         Object object = this.get(key);
+        if (object instanceof JSONObject) {
+            return (JSONObject)object;
+        }
+        throw new JSONException("JSONObject[" + quote(key) +
+                "] is not a JSONObject.");
+    }
+
+    /**
+     * Get the JSONObject value associated with a key, and create one
+     * if it does not exist yet.
+     *
+     * @param key   A key string.
+     * @return      A JSONObject which is the value.
+     * @throws      JSONException if the key exists but is not a JSONObject.
+     */
+    public JSONObject requireJSONObject(String key) throws JSONException {
+        Object object = this.get(key);
+        if (null == object) {
+            JSONObject newVal = new JSONObject();
+            this.put(key, newVal);
+            return newVal;
+        }
         if (object instanceof JSONObject) {
             return (JSONObject)object;
         }

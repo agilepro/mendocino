@@ -47,9 +47,10 @@ import java.util.Hashtable;
  * LockableJSONFile ljf = LockableJSONFile.getSurrogate(myFile);   //retrieve
  * synchronized (ljf) {
  *     try {
- *         JSONObject jo = ljf.lockAndRead();       //read and lock
- *         ...                                      //exclusive actions while locked
- *         ljf.writeAndUnlock(jo);                  //write and release lock
+ *         ljf.lock();
+ *         JSONObject jo = ljf.readTarget();       //read 
+ *         ...                                     //exclusive actions while locked
+ *         ljf.writeTarget(jo);                    //write 
  *     }
  *     finally {
  *         ljf.unlock();
@@ -71,11 +72,12 @@ import java.util.Hashtable;
  * 
  * <pre>
  * File myFile = new File("c:/a/b/c/file.json");
- * ClusterJSONFile ljf = new ClusterJSONFile(myFile);   //declare
- * JSONObject jo = new JSONObject();                    //create JSON contents
+ * LockableJSONFile ljf = LockableJSONFile.getSurrogate(myFile);   //declare
+ * JSONObject jo = new JSONObject();                  //create JSON contents
  * synchronized(ljf) {
  *     try {
- *         ljf.initializeFile(jo);                      //create the file
+ *         ljf.lock();
+ *         ljf.writeTarget(jo);                       //create the file
  *     }
  *     finally {
  *         ljf.unlock();
@@ -95,10 +97,11 @@ import java.util.Hashtable;
  * LockableJSONFile ljf = LockableJSONFile.getSurrogate(myFile);   //declare
  * synchronized (ljf) {
  *     try {
- *         JSONObject jo = ljf.lockAndRead();               //read and lock
+ *         ljf.lock();
+ *         JSONObject jo = ljf.readTarget();               //read and lock
  *         ...                                              //exclusive actions while locked
  *         ...                                              //after all this is done, only then:
- *         ljf.writeAndUnlock(jo);                          //write and release lock
+ *         ljf.writerTarget(jo);                          //write and release lock
  *     }
  *     catch (Exception e) {
  *         throw new Exception("Unable to ... (details about goals of this method)", e);
@@ -111,7 +114,12 @@ import java.util.Hashtable;
  * </pre>
  * 
  * <p>It is important to assure that if you lock the file, you also unlock it.
- * It is OK to call unlock redundant times, the unnecessary unlocks are ignored.
+ * If you have multi-threading, then do everything in a synchronized block.
+ * Exceptions can always occur, so do everything in a try block, and put the 
+ * unlock in a finally block.
+ * You must lock before you do anything, even just checking existence.
+ * It is OK to call unlock redundant times, the unnecessary unlocks are ignored,
+ * however following the pattern of the finally block virtually eliminates this possibility.
  * If you hit an error, you generally don't want to write out the file with an undetermined
  * amount of update to the content.  Unless you know how to 'fix' the problem, you 
  * generally want to leave the file untouched, but you want to clear the file lock
@@ -273,6 +281,17 @@ public class LockableJSONFile {
         return JSONObject.readFromFile(target);
     }
     
+    /**
+     * Read and return the contents of the file if it exists.
+     * If it does not exist, an empty JSONObject is returned.
+     * You must lock the file before calling this.
+     */
+    public JSONObject readTargetIfExists() throws Exception {
+        if (!exists()) {
+            return new JSONObject();
+        }
+        return JSONObject.readFromFile(target);
+    }
 
 
     /**
