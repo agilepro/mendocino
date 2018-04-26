@@ -195,7 +195,7 @@ public class UUDecoderStream extends InputStream {
 
 		int need = ((count * 8) + 5) / 6;
 		if (inSize < need + 1) {
-			throw new IOException("Short buffer error: only have a line of '" + count
+			throw new IOException("Short buffer error: only have a line of '" + inSize
 					+ "' chars and we think we need '" + need + "'");
 		}
 
