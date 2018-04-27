@@ -289,7 +289,6 @@ public class Dom2JSON {
                 String attName = node.getNodeName();
                 String attValue = node.getNodeValue();
                 jo.put(attName, attValue);
-                System.out.println("Found an attribute: "+attName+" = "+attValue);
             }
             else if (Node.ELEMENT_NODE==type) {
                 Element ele2 = (Element)node;
@@ -313,7 +312,7 @@ public class Dom2JSON {
                 }
             }
             else if (Node.TEXT_NODE!=type && Node.CDATA_SECTION_NODE!=type) {
-                System.out.println("Found unknown element: "+type+"   Name: "+node.getNodeName());
+                //System.out.println("Found unknown element: "+type+"   Name: "+node.getNodeName());
             }
         }
         for (String key : stringMap.keySet()) {
@@ -366,7 +365,7 @@ public class Dom2JSON {
                 jo.put(attName, attValue);
             }
             else {
-                System.out.println("Attribute list contains a non attribute: "+node.getNodeType()+" = "+node.getNodeName());
+                //System.out.println("Attribute list contains a non attribute: "+node.getNodeType()+" = "+node.getNodeName());
             }
         }
 

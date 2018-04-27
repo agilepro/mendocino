@@ -23,8 +23,7 @@ public class FileLockTest {
     		FileLockTest pt = new FileLockTest();
 			pt.start(configFileName);
 		} catch (Exception e) {
-			System.out.println("Execution ended with an error.");
-			JSONException.traceException(e, "ProcessTest main level");
+            JSONException.traceException(e, "FileLockSimple main routine");
 		}
 	}
 	

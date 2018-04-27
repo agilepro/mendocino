@@ -346,9 +346,6 @@ public class MemFile {
                 amt = r.read(buf, 0, 1000);
             }
             String res = sb.toString();
-            if (res.length()!=size) {
-                System.out.println("MemFile calculate the length to be '"+size+"' but actually got '"+res.length()+"'");
-            }
             return res;
         }
         catch (Exception e) {

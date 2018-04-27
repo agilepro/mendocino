@@ -14,6 +14,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
+import com.purplehillsbooks.json.JSONException;
+
 public class FileLockSimple {
     
     
@@ -86,8 +88,7 @@ public class FileLockSimple {
                 System.out.print(".");
 		    } 
 		    catch (Exception e) {
-    			System.out.println("\nEXCEPTION");
-    			e.printStackTrace();
+		        JSONException.traceException(e, "FileLockSimple main routine");
     		}
 		}
 	}

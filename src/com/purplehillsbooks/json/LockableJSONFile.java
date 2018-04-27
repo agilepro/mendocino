@@ -199,6 +199,21 @@ public class LockableJSONFile {
         lockAccessFile = new RandomAccessFile(lockFile, "rw");
         FileChannel lockChannel = lockAccessFile.getChannel();
         lock = lockChannel.lock();
+        
+        //check that the file exists
+        if (!exists()) {
+            //there are some file systems that are slow about letting the programs know about files.
+            //we have found this in stress scenarios that a file just written out, the lock can be released
+            //somewhat before the file appears to the program.   So wait 100 ms to see if it appears
+            //in that time.  If the file really is not there -- e.g. the first time you look for a file and 
+            //expect to create it, will result in a 100ms delay.  Otherwise give up.  
+            //For normal files, they should normally exist, so delaying only on the create case should not be a problem.
+            // I don't like this.  I don't.   I don't.
+            Thread.sleep(100);
+            if (exists()) {
+                System.out.println("FILE RESCUE: file appeard only 100ms after the lock was acquired");
+            }
+        }
     }
 
     
@@ -264,9 +279,6 @@ public class LockableJSONFile {
         if (!exists()) {
             throw new Exception("LockableJSONFile.initializeFile tried to create file, but it did not get created: "+target);
         }
-        //This is to make sure that the file system has a chance to really know that the file is there.
-        //kind of stupid really, but we have seen failures otherwise.
-        //readTarget(outFile);
     }
 
     /**

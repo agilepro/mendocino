@@ -98,7 +98,6 @@ public class FileLockThread extends Thread {
                     Thread.sleep(lockHoldMillis);
                     
                     JSONObject newVersion = ljf.readTarget();
-                    //System.out.println("Thread "+threadName+" locked file");
                     //now update them
                     lastSetValue = incrementOneValue(newVersion, "testVal1");
                     incrementOneValue(newVersion, "testVal2");
@@ -112,7 +111,6 @@ public class FileLockThread extends Thread {
                     System.out.print(".");
                 }
                 finally {
-                    //System.out.println("Thread "+threadName+" unlock");
                     ljf.unlock();
                 }
                 dur = System.currentTimeMillis() - startTime;
