@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.*;
 
 import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.json.JSONObject;
 
 public class FileLockTest {
     
@@ -15,11 +16,11 @@ public class FileLockTest {
 	 */
 	public static void main(String args[]) {
 		try {
-            String configFileName = "AA_StressTest.config";
+            String configFileName = "StressTest.config";
     	    if (args.length>0) {
     	        configFileName = args[0];
-    	        System.out.println("CONFIG FILE NAME: "+configFileName);
     	    }
+	        System.out.println("CONFIG FILE NAME: "+configFileName);
     		FileLockTest pt = new FileLockTest();
 			pt.start(configFileName);
 		} catch (Exception e) {
@@ -40,23 +41,20 @@ public class FileLockTest {
 		// Read from a configuration file
 		File file = new File(configFileName);
 		if (!file.exists()) {
-			throw new Exception(String.format("Cound not find the config file in %s", file.getAbsolutePath()));
+			throw new Exception(String.format("Could not find the config file in %s", file.getAbsolutePath()));
 		}
-		File resultfolder = new File("testResults");
-		if (!resultfolder.exists()) {
-		    resultfolder.mkdirs();
-	        if (!resultfolder.exists()) {
-	            throw new Exception("Failed to create the output folder: "+resultfolder);
-	        }
-		}
+		JSONObject config = JSONObject.readFileIfExists(file);
 		
 		int threadCount = 2;
+		if (config.has("threadCount")) {
+		    threadCount = config.getInt("threadCount");
+		}
 		
         ArrayList<FileLockThread> threadList = new ArrayList<FileLockThread>();
         
         // Start Timer1 : This timer task checks process count periodically
         for (int i = 1; i<=threadCount; i++) {
-            FileLockThread flt1 = new FileLockThread("#"+i);
+            FileLockThread flt1 = new FileLockThread("#"+i, config);
             flt1.start();
             threadList.add(flt1);
         }

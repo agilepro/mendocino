@@ -14,6 +14,8 @@ import com.purplehillsbooks.json.LockableJSONFile;
  */
 public class FileLockThread extends Thread {
     
+    JSONObject config;
+    File testFile;
     boolean running = true;
     long lastSetValue = 0;
     int totalTries = 0;
@@ -23,9 +25,16 @@ public class FileLockThread extends Thread {
     Random rand;
     JSONArray stats = new JSONArray();
     
-    public FileLockThread(String name) throws Exception {
+    public FileLockThread(String name, JSONObject _config) throws Exception {
+        config = _config;
         threadName = name;
-        File testFile = new File("./ConFileTest.json");
+        testFile = new File("./ConFileTest.json");
+        if (config.has("testFile")) {
+            testFile = new File(config.getString("testFile"));
+        }
+        if (config.has("lockHoldMillis")) {
+            lockHoldMillis = config.getLong("lockHoldMillis");
+        }
         LockableJSONFile ljf = LockableJSONFile.getSurrogate(testFile);
         rand = new Random(System.currentTimeMillis());
 
@@ -47,6 +56,10 @@ public class FileLockThread extends Thread {
                 else {
                     System.out.println("Thread "+threadName+" did NOT initialized the file: "+testFile);                    
                 }
+                if (!ljf.exists()) {
+                    //this should never happen, but bomb out if it does.
+                    throw new Exception("Newly initialized file ("+testFile+") does not exist after creating it!");
+                }
             }
             finally {
                 ljf.unlock();
@@ -59,13 +72,22 @@ public class FileLockThread extends Thread {
     }
 
     public void run() {
-        System.out.println("Running Thread");
+        System.out.println("Running Thread "+threadName);
+        //report every 10 seconds;
+        long reportTime = System.currentTimeMillis() + 10000;
         while (running) {
-            if (++totalTries % 25 == 0) {
+            long thisTime = System.currentTimeMillis();
+            if (thisTime > reportTime) {
                 System.out.println("\nThread "+threadName+" completed "+totalTries+", value is "+lastSetValue+", exceptions: "+exceptionCount);
+                while (thisTime > reportTime) {
+                    //usually this goes through the loop once, but occasionally someone will put a machine to sleep
+                    //and when it wakes up, don't report for all the 10 second intervals that it was asleep
+                    reportTime = reportTime + 10000;
+                }
             }
+            totalTries++;
             try {
-                //we are in a fast loop doing this as fast as possible 99 out of 100 times
+                //we are in a fast loop doing this as fast as possible 
                 incrementLocalJSON();
             
             }
@@ -74,6 +96,7 @@ public class FileLockThread extends Thread {
                 JSONException.traceException(System.out, e, "Thread "+threadName+" FAILURE on try #"+totalTries);
             }
         }
+        System.out.println("Stopping Thread "+threadName);
     }   
     
     public void incrementLocalJSON() throws Exception {
@@ -81,7 +104,6 @@ public class FileLockThread extends Thread {
         JSONObject stat = new JSONObject();
         stat.put("thread", threadName);
         long dur = 0;
-        File testFile = new File("./ConFileTest.json");
         try {
             LockableJSONFile ljf = LockableJSONFile.getSurrogate(testFile);
             
