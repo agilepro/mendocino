@@ -648,7 +648,7 @@ public class JSONObject {
      * @throws      JSONException if the key exists but value is not a JSONArray.
      */
     public JSONArray requireJSONArray(String key) throws JSONException {
-        Object object = this.get(key);
+        Object object = this.opt(key);
         if (null == object) {
             JSONArray newVal = new JSONArray();
             this.put(key, newVal);
