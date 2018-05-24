@@ -8,6 +8,7 @@ import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.LockableJSONFile;
+import com.purplehillsbooks.xml.Mel;
 
 /**
  * Simple test of file locking
@@ -24,6 +25,7 @@ public class FileLockThread extends Thread {
     long lockHoldMillis = 20;
     Random rand;
     JSONArray stats = new JSONArray();
+    public Exception lastException = null;
     
     public FileLockThread(String name, JSONObject _config) throws Exception {
         config = _config;
@@ -88,11 +90,16 @@ public class FileLockThread extends Thread {
             totalTries++;
             try {
                 //we are in a fast loop doing this as fast as possible 
-                incrementLocalJSON();
-            
+                if (rand.nextInt(20)!=2) {
+                    incrementLocalJSON();
+                }
+                else {
+                    checkFileDoesNotChange();
+                }
             }
             catch (Exception e) {
                 exceptionCount++;
+                lastException = e;
                 JSONException.traceException(System.out, e, "Thread "+threadName+" FAILURE on try #"+totalTries);
             }
         }
@@ -100,7 +107,6 @@ public class FileLockThread extends Thread {
     }   
     
     public void incrementLocalJSON() throws Exception {
-        lastSetValue = 1;
         JSONObject stat = new JSONObject();
         stat.put("thread", threadName);
         long dur = 0;
@@ -154,31 +160,60 @@ public class FileLockThread extends Thread {
         if (!output.has(name)) {
             throw new Exception("Failure incrementing value "+name+", has object been initialized properly?");
         }
-        int val = (int)safeConvertLong(output.getString(name)) + 1;
+        int val = (int)Mel.safeConvertLong(output.getString(name)) + 1;
         if (val < lastSetValue) {
             throw new Exception("Problem, expected value >"+lastSetValue+" but got "+val+" instead.");
         }
         output.put(name, Integer.toString(val));
         return val;
     }
-    
-    public static long safeConvertLong(String val) {
-        if (val == null) {
-            return 0;
-        }
-        long res = 0;
-        int last = val.length();
-        for (int i = 0; i < last; i++) {
-            char ch = val.charAt(i);
-            if (ch >= '0' && ch <= '9') {
-                res = res * 10 + ch - '0';
-            }
-        }
-        return res;
-    }
+
     
     public void report(PrintStream out) throws Exception {
         out.println("Thread "+threadName+" encountered "+exceptionCount+" exceptions in "+totalTries+" total tries");
+        
+        if (lastException!=null) {
+            JSONException.traceException(System.out, lastException, "Thread "+threadName+" last exception was:");
+        }
     }
+
     
+    /**
+     * This test gets a lock and holds it for a long time, reading the file at the beginning and the end and
+     * assuring that nothing changed.
+     */
+    public void checkFileDoesNotChange() throws Exception {
+        JSONObject stat = new JSONObject();
+        stat.put("thread", threadName);
+        try {
+            LockableJSONFile ljf = LockableJSONFile.getSurrogate(testFile);
+            
+            synchronized(ljf) {
+                try {
+                    ljf.lock();
+                    JSONObject firstVersion = ljf.readTarget();
+                    int firstValue = (int)Mel.safeConvertLong(firstVersion.getString("testVal1"));
+                    
+                    Thread.sleep(1000);
+                    
+                    JSONObject lastVersion = ljf.readTarget();
+                    int lastValue = (int)Mel.safeConvertLong(lastVersion.getString("testVal1"));
+                    lastSetValue = lastValue;
+                    
+                    if (firstValue!=lastValue) {
+                        throw new Exception("File was updated during lock:  "+firstValue+" was changed to "+lastValue);
+                    }
+                    System.out.print("*");
+                }
+                finally {
+                    ljf.unlock();
+                }
+            }
+
+        } catch (Exception e) {
+            stat.put("error", e.toString());
+            stats.put(stat);
+            throw new Exception("Thread "+threadName+" failed to show file is static: "+testFile,e);
+        }
+    }    
 }

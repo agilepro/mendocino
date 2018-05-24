@@ -189,8 +189,19 @@ public class LockableJSONFile {
     
     
     /**
-     * This is the basic lock command.  It will block until the lock on the LOCK file
-     * can be gotten.  You should only call lock once, before calling unlock.
+     * This is the basic lock command and wait until the target file is there.  
+     * It will block until the lock on the LOCK file can be gotten.
+     * Then it will check if the target file exists, and wait up to 1 second for it to appear.
+     * You should only call lock once, before calling unlock.
+     * 
+     * It waits for the file to appear because on some shared file systems, the lock signal will
+     * arrive long before the file name change from the last update will propogate.   That means
+     * that for a long period of time (sometimes more than 100ms) it will appear like there is no
+     * target file in the file system.  To prevent errors we wait for it here.
+     * After 1 second it will continue without error assuming that this is the 
+     * extremely rare initialization case.  That means the very first time you create
+     * a file you will encounter a 1 second delay but we assume that is a rare case that is
+     * not seen in normal operation.
      */
     public void lock() throws Exception {
         if (lock != null || lockAccessFile != null) {
@@ -200,19 +211,20 @@ public class LockableJSONFile {
         FileChannel lockChannel = lockAccessFile.getChannel();
         lock = lockChannel.lock();
         
-        //check that the file exists
-        if (!exists()) {
+        //wait for the file to appear in the file system from the last write/rename
+        int count = 0;
+        while (!exists() && ++count<50) {
             //there are some file systems that are slow about letting the programs know about files.
             //we have found this in stress scenarios that a file just written out, the lock can be released
             //somewhat before the file appears to the program.   So wait 100 ms to see if it appears
             //in that time.  If the file really is not there -- e.g. the first time you look for a file and 
-            //expect to create it, will result in a 100ms delay.  Otherwise give up.  
+            //expect to create it, will result in a delay of up to 1 second.  Otherwise give up.  
             //For normal files, they should normally exist, so delaying only on the create case should not be a problem.
-            // I don't like this.  I don't.   I don't.
-            Thread.sleep(100);
-            if (exists()) {
-                System.out.println("FILE RESCUE: file appeard only 100ms after the lock was acquired");
-            }
+            //I don't like this.  I don't.   I don't.
+            Thread.sleep(20);
+        }
+        if (count>5) {
+            System.out.println("SLOW FILE SYSTEM: file appeard "+ (count*20) + "ms after the lock was acquired: "+target);
         }
     }
 
