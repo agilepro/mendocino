@@ -40,7 +40,7 @@ public class FileLockSimple {
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            JSONException.traceException(e, "FileLockSimple.main");
         }
         
 		while (true) {

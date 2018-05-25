@@ -29,6 +29,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
+import com.purplehillsbooks.json.JSONException;
+
 /**
  * TestRecorderText implements the TestRecorder interface so that:
  * <ol>
@@ -309,7 +311,7 @@ public class TestRecorderText implements TestRecorder {
             savedLog.clear();
         }
         catch (Exception e) {
-            e.printStackTrace(logWriter);
+            JSONException.traceException(logWriter, e, "Exception during markPassed");
         }
     }
 
@@ -357,7 +359,7 @@ public class TestRecorderText implements TestRecorder {
             savedLog = new ArrayList<String>();
         }
         catch (Exception e) {
-            e.printStackTrace(logWriter);
+            JSONException.traceException(logWriter, e, "Exception during markFailed");
         }
     }
 
@@ -415,7 +417,7 @@ public class TestRecorderText implements TestRecorder {
             savedLog = new ArrayList<String>();
         }
         catch (Exception e1) {
-            e1.printStackTrace(logWriter);
+            JSONException.traceException(logWriter, e, "Exception during markFatalError");
         }
     }
 
@@ -453,7 +455,7 @@ public class TestRecorderText implements TestRecorder {
             }
         }
         catch (Exception e) {
-            e.printStackTrace(logWriter);
+            JSONException.traceException(logWriter, e, "Exception during logging");
         }
     }
 
@@ -631,8 +633,7 @@ public class TestRecorderText implements TestRecorder {
         }
         catch (Exception e) {
             System.out.print("\n\n\n====================================================");
-            System.out.print("\nEXCEPTION CAUGHT AT MAIN LEVEL:\n");
-            e.printStackTrace(System.out);
+            JSONException.traceException(e, "EXCEPTION CAUGHT AT MAIN LEVEL");
         }
         if (tr!=null) {
             System.out.print("\n\n\n====================================================");

@@ -27,6 +27,8 @@ import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
+import com.purplehillsbooks.json.JSONException;
+
 /**
  * The Test Driver reads the command line arguments, makes an instance of the
  * test class, and passes a test recorder to it.
@@ -265,7 +267,7 @@ public class TestDriver {
             ts.runTests(recorder);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            JSONException.traceException(e, "TestSet (" + fullCommand + ") failed");
             recorder.markFatalError(e);
             throw new Exception("TestSet (" + fullCommand + ") failed", e);
         }
@@ -456,8 +458,7 @@ public class TestDriver {
                 w.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
                 w.write("Fatal Error, in " + firstParam + "\n");
                 deparenthesize(w, e.toString());
-                java.io.PrintWriter pw = new java.io.PrintWriter(w);
-                e.printStackTrace(pw);
+                JSONException.convertToJSON(e, "Fatal Error, in " + firstParam).write(w,2,2);
                 result = -1;
                 w.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
             }

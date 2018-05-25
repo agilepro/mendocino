@@ -47,9 +47,9 @@
     "    TestExceptions.java: callHigher: 62",
     "    TestExceptions.java: sampleMethod1: 40",
     "    TestExceptions.java: callHigher: 62",
-    "    TestExceptions.java: runCourse: 94",
+    "    TestExceptions.java: runCourse: 84",
     "    TestExceptions.java: runTests: 32",
-    "    TestRecorderText.java: parseArgsRunTests: 630",
-    "    TestExceptions.java: main: 114"
+    "    TestRecorderText.java: parseArgsRunTests: 632",
+    "    TestExceptions.java: main: 111"
   ]
 }}

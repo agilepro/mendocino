@@ -21,6 +21,8 @@ import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import com.purplehillsbooks.json.JSONException;
+
 /**
  *
  * Author: Keith Swenson
@@ -91,8 +93,7 @@ public class TestRunner {
                 out.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
                 out.write("Fatal Error, in " + className + "\n");
                 TestDriver.deparenthesize(out, e.toString());
-                java.io.PrintWriter pw = new java.io.PrintWriter(out);
-                e.printStackTrace(pw);
+                JSONException.traceException(out, e, "Fatal Error, in " + className);
                 out.write("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
             }
 
@@ -131,7 +132,7 @@ public class TestRunner {
             out.flush();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            JSONException.traceException(e, "TestRunner.run");
         }
     }
 }

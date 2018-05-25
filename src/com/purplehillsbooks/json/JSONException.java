@@ -1,6 +1,7 @@
 package com.purplehillsbooks.json;
 
 import java.io.PrintStream;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -84,7 +85,7 @@ public class JSONException extends Exception {
      * @param context allows you to include some context about the operation that was being performed 
      *                when the exception occurred.
      */
-    public static JSONObject convertToJSON(Exception e, String context) throws Exception {
+    public static JSONObject convertToJSON(Throwable e, String context) throws Exception {
         JSONObject responseBody = new JSONObject();
         JSONObject errorTag = new JSONObject();
         responseBody.put("error", errorTag);
@@ -242,7 +243,7 @@ public class JSONException extends Exception {
     /**
      * A standardized way to trace a given exception to the system out.
      */
-    public static JSONObject traceException(Exception e, String context) {
+    public static JSONObject traceException(Throwable e, String context) {
         JSONObject errOB = traceException(System.out, e, context);
         return errOB;
     }
@@ -250,7 +251,7 @@ public class JSONException extends Exception {
     /**
      * A standardized way to trace a given exception to the system out.
      */
-    public static JSONObject traceException(PrintStream out, Exception e, String context) {
+    public static JSONObject traceException(PrintStream out, Throwable e, String context) {
         if (out==null) {
             System.out.println("$$$$$$$$ traceException requires an out parameter");
             return null;
@@ -274,6 +275,34 @@ public class JSONException extends Exception {
             return null;
         }
     }
+
+    /**
+     * A standardized way to trace a given exception to the system out.
+     */
+    public static JSONObject traceException(Writer w, Throwable e, String context) {
+        if (w==null) {
+            System.out.println("$$$$$$$$ traceException requires an w parameter");
+            return null;
+        }
+        if (e==null) {
+            System.out.println("$$$$$$$$ traceException requires an e parameter");
+            return null;
+        }
+        if (context==null || context.length()==0) {
+            System.out.println("$$$$$$$$ traceException requires a context parameter");
+            return null;
+        }
+        try {
+            JSONObject errOb = convertToJSON(e, context);
+            traceConvertedException(w, errOb);
+            return errOb;
+        }
+        catch (Exception eee) {
+            System.out.println("$$$$$$$$ FAILURE TRACING AN EXCEPTION TO JSON");
+            eee.printStackTrace();
+            return null;
+        }
+    }
     
 
     /**
@@ -283,6 +312,16 @@ public class JSONException extends Exception {
     public static void traceConvertedException(PrintStream out, JSONObject errOb) {
         try {
             out.println(getTraceExceptionFormat(errOb));
+        }
+        catch (Exception eee) {
+            System.out.println("$$$$$$$$ FAILURE TRACING A CONVERTED EXCEPTION");
+            eee.printStackTrace();
+        }
+    }
+    
+    public static void traceConvertedException(Writer w, JSONObject errOb) {
+        try {
+            w.write(getTraceExceptionFormat(errOb));
         }
         catch (Exception eee) {
             System.out.println("$$$$$$$$ FAILURE TRACING A CONVERTED EXCEPTION");

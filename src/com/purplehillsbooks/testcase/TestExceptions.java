@@ -13,6 +13,10 @@ import com.purplehillsbooks.testframe.TestSet;
  * Author: Keith Swenson
  * Copyright: Keith Swenson, all rights reserved
  * License: This code is made available under the GNU Lesser GPL license.
+ * 
+ * NOTE: these tests are very sensitive to the line numbers of the test framework.
+ * If you add or remove lines in the test framework, you may need to regenerate
+ * the test results files.
  */
 public class TestExceptions implements TestSet {
 
@@ -72,16 +76,6 @@ public class TestExceptions implements TestSet {
         }
     }
     
-    private void compareJSON(JSONObject j1, JSONObject j2, String id) {
-        String s1 = j1.toString();
-        String s2 = j2.toString();
-        if (s1.equals(s2)) {
-            tr.markPassed(id);
-        }
-        else {
-            tr.markFailed(id, "read the file for details: "+id);
-        }
-    }
 
     private void runCourse(String course, String fileName) {
         Exception testException = null;
@@ -102,7 +96,14 @@ public class TestExceptions implements TestSet {
             JSONObject answer = JSONObject.readFromFile(path);
             File outputFile2 = new File(tr.getProperty("testoutput", null), fileName);
             exObj.writeToFile(outputFile2);
-            compareJSON(exObj, answer, fileName);
+            String s1 = exObj.toString();
+            String s2 = answer.toString();
+            if (s1.equals(s2)) {
+                tr.markPassed(fileName);
+            }
+            else {
+                tr.markFailed(fileName, "read the file for details: "+path);
+            }
         }
         catch (Exception e) {
             System.out.println("FATAL ERROR: "+e);
