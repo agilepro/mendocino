@@ -223,8 +223,8 @@ public class LockableJSONFile {
             //I don't like this.  I don't.   I don't.
             Thread.sleep(20);
         }
-        if (count>5) {
-            System.out.println("SLOW FILE SYSTEM: file appeard "+ (count*20) + "ms after the lock was acquired: "+target);
+        if (count>5 && exists()) {
+            System.out.println("SLOW FILE SYSTEM: file appeared "+ (count*20) + "ms after the lock was acquired: "+target);
         }
     }
 
@@ -312,7 +312,11 @@ public class LockableJSONFile {
      */
     public JSONObject readTargetIfExists() throws Exception {
         if (!exists()) {
-            return new JSONObject();
+            //actually initialize the file here so that next time we can avoid
+            //the 1 second delay waiting for it to appear.
+            //This should be rare, so print a trace statement about it
+            writeTarget(new JSONObject());
+            System.out.println("LockableJSONFile: initialized file to empty JSON object: "+target);
         }
         return JSONObject.readFromFile(target);
     }
