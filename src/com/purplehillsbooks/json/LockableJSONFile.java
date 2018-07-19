@@ -125,6 +125,28 @@ import java.util.Hashtable;
  * generally want to leave the file untouched, but you want to clear the file lock
  * so that other threads have access.  The exception might not be the fault of the 
  * file itself, and it may not be a problem next time you read it.</p>
+ * 
+ * 
+ * <p>RQ High Reliability Option</p>
+ * 
+ * <p>We have a problem at a customer where they are using a very unreliable 
+ * file system.  This is causing errors.  The problem is that when a file is
+ * written, and unlocked by one system, the other system gets the lock, but is 
+ * unable to read the file.   Sometimes because the file is locked and unable
+ * to be accessed. Other times the temp file can not be renamed for some reason.</p>
+ * 
+ * The strategy to avoid problem is:
+ * 
+ * 1. When getting the locked file, also check that the target file exist.  Wait
+ *    for it in increments of 20ms for up to 1 second for it to appear.
+ *    
+ * 2. When reading the file, wait for the file to exist before reading it.
+ * 
+ * 3. If there is a failure read the file, wait 50ms and try again, up to 5 times
+ * 
+ * 4. When writing a file, it there is a failure, wait 50ms and try again, up to 5 times
+ * 
+ * 5. After writing, wait for the file to exist.
  */
 public class LockableJSONFile {
 
@@ -211,6 +233,12 @@ public class LockableJSONFile {
         FileChannel lockChannel = lockAccessFile.getChannel();
         lock = lockChannel.lock();
         
+        waitUntilItExists();
+    }
+    
+    
+    
+    private void waitUntilItExists() throws Exception {
         //wait for the file to appear in the file system from the last write/rename
         int count = 0;
         while (!exists() && ++count<50) {
@@ -224,7 +252,7 @@ public class LockableJSONFile {
             Thread.sleep(20);
         }
         if (count>5 && exists()) {
-            System.out.println("SLOW FILE SYSTEM: file appeared "+ (count*20) + "ms after the lock was acquired: "+target);
+            System.out.println("SLOW FILE SYSTEM: file appeared "+ (count*20) + "ms after expected: "+target);
         }
     }
 
@@ -286,7 +314,20 @@ public class LockableJSONFile {
         if (!isLocked()) {
             throw new Exception("File was not locked before calling writeTarget: "+target);
         }
-        newContent.writeToFile(target);
+        
+        int retryCount = 0;
+        while (retryCount++ < 5) {
+            try {
+                newContent.writeToFile(target);
+                waitUntilItExists();
+                return;
+            }
+            catch (Exception e) {
+                System.out.println();
+                JSONException.traceException(e, "LockableJSONFile.writeTarget:  Try #"+retryCount+" writing file got an exception.");
+                Thread.sleep(50);
+            }
+        }
         //check and make sure it exists!
         if (!exists()) {
             throw new Exception("LockableJSONFile.initializeFile tried to create file, but it did not get created: "+target);
@@ -302,15 +343,42 @@ public class LockableJSONFile {
         if (!isLocked()) {
             throw new Exception("File was not locked before calling readTarget: "+target);
         }
-        return JSONObject.readFromFile(target);
+        
+        int retryCount = 0;
+        Exception lastException = null;
+        while (retryCount++ < 5) {
+            try {
+                waitUntilItExists();
+                return JSONObject.readFromFile(target);
+            }
+            catch (Exception e) {
+                lastException = e;
+                System.out.println();
+                JSONException.traceException(e, "LockableJSONFile.writeTarget:  Try #"+retryCount+" writing file got an exception.");
+                Thread.sleep(50);
+            }
+        }
+        throw new Exception("LockableJSONFile.writeTarget:  Failed "+retryCount+" times to write file "+target, lastException);
     }
     
     /**
      * Read and return the contents of the file if it exists.
-     * If it does not exist, an empty JSONObject is returned.
+     * If it does not exist, the file will be created with an empty JS object.
      * You must lock the file before calling this.
+     * 
+     * Note: this method will first wait up to 1 second to see 
+     * if the file exists, and then it will initialize the file
+     * to an empty object if not found, so that next time 
+     * it will see and read the file quickly.
+     * This method should only be used on files that almost always exist
+     * and should be initialized if they don't exist.
      */
     public JSONObject readTargetIfExists() throws Exception {
+        //consistency check
+        if (!isLocked()) {
+            throw new Exception("File was not locked before calling readTargetIfExists: "+target);
+        }
+        waitUntilItExists();
         if (!exists()) {
             //actually initialize the file here so that next time we can avoid
             //the 1 second delay waiting for it to appear.
