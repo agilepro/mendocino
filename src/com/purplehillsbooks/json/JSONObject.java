@@ -1358,7 +1358,7 @@ public class JSONObject {
     * returns the same writer that was passed in.
     * That is, it writes double quote characters before and after
     * the value, and then scans the value, putting a backslash
-    * before each double quote, adn before each backslash.
+    * before each double quote, and before each backslash.
     * It also converts newlines, returns, tabs, linefeed, and
     * backspace characters to their properly encoded symbolic equivalent.
     */

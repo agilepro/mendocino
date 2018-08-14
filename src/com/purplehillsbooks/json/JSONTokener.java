@@ -32,14 +32,14 @@ SOFTWARE.
 */
 
 /**
- * A JSONTokener takes a source string and extracts characters and tokens from
- * it. It is used by the JSONObject and JSONArray constructors to parse
- * JSON source strings.</p>
+ * A JSONTokener takes a source stream and parses it for the JSONObject / JSONArray.
+ * The only way to use this is in a constructor to a JSONObject / JSONArray.</p>
  * 
  * <h1>USAGE</h1>
  * 
  * <pre>
  * JSONObject jo = new JSONObject( new JSONTokener( input ) );
+ * JSONArray ja = new JSONArray( new JSONTokener( input ) );
  * </pre>
  * 
  * <p>The variable <code>input</code> can be an inputStream, a reader, or a String.

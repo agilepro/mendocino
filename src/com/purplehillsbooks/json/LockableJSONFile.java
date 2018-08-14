@@ -98,16 +98,16 @@ import java.util.Hashtable;
  * synchronized (ljf) {
  *     try {
  *         ljf.lock();
- *         JSONObject jo = ljf.readTarget();               //read and lock
- *         ...                                              //exclusive actions while locked
- *         ...                                              //after all this is done, only then:
- *         ljf.writerTarget(jo);                          //write and release lock
+ *         JSONObject jo = ljf.readTarget();              //read and lock
+ *         ...                                            //exclusive actions while locked
+ *         ...                                            //after all this is done, only then:
+ *         ljf.writeTarget(jo);                       v   //write and release lock
  *     }
  *     catch (Exception e) {
  *         throw new Exception("Unable to ... (details about goals of this method)", e);
  *     }
  *     finally {
- *         ljf.unlock();                                    //unlock WITHOUT writing content
+ *         ljf.unlock();                                  //unlock WITHOUT writing content
  *     }
  * }
  * ljf.free();
@@ -135,18 +135,19 @@ import java.util.Hashtable;
  * unable to read the file.   Sometimes because the file is locked and unable
  * to be accessed. Other times the temp file can not be renamed for some reason.</p>
  * 
- * The strategy to avoid problem is:
- * 
- * 1. When getting the locked file, also check that the target file exist.  Wait
- *    for it in increments of 20ms for up to 1 second for it to appear.
+ * <p>The strategy to avoid problem is:</p>
+ * <ol>
+ * <li>When getting the locked file, also check that the target file exist.  Wait
+ *    for it in increments of 20ms for up to 1 second for it to appear.</li>
  *    
- * 2. When reading the file, wait for the file to exist before reading it.
+ * <li>When reading the file, wait for the file to exist before reading it.</li>
  * 
- * 3. If there is a failure read the file, wait 50ms and try again, up to 5 times
+ * <li>If there is a failure read the file, wait 50ms and try again, up to 5 times.</li>
  * 
- * 4. When writing a file, it there is a failure, wait 50ms and try again, up to 5 times
+ * <li>When writing a file, it there is a failure, wait 50ms and try again, up to 5 times.</li>
  * 
- * 5. After writing, wait for the file to exist.
+ * <li>After writing, wait for the file to exist.</li>
+ * </ol>
  */
 public class LockableJSONFile {
 
