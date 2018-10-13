@@ -7,11 +7,11 @@ import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 public class FileLockTest {
-    
-    
+
+
 	/**
 	 * Application Main
-	 * 
+	 *
 	 * @param args
 	 */
 	public static void main(String args[]) {
@@ -25,9 +25,10 @@ public class FileLockTest {
 			pt.start(configFileName);
 		} catch (Exception e) {
             JSONException.traceException(e, "FileLockSimple main routine");
+            e.printStackTrace();
 		}
 	}
-	
+
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// Methods
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -44,14 +45,14 @@ public class FileLockTest {
 			throw new Exception(String.format("Could not find the config file in %s", file.getAbsolutePath()));
 		}
 		JSONObject config = JSONObject.readFileIfExists(file);
-		
+
 		int threadCount = 2;
 		if (config.has("threadCount")) {
 		    threadCount = config.getInt("threadCount");
 		}
-		
+
         ArrayList<FileLockThread> threadList = new ArrayList<FileLockThread>();
-        
+
         // Start Timer1 : This timer task checks process count periodically
         for (int i = 1; i<=threadCount; i++) {
             FileLockThread flt1 = new FileLockThread("#"+i, config);
@@ -77,12 +78,12 @@ public class FileLockTest {
 
 		System.out.println("Shutting down in 3 seonds....");
 		Thread.sleep(3000);
-		
+
         for (FileLockThread flt : threadList) {
             flt.report(System.out);
         }
 	}
-	
-	
+
+
 
 }
