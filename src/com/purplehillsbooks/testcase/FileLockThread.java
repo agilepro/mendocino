@@ -286,13 +286,13 @@ public class FileLockThread extends Thread {
     }
 
     public void finishOpRecord(OpRecord or, Exception e) {
-        or.duration = System.currentTimeMillis() - or.timestamp;
+        or.duration = (System.nanoTime()/1000) - or.timestamp;
         timeTable.add(or);
     }
 
     public OpRecord startOpRecord(String oper) {
         OpRecord or = new OpRecord();
-        or.timestamp = System.currentTimeMillis();
+        or.timestamp = System.nanoTime()/1000;
         or.op = oper;
         return or;
     }
@@ -322,6 +322,6 @@ public class FileLockThread extends Thread {
         if (count>0) {
             avg = sum / count;
         }
-        out.println("    "+op+" count="+count+", max="+max+",  avg="+avg);
+        out.println("    "+op+" count="+count+", max="+max+",  avg="+avg+" (microseconds)");
     }
 }
