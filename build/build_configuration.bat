@@ -16,7 +16,7 @@
 :# is installed.  For example: JAVA_HOME=e:\Program Files\Java\jdk1.5.0_11\
 :#
 :#####################################################################################################
-set JAVA_HOME=E:\Program Files\Java\jdk1.5.0_11\
+set JAVA_HOME=c:\Program Files\Java\jdk1.8.0_131\
 
 :#####################################################################################################
 :#
@@ -27,7 +27,7 @@ set JAVA_HOME=E:\Program Files\Java\jdk1.5.0_11\
 :# Example: SOURCE_DIR=f:\subversion\mendo\
 :#
 :#####################################################################################################
-set SOURCE_DIR=F:\subversion\mendo\
+set SOURCE_DIR=c:\github\mendocino\
 
 :#####################################################################################################
 :#
@@ -40,6 +40,57 @@ set SOURCE_DIR=F:\subversion\mendo\
 :# TARGET_DIR_DRIVE is the drive letter of TARGET_DIR - a kludge till we have a smarter script
 :#
 :#####################################################################################################
-set TARGET_DIR=F:\sandbuild\mendo\
-set TARGET_DIR_DRIVE=F:
+set TARGET_DIR=c:\build\purple\
+set TARGET_DIR_DRIVE=C:
+
+
+
+
+
+:#####################################################################################################
+:#
+:# NOW test that these settings are correct, test that the folders exist
+:# and warn if they do not.  No user settings below here
+:#
+:#####################################################################################################
+
+IF EXIST "%JAVA_HOME%" goto step2
+
+echo off
+echo ************************************************************
+echo The Java home folder (%JAVA_HOME%) does not exist.
+echo please change JAVA_HOME to a valid folder where Java is installed
+echo ************************************************************
+pause
+echo on
+goto exit1
+
+:step2
+IF EXIST "%SOURCE_DIR%" goto step3
+
+echo off
+echo ************************************************************
+echo The source folder (%SOURCE_DIR%) does not exist.
+echo please change SOURCE_DIR to a valid folder where source is to be read from
+echo ************************************************************
+pause
+echo on
+goto exit1
+
+:step3
+IF EXIST "%TARGET_DIR%" goto step4
+
+echo off
+echo ************************************************************
+echo The build target folder (%TARGET_DIR%) does not exist.
+echo please change TARGET_DIR to a valid folder where output is to go
+echo ************************************************************
+pause
+echo on
+goto exit1
+
+:step4
+echo configuration looks OK
+
+:exit1
 
