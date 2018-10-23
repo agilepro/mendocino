@@ -254,6 +254,7 @@ public class LockableJSONFile {
             lockAccessFile2 = new RandomAccessFile(target, "rw");
             FileChannel lockChannel2 = lockAccessFile2.getChannel();
             lock2 = lockChannel2.lock();
+            //System.out.println("+++ getSecondLock on "+target);
         }
         catch (Exception e) {
             throw new Exception("Failed to get second lock, the one on : "+target, e);
@@ -269,6 +270,7 @@ public class LockableJSONFile {
                 lockAccessFile2.close();
                 lockAccessFile2 = null;
             }
+            //System.out.println("+++ releaseSecondLock on "+target);
         }
         catch (Exception e) {
             throw new Exception("Failed to release second lock, the one on : "+target, e);
@@ -392,9 +394,9 @@ public class LockableJSONFile {
         while (retryCount++ < 5) {
             try {
                 waitUntilItExists();
-                JSONObject ret = JSONObject.readFromFile(target);
+                JSONObject result = JSONObject.readFromFile(target);
                 getSecondLock();
-                return ret;
+                return result;
             }
             catch (Exception e) {
                 lastException = e;
@@ -403,6 +405,7 @@ public class LockableJSONFile {
                 Thread.sleep(50);
             }
         }
+        getSecondLock();
         throw new Exception("LockableJSONFile.writeTarget:  Failed "+retryCount+" times to write file "+target, lastException);
     }
 
@@ -423,15 +426,25 @@ public class LockableJSONFile {
         if (!isLocked()) {
             throw new Exception("File was not locked before calling readTargetIfExists: "+target);
         }
-        waitUntilItExists();
-        if (!exists()) {
-            //actually initialize the file here so that next time we can avoid
-            //the 1 second delay waiting for it to appear.
-            //This should be rare, so print a trace statement about it
-            writeTarget(new JSONObject());
-            System.out.println("LockableJSONFile: initialized file to empty JSON object: "+target);
+        releaseSecondLock();
+        try {
+            waitUntilItExists();
+            if (!exists()) {
+                //actually initialize the file here so that next time we can avoid
+                //the 1 second delay waiting for it to appear.
+                //This should be rare, so print a trace statement about it
+                writeTarget(new JSONObject());
+                //System.out.println("LockableJSONFile: initialized file to empty JSON object: "+target);
+            }
+            return JSONObject.readFromFile(target);
         }
-        return JSONObject.readFromFile(target);
+        catch (Exception e) {
+            JSONException.traceException(e, "LockableJSONFile.readTargetIfExists FAILURE: "+target);
+            throw new Exception("readTargetIfExists failed for "+target, e);
+        }
+        finally {
+            getSecondLock();
+        }
     }
 
 

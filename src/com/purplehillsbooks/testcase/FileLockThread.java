@@ -150,7 +150,17 @@ public class FileLockThread extends Thread {
                     Thread.sleep(lockHoldMillis);
 
                     or = startOpRecord(FileLockThread.OP_READ);
-                    JSONObject newVersion = ljf.readTarget();
+                    JSONObject newVersion = null;
+                    //there are two different read operations.  They are essentially the same
+                    //but one complains if the file does not exist.   We know the file exists
+                    //so there is no effective difference.  Randomly call one or the other
+                    //so that we can test both of them working in this test.
+                    if (rand.nextInt(2)>=1) {
+                        newVersion = ljf.readTarget();
+                    }
+                    else {
+                        newVersion = ljf.readTargetIfExists();
+                    }
                     finishOpRecord(or, null);
 
                     //now update them

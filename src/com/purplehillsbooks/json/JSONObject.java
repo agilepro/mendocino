@@ -49,17 +49,17 @@ import java.util.Set;
 
 /**
  * <p>A JSONObject is an collection of name/value pairs.</p>
- * 
+ *
  * <p> This com.purplehillsbooks.json version of the classes enforces alphabetical order
  * on the object members when being serialized.  This is done to put the output
  * into a cononical, reproducible form.  So that identical JSON objects will
  * produce identical output, and so that if you compare two JSON files, the
  * difference will be more meaningful.   Otherwise, the order of the members does
  * not matter.</p>
- * 
+ *
  * <p> This com.purplehillsbooks.json version also provides human readible, indented output
  * when you use the <code>write(stream, indent, offset)</code> method.</p>
- * 
+ *
  * <p>The JSONObject serialized
  * form is a string wrapped in curly braces with colons between the names and
  * values, and commas between the values and names. The internal form is an
@@ -75,13 +75,13 @@ import java.util.Set;
  * returns a value if one can be found, and throws an exception if one cannot be
  * found. An <code>opt</code> method returns a default value instead of throwing
  * an exception, and so is useful for obtaining optional values.</p>
- * 
+ *
  * <p>The generic <code>get()</code> and <code>opt()</code> methods return an
  * object, which you can cast or query for type. There are also typed
  * <code>get</code> and <code>opt</code> methods that do type checking and type
  * casting for you. The opt methods differ from the get methods in that they do
  * not throw. Instead, they return a specified default value, such as null or zero.</p>
- * 
+ *
  * <p>The <code>put</code> methods add or replace values in an object. For example,</p>
  *
  * <pre>
@@ -91,11 +91,11 @@ import java.util.Set;
  * </pre>
  *
  * <p>produces the string <code>{"JSON": "Hello, World"}</code>.</p>
- * 
+ *
  * <p>The texts produced by the <code>write</code> methods strictly conform to
  * the JSON syntax rules. The constructors are more forgiving in the texts they
  * will accept:</p>
- * 
+ *
  * <ul>
  * <li>An extra <code>,</code>&nbsp;<small>(comma)</small> may appear just
  * before the closing brace.</li>
@@ -112,51 +112,51 @@ import java.util.Set;
  * <li>Values can be followed by <code>;</code> <small>(semicolon)</small> as
  * well as by <code>,</code> <small>(comma)</small>.</li>
  * </ul>
- * 
+ *
  * <h1>Reading JSON Format</h1>
- * 
+ *
  * <p>To read from a stream, reader, or string, use the following:</p>
- * 
+ *
  * <pre>
  * JSONObject jo = new JSONObject( new JSONTokener( input ) );
  * </pre>
- * 
+ *
  * <p>To read from a file, it is most convenient:</p>
- * 
+ *
  * <pre>
  * JSONObject jo = JSONObject.readFromFile( file );
  * </pre>
  *
  * <h1>Writing JSON Format</h1>
- * 
+ *
  * <p>If you want to write to a stream, use the write methods on JSON object or array:</p>
- * 
+ *
  * <pre>
  * jo.write( output );
  * -or-
  * jo.write( output, 2, 0 );
  * </pre>
- * 
+ *
  * <p>To write to a file.  This is more than just a convenience, this will write to a
  * temporary file, and then only when it is fully written, will delete the existing file,
  * and rename the temp to the new name:</p>
- * 
+ *
  * <pre>
  * jo.writeToFile( file );
  * </pre>
- *  
- * <p>Thus, no matter if the server crashes in the 
+ *
+ * <p>Thus, no matter if the server crashes in the
  * middle of writing, the file being pointed to will always contain valid JSON format contents.
- * If the server crashes in the middle of writing, this may leave "temp" files in 
+ * If the server crashes in the middle of writing, this may leave "temp" files in
  * the file system.</p>
- * 
+ *
  * <p>If you have multiple programs running which will be updating a JSON file, please look
  * into LockableJSONFile for proper file system level locking of JSON files.</p>
- * 
+ *
  * @see com.purplehillsbooks.json.LockableJSONFile
- * 
+ *
  * <hr/>
- * 
+ *
  * </p>Originally written by JSON.org released 2012-10-26 but heavily modified
  * by Keith Swenson in the years after that to make the object classes
  * conform to style guidelines discussed in http://agiletribe.wordpress.com/</p>
@@ -192,6 +192,7 @@ public class JSONObject {
      */
     public static JSONObject readFromFile(File inFile) throws Exception {
         try {
+            //System.out.println("JSONObject.readFromFile: "+inFile);
             FileInputStream fis = new FileInputStream(inFile);
             JSONTokener jt = new JSONTokener(fis);
             JSONObject jo = new JSONObject(jt);
@@ -199,23 +200,26 @@ public class JSONObject {
             return jo;
         }
         catch (Exception e) {
+            //System.out.println("JSONObject.readFromFile FAILURE: "+inFile);
+            //e.printStackTrace();
             throw new Exception("Unable to read JSON objects from file: "+inFile, e);
         }
     }
 
-    
+
     /**
      * Open the file if exists, read the contents, and return the
      * JSONObject tree that the file represents.
      * If the file does not exist, then it return an empty JSONObject
      * representing the content of the file that does not exist.
      * This is useful for files that lazily created and that start
-     * as an empty JSONObject.  This makes a missing file acts as if 
-     * the file had been initialized with an empty JSONObject, but it 
+     * as an empty JSONObject.  This makes a missing file acts as if
+     * the file had been initialized with an empty JSONObject, but it
      * does not actually update the file system with a new file.
      */
     public static JSONObject readFileIfExists(File inFile) throws Exception {
         try {
+            //System.out.println("JSONObject.readFileIfExists: "+inFile);
             if (!inFile.exists()) {
                 return new JSONObject();
             }
@@ -226,10 +230,12 @@ public class JSONObject {
             return jo;
         }
         catch (Exception e) {
+            //System.out.println("JSONObject.readFileIfExists FAILURE: "+inFile);
+            //e.printStackTrace();
             throw new Exception("Unable to read JSON objects from file: "+inFile, e);
         }
     }
-    
+
     /**
      * Write the entire contents of the JSONObject tree to the specified
      * file using JSON format.  This is written out properly and safely
@@ -266,7 +272,7 @@ public class JSONObject {
 
             Path sourcePath      = Paths.get(tempFile.toString());
             Path destinationPath = Paths.get(outFile.toString());
-            
+
             boolean failedOnce = false;
             if (Files.exists(destinationPath)) {
                 try {
@@ -279,12 +285,12 @@ public class JSONObject {
             }
             if (failedOnce) {
                 //This is really gross, but if the delete fails, try it again, if needed.
-                if (Files.exists(destinationPath)) {                
+                if (Files.exists(destinationPath)) {
                     Files.delete(destinationPath);
                 }
             }
 
-            
+
             failedOnce = false;
             try {
                 Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
@@ -293,17 +299,17 @@ public class JSONObject {
                 System.out.println("RETRYING-FAILURE renaming file ("+tempFile+") because: "+e.toString());
                 failedOnce = true;
             }
-            
-            //This is really gross, but it seems that this call will fail about 1% of the time,  we 
+
+            //This is really gross, but it seems that this call will fail about 1% of the time,  we
             //suspect it is due to virus-scan or something else.   It does not fail every time, and it
-            //is timing dependent, so hard to prove either way.   This causes a slight slow down in 
+            //is timing dependent, so hard to prove either way.   This causes a slight slow down in
             //maybe 1% of the cases, but there is no real way around it.
             if (failedOnce) {
                 Thread.sleep(10);
                 //after waiting just a moment, if this fails, then it fails for good
                 Files.move(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             }
-            
+
             //on some shared file systems, this step was failing but there was no indication at the time of the fail.
             //So the following two steps check for that, and produce an error when it is detected.
             if (!outFile.exists()) {
@@ -638,7 +644,7 @@ public class JSONObject {
                 "] is not a JSONArray.");
     }
 
-    
+
     /**
      * Get the JSONArray value associated with a key
      * and create an empty array with that key if it does not yet exist.
@@ -660,7 +666,7 @@ public class JSONObject {
         throw new JSONException("JSONObject[" + quote(key) +
                 "] is not a JSONArray.");
     }
-    
+
 
     /**
      * Get the JSONObject value associated with a key.
@@ -1600,7 +1606,7 @@ public class JSONObject {
             }
         }
         catch (Exception e) {
-            //there is no conceivable exception that can come out of this, but throw something 
+            //there is no conceivable exception that can come out of this, but throw something
             //just in case.   Want the signature to not have exception in it.
             throw new RuntimeException("Can not serialize JSONObject????", e);
         }
