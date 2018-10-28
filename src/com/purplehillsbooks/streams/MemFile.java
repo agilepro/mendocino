@@ -141,17 +141,19 @@ public class MemFile {
      */
     public void fillWithInputStream(InputStream in) throws Exception {
         byte[] buf = new byte[5000];
+        OutputStream out = getOutputStream();        
         int len = in.read(buf);
         while (len > 0) {
             if (len == 5000) {
-                contents.add(buf);
-                buf = new byte[5000];
+                out.write(buf);
             }
             else {
-                addPartial(buf, 0, len);
+                out.write(buf, 0, len);
             }
             len = in.read(buf);
         }
+        out.flush();
+        out.close();
     }
 
     /**
