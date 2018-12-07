@@ -129,7 +129,7 @@ public class TestRecorderText implements TestRecorder {
     }
 
     /**
-     * deprecated constructor, use the one below instead
+     * @deprecated constructor, use the one below instead
      */
     public TestRecorderText(Writer forLog, boolean newVerbose, String[] args, String configDir)
             throws Exception {
@@ -137,13 +137,15 @@ public class TestRecorderText implements TestRecorder {
     }
 
     /**
-     * The test framework initializes this class and gives it to a test case.
+     * The test driver initializes this class and gives it to each test case.
      * For a run of the tests, only one recorder is constructed, so that it can
-     * return the results of all the tests.
+     * collect the results of all the tests.
      * <p>
      * A test class should never be creating a TestRecorder, only the TestDriver
      * should do so. This allows the tests themselves to be reusable in any
-     * situation.
+     * situation.  You can write your own test driver which calls all your tests,
+     * or you can use the generic TestDriver class that reads what it needs from
+     * input files in order to call the tests.
      */
     public TestRecorderText(Writer forLog, boolean newVerbose, String[] args, String configDir,
             Properties configProps) throws Exception {

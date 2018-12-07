@@ -34,7 +34,7 @@ import com.purplehillsbooks.json.JSONException;
  * test class, and passes a test recorder to it.
  * <p>
  * <b>TestFrame</b> overview. Compared to other test frameworks, TestFrame may
- * seem very uncomplicated. Do not confuse this with lack of capability.
+ * seem very simple. Do not confuse this with lack of capability.
  * TestFrame was designed to provide precisely what is needed to implement a set
  * of component tests, without a lot of extra fluff. Everything that is provided
  * is needed, and everything that is provided has a well defined meaning. Other

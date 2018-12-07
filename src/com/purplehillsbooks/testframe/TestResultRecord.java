@@ -18,6 +18,10 @@ package com.purplehillsbooks.testframe;
 
 import java.util.ArrayList;
 
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.json.JSONObject;
+
 /**
  *
  * Author: Keith Swenson
@@ -40,4 +44,37 @@ public class TestResultRecord {
     public int duration; // milliseconds
     public ArrayList<String> savedLog;
     public Exception fatalException;
+
+
+
+    public JSONObject getJSON() throws Exception {
+        JSONObject jo = new JSONObject();
+        jo.put("category", category);
+
+        jo.put("caseDetails", caseDetails);
+        jo.put("pass", pass);
+        jo.put("failureMessage", failureMessage);
+        jo.put("duration", duration);
+        if (fatalException!=null) {
+            jo.put("fatalException", JSONException.convertToJSON(fatalException, "TestResultRecord"));
+        }
+
+        if (args!=null) {
+            JSONArray ja = new JSONArray();
+            for (String arg : args) {
+                ja.put(arg);
+            }
+            jo.put("args", ja);
+        }
+
+        if (savedLog!=null) {
+            JSONArray loga = new JSONArray();
+            for (String line : savedLog) {
+                loga.put(line);
+            }
+            jo.put("log", loga);
+        }
+
+        return jo;
+    }
 }
