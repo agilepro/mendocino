@@ -37,9 +37,33 @@ public class TestExceptions implements TestSet {
         runCourse("3",           "ExTest2.json");
         runCourse("1222",        "ExTest3.json");
         runCourse("2",           "ExTest4.json");
+ 
+        
+        compareString(newTr, "testing format 1", "test whether it works", String.format("test %s it works", "whether"));
+        compareString(newTr, "testing format 2", "test whether it works two", String.format("test %s it works %s",  "whether", "two"));
+        String[] myBundle = new String[] {"whether", "two"};
+        compareString(newTr, "testing format 3", "test whether it works two", String.format("test %s it works %s",  (Object []) myBundle));
+        
+
+        
+        JSONException je = new JSONException("this is a %s good template", "very");
+        compareString(newTr, "JSONException one parameter", "this is a very good template", je.getMessage());
+        je = new JSONException("this has %s and %s value", "first", "second");
+        compareString(newTr, "JSONException two params", "this has first and second value", je.getMessage());
+        je = new JSONException("three %s values %s to %s see", "nogood", "inevibatly", "hardly");
+        compareString(newTr, "JSONException three params", "three nogood values inevibatly to hardly see", je.getMessage());      
+        JSONException je2 = new JSONException("NESTED %s values %s to %s see", je, "nogood", "inevibatly", "hardly");
+        compareString(newTr, "JSONException three params NESTED", "NESTED nogood values inevibatly to hardly see", je2.getMessage());      
     }
 
-    
+    public void compareString(TestRecorder tr, String caseDesc, String s1, String s2) {
+        if (s1.equals(s2)) {
+            tr.markPassed(caseDesc);
+        }
+        else {
+            tr.markFailed(caseDesc, "Expected ("+s1+") but got ("+s2+")");
+        }
+    }    
     private void sampleMethod1(String course) throws Exception {
         callHigher(course);
     }

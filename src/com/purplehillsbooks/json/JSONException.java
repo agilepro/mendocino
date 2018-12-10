@@ -16,6 +16,8 @@ import java.util.List;
  */
 public class JSONException extends Exception {
     private static final long serialVersionUID = 0;
+    private String   template;
+    private String[] params;
 
     /**
      * Constructs a JSONException with an explanatory message.
@@ -23,12 +25,24 @@ public class JSONException extends Exception {
      */
     public JSONException(String message) {
         super(message);
+        params = new String[0];
     }
 
     public JSONException(String message, Throwable cause) {
         super(message, cause);
+        params = new String[0];
     }
 
+    public JSONException(String template, String ... params) {
+        super(String.format(template, (Object[]) params));
+        this.template = template;
+        this.params = params;
+    }
+    public JSONException(String template, Throwable cause, String ... params) {
+        super(String.format(template, (Object[]) params), cause);
+        this.template = template;
+        this.params = params;
+    }
 
     /**
      * @deprecated always specify a message value, never just do the wrap
@@ -68,6 +82,15 @@ public class JSONException extends Exception {
             t = t.getCause();
         }
         return false;
+    }
+    
+    public String substituteParams() {
+        String msg = getMessage();
+        if (params.length==0) {
+            return msg;
+        }
+        String result = String.format(msg, (Object[]) params);
+        return result;
     }
     
     /**
@@ -147,6 +170,15 @@ public class JSONException extends Exception {
             lastMessage = msg;
 
             JSONObject detailObj = new JSONObject();
+            if (runner instanceof JSONException) {
+                JSONException jrun = (JSONException)runner;
+                if (jrun.params.length>0) {
+                    detailObj.put("template", jrun.template);
+                    for (int i=0; i<jrun.params.length; i++) {
+                        detailObj.put("param"+i,jrun.params[i]);
+                    }
+                }
+            }
             detailObj.put("message",msg);
             int dotPos = className.lastIndexOf(".");
             if (dotPos>0) {
@@ -210,34 +242,6 @@ public class JSONException extends Exception {
             }
         }
     }
-    
-    /*
-    private static List<String> prettifyStack(String input) {
-        ArrayList<String> res = new ArrayList<String>();
-        int start = 0;
-        int pos = input.indexOf('\r');
-        while (pos>0) {
-            String line = input.substring(start, pos).trim();
-            int parenPos = line.indexOf('(');
-            if (parenPos>0 && parenPos<line.length()) {
-                String fullMethod = line.substring(0,parenPos);
-                int methodPoint = fullMethod.lastIndexOf('.');
-                if (methodPoint>0 && methodPoint<fullMethod.length()) {
-                    res.add(fullMethod.substring(methodPoint+1)+line.substring(parenPos));
-                }
-                else {
-                    res.add(line);
-                }
-            }
-            else {
-                res.add(line);
-            }
-            start = pos+1;
-            pos = input.indexOf('\r', start);
-        }
-        return res;
-    }
-    */
     
     
     /**
