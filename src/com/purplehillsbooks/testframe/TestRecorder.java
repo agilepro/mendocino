@@ -105,6 +105,31 @@ public interface TestRecorder {
      */
     public void markFailed(String id, String details);
 
+
+    /**
+     * A "fatal error" is an error that is so bad that subsequent tests were
+     * skipped. For example, a particular routine is expecting test 5
+     * consistency constraints on the contents of a file, but it finds that the
+     * file does not exist. There are two choices: call markFailed 5 times (so
+     * that all failures are recorded) or record a single markFatalError to
+     * indicate that something is so wrong it is not even worth continuing
+     * testing.
+     * <p>
+     * Recording a fatal error means tests has been skipped in this run, and the
+     * resulting statistics are meaningless. We don't have a complete record of
+     * all the tests that might have failed. The presence of a single fatal test
+     * should tell you that something is terribly broken in the tests, and the
+     * results are not valid.
+     * <p>
+     * Normally, a test case will indicate a fatal error by throwing an
+     * exception. The Test Framework will catch the exception, and use this
+     * method to record that a test failed to the extent that further testing
+     * had to be skipped. Throw a meaningful exception instead of calling this
+     * routine.
+     */
+    public void markFatalError(Exception e);
+
+
     /**
      * Writes the specified string to the log file, only when verbose == true.
      * This is used typically for debugging, and calls to this should be removed

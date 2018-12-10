@@ -7,12 +7,12 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * JSONException is mainly a class that has a few helpful methods for handling 
+ * JSONException is mainly a class that has a few helpful methods for handling
  * exceptions, such as:
  * to get the full message of a chain of exceptions,
  * to test if a particular message is anywhere in a chain,
  * to convert an exception to JSON in a standard way
- * to trace an exception to the output stream in a standard way. 
+ * to trace an exception to the output stream in a standard way.
  */
 public class JSONException extends Exception {
     private static final long serialVersionUID = 0;
@@ -69,9 +69,9 @@ public class JSONException extends Exception {
     }
 
     /**
-    * When an exception is caught, you will want to test whether the exception, or any of 
+    * When an exception is caught, you will want to test whether the exception, or any of
     * the causing exceptions contains a particular string fragment.  This routine searches
-    * the entire cascading chain of exceptions and return true if the string fragment is 
+    * the entire cascading chain of exceptions and return true if the string fragment is
     * found in any of the exception, and false if the fragment is not found anywhere.
     */
     public static boolean containsMessage(Throwable t, String fragment) {
@@ -83,6 +83,7 @@ public class JSONException extends Exception {
         }
         return false;
     }
+
     
     public String substituteParams() {
         String msg = getMessage();
@@ -93,19 +94,20 @@ public class JSONException extends Exception {
         return result;
     }
     
+
     /**
      * In any kind of JSON protocol, you need to return an exception back to the caller.
-     * How should the Java exception be encoded into JSON?  
+     * How should the Java exception be encoded into JSON?
      * This method offers a convenient way to convert ANY exception
      * into a stardard form proposed by OASIS:
-     * 
+     *
      * http://docs.oasis-open.org/odata/odata-json-format/v4.0/errata02/os/odata-json-format-v4.0-errata02-os-complete.html#_Toc403940655
-     * 
+     *
      * Also see:
-     * 
+     *
      * https://agiletribe.wordpress.com/2015/09/16/json-rest-api-exception-handling/
-     * 
-     * @param context allows you to include some context about the operation that was being performed 
+     *
+     * @param context allows you to include some context about the operation that was being performed
      *                when the exception occurred.
      */
     public static JSONObject convertToJSON(Throwable e, String context) throws Exception {
@@ -120,14 +122,14 @@ public class JSONException extends Exception {
         errorTag.put("details", detailList);
 
         String lastMessage = "";
-        
+
         Throwable nextRunner = e;
         List<ExceptionTracer> traceHolder = new ArrayList<ExceptionTracer>();
         while (nextRunner!=null) {
             //doing this at the top allows 'continues' statements to be safe
             Throwable runner = nextRunner;
             nextRunner = runner.getCause();
-            
+
             String className =  runner.getClass().getName();
             String msg =  runner.toString();
 
@@ -142,7 +144,7 @@ public class JSONException extends Exception {
                 }
             }
 
-            if (msg.startsWith(className)) {
+            if (msg.startsWith(className) && msg.length()>className.length()+5) {
                 int skipTo = className.length();
                 while (skipTo<msg.length()) {
                     char ch = msg.charAt(skipTo);
@@ -153,14 +155,14 @@ public class JSONException extends Exception {
                 }
                 msg = msg.substring(skipTo);
             }
-            
+
             if (lastMessage.equals(msg)) {
                 //model api has an incredibly stupid pattern of catching an exception, and then throwing a
                 //new exception with the exact same message.  This ends up in three or four duplicate messages.
                 //Check here for that problem, and eliminate duplicate messages by skipping rest of loop.
                 continue;
             }
-            
+
             ExceptionTracer et = new ExceptionTracer();
             et.t = runner;
             et.msg = msg;
@@ -205,7 +207,7 @@ public class JSONException extends Exception {
 
         return responseBody;
     }
-    
+
     static class ExceptionTracer {
         public Throwable t;
         public String msg;
@@ -213,7 +215,7 @@ public class JSONException extends Exception {
         boolean wasTrimmed = false;
 
         public ExceptionTracer() {}
-        
+
         public void captureTrace() {
             for (StackTraceElement ste : t.getStackTrace()) {
                 String line = "    "+ste.getFileName() + ": " + ste.getMethodName() + ": " + ste.getLineNumber();
@@ -223,7 +225,7 @@ public class JSONException extends Exception {
         public void removeTail(List<String> lower) {
             int offUpper = trace.size()-1;
             int offLower = lower.size()-1;
-            while (offUpper>0 && offLower>0 
+            while (offUpper>0 && offLower>0
                     && trace.get(offUpper).equals(lower.get(offLower))) {
                 trace.remove(offUpper);
                 offUpper--;
@@ -231,7 +233,7 @@ public class JSONException extends Exception {
                 wasTrimmed = true;
             }
         }
-        
+
         public void insertIntoArray(JSONArray ja) {
             ja.put(msg);
             for (String line : trace) {
@@ -242,8 +244,7 @@ public class JSONException extends Exception {
             }
         }
     }
-    
-    
+
     /**
      * A standardized way to trace a given exception to the system out.
      */
@@ -251,7 +252,7 @@ public class JSONException extends Exception {
         JSONObject errOB = traceException(System.out, e, context);
         return errOB;
     }
-    
+
     /**
      * A standardized way to trace a given exception to the system out.
      */
@@ -307,10 +308,10 @@ public class JSONException extends Exception {
             return null;
         }
     }
-    
+
 
     /**
-     * If you have already converted to a JSONOBject, you can use this method to 
+     * If you have already converted to a JSONOBject, you can use this method to
      * get a standard trace of that object to the output writer.
      */
     public static void traceConvertedException(PrintStream out, JSONObject errOb) {
@@ -322,7 +323,7 @@ public class JSONException extends Exception {
             eee.printStackTrace();
         }
     }
-    
+
     public static void traceConvertedException(Writer w, JSONObject errOb) {
         try {
             w.write(getTraceExceptionFormat(errOb));
@@ -334,11 +335,11 @@ public class JSONException extends Exception {
     }
 
     /**
-     * If you have already converted to a JSONOBject, you can use this method to 
+     * If you have already converted to a JSONOBject, you can use this method to
      * get a standard trace of that object to the output writer.
-     * 
-     * This returns a string because it was too difficult to sort out the 
-     * PrintWriter, Writer, PrintStream differences, and because all of the 
+     *
+     * This returns a string because it was too difficult to sort out the
+     * PrintWriter, Writer, PrintStream differences, and because all of the
      * exceptions within exception need to be handled with output streams.
      * Clearly returning a string is not efficient memory-wise, but exceptions
      * should be rare, so don't worry about it.
@@ -352,7 +353,7 @@ public class JSONException extends Exception {
         sb.append("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \n");
         return sb.toString();
     }
-    
+
     /**
      * Given a JSON representation of an exception, this re-constructs the Exception
      * chain (linked cause exceptions) and returns the Exception object.
@@ -360,7 +361,7 @@ public class JSONException extends Exception {
      * this standard kind of JSON representation, then this converts it back
      * to exception objects so that can be thrown.  Thus the exception on the server
      * is reproduced to the client.
-     * 
+     *
      * This does not copy the stack traces, only the 'stack' of messages.
      */
     public static Exception convertJSONToException(JSONObject ex) {
@@ -400,5 +401,5 @@ public class JSONException extends Exception {
             }
         }
     }
-        
+
 }
