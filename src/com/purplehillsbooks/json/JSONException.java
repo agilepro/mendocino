@@ -17,7 +17,7 @@ import java.util.List;
 public class JSONException extends Exception {
     private static final long serialVersionUID = 0;
     private String   template;
-    private String[] params;
+    private Object[] params;
 
     /**
      * Constructs a JSONException with an explanatory message.
@@ -33,13 +33,24 @@ public class JSONException extends Exception {
         params = new String[0];
     }
 
-    public JSONException(String template, String ... params) {
-        super(String.format(template, (Object[]) params));
+    /**
+     * Construct the exception with a template by using variable parameters
+     * Use a template like this:
+     * 
+     * JSONException("Error when contemplating {0} in context of {1}", value0, value1)
+     *    
+     * Tokens are braces with a single digit numeral between them.
+     * The message will ultimately include the main string template with the values
+     * substituted, however this gives the option to translate the template before
+     * substitution and get a translated message.
+     */
+    public JSONException(String template, Object ... params) {
+        super(formatString(template, params));
         this.template = template;
         this.params = params;
     }
-    public JSONException(String template, Throwable cause, String ... params) {
-        super(String.format(template, (Object[]) params), cause);
+    public JSONException(String template, Throwable cause, Object ... params) {
+        super(formatString(template, params), cause);
         this.template = template;
         this.params = params;
     }
@@ -50,7 +61,57 @@ public class JSONException extends Exception {
     public JSONException(Throwable cause) {
         super("Error while processing JSON", cause);
     }
+    
+    
+    public static String formatString(String template, Object[] params) {
+        StringBuilder sb = new StringBuilder();
+        
+        int start = 0;
+        int pos = template.indexOf("{");
+        while (pos>0)  {
+            sb.append(template.substring(start, pos));
+            int endPos = template.indexOf("}",pos);
+            if (endPos<pos+2) {
+                //no end of the token, or malformed token with no contents
+                //just append the rest and return it
+                sb.append(template.substring(pos));
+                return sb.toString();
+            }
+            int param = safeConvertInt(template.substring(pos+1,endPos));
+            if (param>=params.length) {
+                sb.append("unknown_param_"+param);
+            }
+            else {
+                Object p = params[param];
+                if (p instanceof String) {
+                    sb.append(p);
+                }
+                else {
+                    sb.append(p.toString());
+                }
+            }
+            start = endPos+1;
+            pos = template.indexOf("{", start);
+        }
+        sb.append(template.substring(start));
+        return sb.toString();
+    }
 
+    public static int safeConvertInt(String val) {
+        if (val == null) {
+            return 0;
+        }
+        int res = 0;
+        int last = val.length();
+        for (int i = 0; i < last; i++) {
+            char ch = val.charAt(i);
+            if (ch >= '0' && ch <= '9') {
+                res = res * 10 + ch - '0';
+            }
+        }
+        return res;
+    }
+    
     /**
     * Walks through a chain of exception objects, from the first, to each
     * "cause" in turn, creating a single combined string message from all
