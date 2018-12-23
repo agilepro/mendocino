@@ -32,6 +32,20 @@ import java.util.List;
  */
 public class CSVHelper {
 
+    /**
+     * Just a convenience method that iterates teh rows of a table and outputs
+     * to a writer which is presumably a CSV file.
+     */
+    public static void writeTable(Writer w, List<List<String>> table) throws Exception {
+        for (int i=0; i<table.size(); i++) {
+            List<String> row = table.get(i);
+            writeLine(w, row);
+        }
+    }
+
+    /**
+     * Write a single row of a CSV table, all values are quoted
+     */
     public static void writeLine(Writer w, List<String> values) throws Exception {
         boolean firstVal = true;
         for (String val : values) {
