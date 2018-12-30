@@ -130,6 +130,10 @@ public class JSONDiff {
             CSVHelper.writeTable(osw, table);
             osw.flush();
             osw.close();
+
+            //now write out the extended object
+            File newSecondObject = new File(file2.getParentFile(), file2.getName()+".augment.json");
+            obj2.writeToFile(newSecondObject);
         }
         catch (Exception e) {
             System.out.println("##### FATAL ENDING OF JSONDiff #####");
@@ -207,8 +211,14 @@ public class JSONDiff {
                     //if they are both objects then drill down
                     addRecursive(table, baseKey + key + ".", (JSONObject)o1, (JSONObject)o2);
                 }
+                else if (o2==null) {
+                    //the object is missing to add it
+                    JSONObject replace = new JSONObject();
+                    ob2.put(key, replace);
+                    addRecursive(table, baseKey + key + ".", (JSONObject)o1, null);
+                }
                 else {
-                    //in all other cases, o2 can not be considered so treat like null
+                    //a conflicting value exists, so treat like null
                     addRecursive(table, baseKey + key + ".", (JSONObject)o1, null);
                 }
 
@@ -217,6 +227,12 @@ public class JSONDiff {
                 if (o2!=null && o2 instanceof JSONArray) {
                     iterateArray(table, baseKey + key + "[", (JSONArray)o1, (JSONArray)o2);
                 }
+                else if (o2==null) {
+                    //the object is missing to add it
+                    JSONArray replace = new JSONArray();
+                    ob2.put(key, replace);
+                    iterateArray(table, baseKey + key + "[", (JSONArray)o1, replace);
+                }
                 else {
                     //in all other cases have to consider o2 to be null
                     iterateArray(table, baseKey + key + "[", (JSONArray)o1, null);
@@ -224,6 +240,11 @@ public class JSONDiff {
             }
             else {
                 addRow(table, baseKey + key, val1, val2);
+                if (o2==null) {
+                    //in this case put a value in the place
+                    System.out.println("Added value for "+key);
+                    ob2.put(key, "(*)"+val1);
+                }
             }
         }
     }
