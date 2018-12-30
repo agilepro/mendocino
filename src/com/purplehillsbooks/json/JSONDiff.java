@@ -100,6 +100,25 @@ import com.purplehillsbooks.streams.CSVHelper;
  * value for that key.   reportAll=false will output ONLY the keys that the 
  * two files have different values for.</p>
  
+ * <h1>Augmented Output</h1>
+ *
+ * <p>The first JSON object is considered the superior, and the second parameter
+ * is the inferior with potential missing keys.  To simlify the adding of keys
+ * JSONDiff will extend the second object with values from the first.</p>
+ *
+ * <p>a key that maps to an object will create a new object in the second</p>
+ *
+ * <p>a key that maps to a string will create a new string in the second.
+ * The value will be tagged with "(*)" to identify it as a value that was 
+ * automatically take from the other. For example, if the first object has:</p>
+ 
+ *    <pre>"key111": "This is a Value"</pre>
+ 
+ * <p>then JSONDiff will create the following value in the second object:</p>
+ 
+ *    <pre>"key111": "(*)This is a Value"</pre>
+ 
+
  * <h1>Command Line Arguments</h1>
  * 
  * <p>This class has a main routine so that it can be called as a command-line command
@@ -117,6 +136,8 @@ import com.purplehillsbooks.streams.CSVHelper;
  * <p>The output will be written to second file name with "diff.csv" on the end.
  * In the example above, the file would be written to <tt>Second-File.jsondiff.csv</tt></p>
  *
+ * <p>The augmented object output will be written to second file name with ".augment.json" on the end.
+ * In the example above, the file would be written to <tt>Second-File.json.augment.json</tt></p>
  */
 public class JSONDiff {
 
