@@ -3,8 +3,10 @@
   "context": "Test file ExTest4.json for course 2",
   "details": [
     {
-      "code": "Exception",
-      "message": "caught and rethrow from level: "
+      "code": "JSONException",
+      "message": "caught and rethrow from level: ",
+      "param0": "",
+      "template": "caught and rethrow from level: {0}"
     },
     {
       "code": "Exception",
@@ -14,15 +16,15 @@
   "innerError": {},
   "stack": [
     "top level exception thrown by exception test when course string ran out",
-    "    TestExceptions.java: callHigher: 86",
-    "    TestExceptions.java: sampleMethod2: 73",
+    "    TestExceptions.java: callHigher: 89",
+    "    TestExceptions.java: sampleMethod2: 76",
     "    (continued below)",
     "caught and rethrow from level: ",
-    "    TestExceptions.java: sampleMethod2: 76",
-    "    TestExceptions.java: callHigher: 93",
-    "    TestExceptions.java: runCourse: 112",
-    "    TestExceptions.java: runTests: 39",
+    "    TestExceptions.java: sampleMethod2: 79",
+    "    TestExceptions.java: callHigher: 96",
+    "    TestExceptions.java: runCourse: 158",
+    "    TestExceptions.java: runTests: 42",
     "    TestRecorderText.java: parseArgsRunTests: 634",
-    "    TestExceptions.java: main: 139"
+    "    TestExceptions.java: main: 196"
   ]
 }}

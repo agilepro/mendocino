@@ -3,16 +3,22 @@
   "context": "Test file ExTest3.json for course 1222",
   "details": [
     {
-      "code": "Exception",
-      "message": "caught and rethrow from level: 22"
+      "code": "JSONException",
+      "message": "caught and rethrow from level: 22",
+      "param0": "22",
+      "template": "caught and rethrow from level: {0}"
     },
     {
-      "code": "Exception",
-      "message": "caught and rethrow from level: 2"
+      "code": "JSONException",
+      "message": "caught and rethrow from level: 2",
+      "param0": "2",
+      "template": "caught and rethrow from level: {0}"
     },
     {
-      "code": "Exception",
-      "message": "caught and rethrow from level: "
+      "code": "JSONException",
+      "message": "caught and rethrow from level: ",
+      "param0": "",
+      "template": "caught and rethrow from level: {0}"
     },
     {
       "code": "Exception",
@@ -22,27 +28,27 @@
   "innerError": {},
   "stack": [
     "top level exception thrown by exception test when course string ran out",
-    "    TestExceptions.java: callHigher: 86",
-    "    TestExceptions.java: sampleMethod2: 73",
+    "    TestExceptions.java: callHigher: 89",
+    "    TestExceptions.java: sampleMethod2: 76",
     "    (continued below)",
     "caught and rethrow from level: ",
+    "    TestExceptions.java: sampleMethod2: 79",
+    "    TestExceptions.java: callHigher: 96",
     "    TestExceptions.java: sampleMethod2: 76",
-    "    TestExceptions.java: callHigher: 93",
-    "    TestExceptions.java: sampleMethod2: 73",
     "    (continued below)",
     "caught and rethrow from level: 2",
+    "    TestExceptions.java: sampleMethod2: 79",
+    "    TestExceptions.java: callHigher: 96",
     "    TestExceptions.java: sampleMethod2: 76",
-    "    TestExceptions.java: callHigher: 93",
-    "    TestExceptions.java: sampleMethod2: 73",
     "    (continued below)",
     "caught and rethrow from level: 22",
-    "    TestExceptions.java: sampleMethod2: 76",
+    "    TestExceptions.java: sampleMethod2: 79",
+    "    TestExceptions.java: callHigher: 96",
+    "    TestExceptions.java: sampleMethod1: 71",
     "    TestExceptions.java: callHigher: 93",
-    "    TestExceptions.java: sampleMethod1: 68",
-    "    TestExceptions.java: callHigher: 90",
-    "    TestExceptions.java: runCourse: 112",
-    "    TestExceptions.java: runTests: 38",
+    "    TestExceptions.java: runCourse: 158",
+    "    TestExceptions.java: runTests: 41",
     "    TestRecorderText.java: parseArgsRunTests: 634",
-    "    TestExceptions.java: main: 139"
+    "    TestExceptions.java: main: 196"
   ]
 }}

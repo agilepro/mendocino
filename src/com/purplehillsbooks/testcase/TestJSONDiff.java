@@ -84,8 +84,6 @@ public class TestJSONDiff implements TestSet {
 
     private void doit(String rootFile, JSONObject ob1, JSONObject ob2) throws Exception {
 
-        System.out.println("O1: "+ob1.toString());
-        System.out.println("O2: "+ob2.toString());
         List<List<String>> table = jdFull.createDiff(ob1, ob2);
         compareToFile(rootFile+"a.csv", table);
         table = jdLtd.createDiff(ob1, ob2);
@@ -93,7 +91,6 @@ public class TestJSONDiff implements TestSet {
     }
 
     private void compareToFile(String fileName, List<List<String>> table) throws Exception {
-        System.out.println("TESTING: "+fileName+", TABLE HAS "+table.size()+" rows");
         MemFile mf = new MemFile();
         Writer w = mf.getWriter();
         CSVHelper.writeTable(w, table);

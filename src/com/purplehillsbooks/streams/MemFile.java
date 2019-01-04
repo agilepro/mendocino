@@ -16,6 +16,8 @@
 
 package com.purplehillsbooks.streams;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -141,7 +143,7 @@ public class MemFile {
      */
     public void fillWithInputStream(InputStream in) throws Exception {
         byte[] buf = new byte[5000];
-        OutputStream out = getOutputStream();        
+        OutputStream out = getOutputStream();
         int len = in.read(buf);
         while (len > 0) {
             if (len == 5000) {
@@ -200,6 +202,17 @@ public class MemFile {
             w.write(buf, 0, amt);
             amt = r.read(buf);
         }
+    }
+
+
+    /**
+     * Writes the entire contents of the memory file to the file name passed in
+     */
+    public void outToFile(File file) throws Exception {
+        OutputStream os = new FileOutputStream(file);
+        this.outToOutputStream(os);
+        os.flush();
+        os.close();
     }
 
     /**

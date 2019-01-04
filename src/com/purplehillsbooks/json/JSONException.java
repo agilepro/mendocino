@@ -25,20 +25,20 @@ public class JSONException extends Exception {
      */
     public JSONException(String message) {
         super(message);
-        params = new String[0];
+        params = new Object[0];
     }
 
     public JSONException(String message, Throwable cause) {
         super(message, cause);
-        params = new String[0];
+        params = new Object[0];
     }
 
     /**
      * Construct the exception with a template by using variable parameters
      * Use a template like this:
-     * 
+     *
      * JSONException("Error when contemplating {0} in context of {1}", value0, value1)
-     *    
+     *
      * Tokens are braces with a single digit numeral between them.
      * The message will ultimately include the main string template with the values
      * substituted, however this gives the option to translate the template before
@@ -61,11 +61,11 @@ public class JSONException extends Exception {
     public JSONException(Throwable cause) {
         super("Error while processing JSON", cause);
     }
-    
-    
+
+
     public static String formatString(String template, Object[] params) {
         StringBuilder sb = new StringBuilder();
-        
+
         int start = 0;
         int pos = template.indexOf("{");
         while (pos>0)  {
@@ -111,7 +111,7 @@ public class JSONException extends Exception {
         }
         return res;
     }
-    
+
     /**
     * Walks through a chain of exception objects, from the first, to each
     * "cause" in turn, creating a single combined string message from all
@@ -145,7 +145,7 @@ public class JSONException extends Exception {
         return false;
     }
 
-    
+
     public String substituteParams() {
         String msg = getMessage();
         if (params.length==0) {
@@ -154,7 +154,7 @@ public class JSONException extends Exception {
         String result = String.format(msg, (Object[]) params);
         return result;
     }
-    
+
 
     /**
      * In any kind of JSON protocol, you need to return an exception back to the caller.
@@ -423,8 +423,10 @@ public class JSONException extends Exception {
      * to exception objects so that can be thrown.  Thus the exception on the server
      * is reproduced to the client.
      *
-     * This does not copy the stack traces, only the 'stack' of messages.
-     */
+     * This copies the stack to the final (rootmost) exception object and does not try
+     * to allocate stack to each of the individual exception objects in the chain
+     *
+     **/
     public static Exception convertJSONToException(JSONObject ex) {
         Exception trailer = null;
         try {
@@ -432,34 +434,91 @@ public class JSONException extends Exception {
                 return new Exception("Failure converting JSONToException: Null parameter to JSONToException");
             }
             if (!ex.has("error")) {
-                return new Exception("Failure converting JSONToException: no 'error' member in object.");
+                return new Exception("Failure converting JSONToException: no 'error' member in object. "+ex.toString());
             }
             JSONObject error = ex.getJSONObject("error");
             if (!error.has("details")) {
-                return new Exception("Failure converting JSONToException: no 'error.details' member in object.");
+                return new Exception("Failure converting JSONToException: no 'error.details' member in object. "+ex.toString());
             }
             JSONArray details = error.getJSONArray("details");
             for (int i=details.length()-1; i>=0; i--) {
                 JSONObject oneDetail = details.getJSONObject(i);
+                String message = oneDetail.getString("message");
+                String template = oneDetail.optString("template", null);
+                int paramCount = 0;
+                while (oneDetail.has("param"+paramCount)) {
+                    paramCount++;
+                }
+                Object[] params = new Object[paramCount];
+                for (int ii=0; ii<paramCount; ii++) {
+                    params[ii] = oneDetail.getString("param"+ii);
+                }
                 if (trailer!=null) {
-                    trailer = new Exception(oneDetail.getString("message"), trailer);
+                    if (template!=null && paramCount>0) {
+                        trailer = new JSONException(template, trailer, params);
+                    }
+                    else {
+                        trailer = new Exception(message, trailer);
+                    }
                 }
                 else {
-                    trailer = new Exception(oneDetail.getString("message"));
+                    if (template!=null && paramCount>0) {
+                        trailer = new JSONException(template, params);
+                    }
+                    else {
+                        trailer = new Exception(message);
+                    }
                 }
+                //zero out the stack traces on these objects
+                trailer.setStackTrace(new StackTraceElement[0]);
             }
-            if (trailer!=null) {
-                return trailer;
+
+            if (trailer==null) {
+                return new Exception("Failure converting JSONToException: no details of the error. "+ex.toString());
             }
-            return new Exception("Failure converting JSONToException: no details of the error.");
+            if (error.has("stack")) {
+                JSONArray stack = error.getJSONArray("stack");
+                ArrayList<StackTraceElement> newStack = new  ArrayList<StackTraceElement>();
+                for (int i=0; i<stack.length(); i++) {
+                    String line = stack.getString(i);
+                    //now parse this into part according to the form
+                    //   "    "+FileName + ": " + MethodName + ": " + LineNumber
+                    String fileName = "";
+                    String methodName = "";
+                    int lineNumber = 0;
+                    if (line.length()<4) {
+                        //ignore very short lines
+                        continue;
+                    }
+                    if (!"  ".equals(line.substring(0,2))) {
+                        //ignore lines that don't start with two spaces
+                        continue;
+                    }
+                    int pos = line.lastIndexOf(":");
+                    if (pos<0) {
+                        //ignore lines without any colons in them
+                        continue;
+                    }
+                    lineNumber = safeConvertInt(line.substring(pos+1));
+                    line = line.substring(0, pos);
+                    pos = line.lastIndexOf(":");
+                    if (pos>0) {
+                        methodName = line.substring(pos+1).trim();
+                        line = line.substring(0, pos);
+                    }
+                    fileName = line.trim();
+                    newStack.add(new StackTraceElement("", methodName, fileName, lineNumber));
+                }
+                StackTraceElement[] newStackArray = new StackTraceElement[newStack.size()];
+                for (int i=0; i<newStack.size(); i++) {
+                    newStackArray[i] = newStack.get(i);
+                }
+                trailer.setStackTrace(newStackArray);
+            }
+            return trailer;
         }
         catch (Exception xxx) {
-            if (trailer!=null) {
-                return new Exception("Failure converting JSONToException: "+xxx.toString());
-            }
-            else {
-                return new Exception("Failure converting JSONToException: "+xxx.toString(), xxx);
-            }
+            return new Exception("Failure converting JSONToException: "+ex.toString(), xxx);
         }
     }
 

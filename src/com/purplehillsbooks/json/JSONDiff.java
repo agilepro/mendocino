@@ -15,26 +15,26 @@ import com.purplehillsbooks.streams.CSVHelper;
  * <p>The purpose of this class is to produce a "DIFF" comparison of two JSON
  * files.   This is useful for JSON files which are holding internationalized
  * string values.  Two JSON objects are compared.  The keys must be unique;
- * there must not be two members of an object with the same key.   
+ * there must not be two members of an object with the same key.
  * The value from one object is compared
  * to the value of the same key from the other.</p>
- * 
+ *
  * <p>Nested objects use paths which combine the keys together with dots between them.
  * in the example below, "menu.open" and "menu.close" are path-style keys.
  * These keys again must be unique.</p>
- * 
+ *
  * <p> If there is an array, then the elements in the
  * array will be compared in exactly the order they are found, but this might or might
  * not be useful.  No attempt is made to find a canonical order for the array elements.
  * The path is constructed using the index in square bracket (e.g. [0], [1], etc.)
  * so that the path is once again unique to specify that value.</p>
- * 
- * <p>The output is a three column CSV file.   The first column is the full path key, 
- * the second is the value from the first json object, 
+ *
+ * <p>The output is a three column CSV file.   The first column is the full path key,
+ * the second is the value from the first json object,
  * the third column is the corresponding value from the second json object:</p>
  *
  * <h3>JSON File 1:</h3>
- * 
+ *
  * <pre>
  * {
  *     "title": "title",
@@ -47,7 +47,7 @@ import com.purplehillsbooks.streams.CSVHelper;
  *     "missing": "missing"
  * }
  * </pre>
- 
+
  * <h3>JSON File 2:</h3>
  *
  * <pre>
@@ -75,11 +75,11 @@ import com.purplehillsbooks.streams.CSVHelper;
  * "z-extra",    "~null~",  "superfluous"
  * </pre>
  *
- * <p>Note that the keys are in (canonical) ASCII alphabetical order so that the 
+ * <p>Note that the keys are in (canonical) ASCII alphabetical order so that the
  * result can always be compared effectively with earlier results.  The JSON files
  * need not have keys in alphabetical order, but keeping them that way will make
  * regular text-oriented difference comparisons more useful.</p>
- * 
+ *
  * <p>Note that the first file takes precident in defining the structure to compare.
  * That is, all elements in the first file will be considered and iterated as
  * sub-objects even if the second file has those elements missing or different.  If the key
@@ -91,15 +91,15 @@ import com.purplehillsbooks.streams.CSVHelper;
  * will be ignored in some cases.  If the key points to a string value in the
  * first object, but an object value in the second object, then only the string
  * value will be considered. </p>
- 
+
  * <h1>All or Only Changed</h1>
- * 
+ *
  * <p>There is a boolean parameter on the constructor to say whether to include all
- * the lines, or just the lines that are different.  reportAll=true means that 
- * all keys found will be reported, even if the two input files have the same 
- * value for that key.   reportAll=false will output ONLY the keys that the 
+ * the lines, or just the lines that are different.  reportAll=true means that
+ * all keys found will be reported, even if the two input files have the same
+ * value for that key.   reportAll=false will output ONLY the keys that the
  * two files have different values for.</p>
- 
+
  * <h1>Augmented Output</h1>
  *
  * <p>The first JSON object is considered the superior, and the second parameter
@@ -109,22 +109,22 @@ import com.purplehillsbooks.streams.CSVHelper;
  * <p>a key that maps to an object will create a new object in the second</p>
  *
  * <p>a key that maps to a string will create a new string in the second.
- * The value will be tagged with "(*)" to identify it as a value that was 
+ * The value will be tagged with "(*)" to identify it as a value that was
  * automatically take from the other. For example, if the first object has:</p>
- 
+
  *    <pre>"key111": "This is a Value"</pre>
- 
+
  * <p>then JSONDiff will create the following value in the second object:</p>
- 
+
  *    <pre>"key111": "(*)This is a Value"</pre>
- 
+
 
  * <h1>Command Line Arguments</h1>
- * 
+ *
  * <p>This class has a main routine so that it can be called as a command-line command
- * where you pass the names of JSON files.  The files are read, and the result is 
+ * where you pass the names of JSON files.  The files are read, and the result is
  * written out as a file.</p>
- * 
+ *
  * <pre>JSONDiff {First-File.json}  {Second-File.json} [-a]</pre>
  *
  * <p>First parameter and second parameter are the two files to read as JSON files and
@@ -132,7 +132,7 @@ import com.purplehillsbooks.streams.CSVHelper;
  * There is a third, optional parameter (-a) which controls the reportAll setting.
  * if this is present, then all keys will be reported whether the values match or not.
  * If this is not present, then only the keys that have differing values are included.</p>
- * 
+ *
  * <p>The output will be written to second file name with "diff.csv" on the end.
  * In the example above, the file would be written to <tt>Second-File.jsondiff.csv</tt></p>
  *
@@ -145,10 +145,10 @@ public class JSONDiff {
 
  /**
  * <p>The boolean parameter on the constructor defines whether to include all
- * the lines, or just the lines that are different.  reportAll=true means that 
- * all keys found will be reported, even if the two input files have the same 
- * value for that key.   reportAll=false will output ONLY the keys that the 
- * two files have different values for.</p>    
+ * the lines, or just the lines that are different.  reportAll=true means that
+ * all keys found will be reported, even if the two input files have the same
+ * value for that key.   reportAll=false will output ONLY the keys that the
+ * two files have different values for.</p>
  */
     public JSONDiff(boolean reportAll) {
         includeAll = reportAll;
@@ -158,9 +158,9 @@ public class JSONDiff {
 * <p>Creates a table that represents the difference of the two JSON objects
 * passed in. The table is a list of rows, and each row is a triplet of Strings
 * representing the column values for that row.></p>
-* 
-* <p>The first column is the full path key, 
-* the second is the value from the first json object, 
+*
+* <p>The first column is the full path key,
+* the second is the value from the first json object,
 * the third column is the corresponding value from the second json object</p>
 */
     public List<List<String>> createDiff(JSONObject ob1, JSONObject ob2) throws Exception {
@@ -171,11 +171,11 @@ public class JSONDiff {
 
 
  /**
- * 
+ *
  * <p>The main routine can be called as a command-line command
- * where you pass the names of JSON files.  The files are read, and the result is 
+ * where you pass the names of JSON files.  The files are read, and the result is
  * written out as a CSV file.</p>
- * 
+ *
  * <pre>JSONDiff {First-File.json}  {Second-File.json} [-a]</pre>
  *
  * <p>First parameter and second parameter are the two files to read as JSON files and
@@ -183,9 +183,9 @@ public class JSONDiff {
  * There is a third, optional parameter (-a) which controls the reportAll setting.
  * if this is present, then all keys will be reported whether the values match or not.
  * If this is not present, then only the keys that have differing values are included.</p>
- * 
+ *
  * <p>The output will be written to second file name with "diff.csv" on the end.
- * In the example above, the file would be written to <tt>Second-File.jsondiff.csv</tt></p>     
+ * In the example above, the file would be written to <tt>Second-File.jsondiff.csv</tt></p>
  */
     public static void main(String[] args) {
         try {
@@ -339,7 +339,6 @@ public class JSONDiff {
                 addRow(table, baseKey + key, val1, val2);
                 if (o2==null) {
                     //in this case put a value in the place
-                    System.out.println("Added value for "+key);
                     ob2.put(key, "(*)"+val1);
                 }
             }
