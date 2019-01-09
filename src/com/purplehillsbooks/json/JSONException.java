@@ -16,8 +16,8 @@ import java.util.List;
  */
 public class JSONException extends Exception {
     private static final long serialVersionUID = 0;
-    private String   template;
-    private Object[] params;
+    public  String   template;
+    public  Object[] params;
 
     /**
      * Constructs a JSONException with an explanatory message.
@@ -182,8 +182,6 @@ public class JSONException extends Exception {
         JSONArray detailList = new JSONArray();
         errorTag.put("details", detailList);
 
-        String lastMessage = "";
-
         Throwable nextRunner = e;
         List<ExceptionTracer> traceHolder = new ArrayList<ExceptionTracer>();
         while (nextRunner!=null) {
@@ -194,17 +192,7 @@ public class JSONException extends Exception {
             String className =  runner.getClass().getName();
             String msg =  runner.toString();
 
-            //iflow has this annoying habit of including all the later causes in the response
-            //surrounded by braces.  This strips them off because we are going to iterate down
-            //to those causes anyway.
-            boolean isIFlow = className.indexOf("iflow")>0;
-            if (isIFlow) {
-                int bracePos = msg.indexOf('{');
-                if (bracePos>0) {
-                    msg = msg.substring(0,bracePos);
-                }
-            }
-
+            //trim the classname off the message since that is usually unimportant to communicating the problem
             if (msg.startsWith(className) && msg.length()>className.length()+5) {
                 int skipTo = className.length();
                 while (skipTo<msg.length()) {
@@ -217,20 +205,11 @@ public class JSONException extends Exception {
                 msg = msg.substring(skipTo);
             }
 
-            if (lastMessage.equals(msg)) {
-                //model api has an incredibly stupid pattern of catching an exception, and then throwing a
-                //new exception with the exact same message.  This ends up in three or four duplicate messages.
-                //Check here for that problem, and eliminate duplicate messages by skipping rest of loop.
-                continue;
-            }
-
             ExceptionTracer et = new ExceptionTracer();
             et.t = runner;
             et.msg = msg;
             et.captureTrace();
             traceHolder.add(et);
-
-            lastMessage = msg;
 
             JSONObject detailObj = new JSONObject();
             if (runner instanceof JSONException) {
@@ -269,6 +248,11 @@ public class JSONException extends Exception {
         return responseBody;
     }
 
+    /**
+     * This grabs a copy of the trace so that later it can be compared with
+     * other stack traces, and truncated to eliminate the redundant parts.
+     * Records the fact that it was truncated.
+     */
     static class ExceptionTracer {
         public Throwable t;
         public String msg;
