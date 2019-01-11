@@ -1,5 +1,14 @@
 package com.purplehillsbooks.json;
 
+
+This class intentionally broken
+
+There is a new repository:   agilepro/purple
+
+it holds the new versions of these classes.
+
+
+
 /*
 Copyright (c) 2002 JSON.org
 

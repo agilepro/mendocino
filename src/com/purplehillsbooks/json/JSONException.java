@@ -6,6 +6,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
+
+
+This class intentionally broken
+
+There is a new repository:   agilepro/purple
+
+it holds the new versions of these classes.
+
+
+
+
+
 /**
  * JSONException is mainly a class that has a few helpful methods for handling
  * exceptions, such as:
